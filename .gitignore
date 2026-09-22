@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+data/*.json
+package-lock.json
+worker-inline.js
+*.log
+.env
+*.tmp
