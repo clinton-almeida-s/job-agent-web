@@ -193,7 +193,7 @@ async function scrapeGreenhouse(board, kv) {
 }
 
 async function scrapeGreenhouseFiltered(keyword, kv) {
-  const boards = ['Vercel', 'GitLab', 'Stripe'];
+  const boards = ['Google', 'Cloudflare', 'Stripe', 'Datadog', 'Vercel', 'GitLab', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox'];
   const allResults = await Promise.allSettled(
     boards.map(function(board) { return scrapeGreenhouse(board, kv); })
   );
@@ -240,13 +240,9 @@ async function scrapeAllSources(profile, kv) {
   const keyword = keywords[0];
 
   const results = await Promise.allSettled([
-    scrapeRemoteOK(kv),
-    scrapeRemotive(keyword, kv),
-    scrapeWeWorkRemotely(kv),
     scrapeLinkedInRSS(keyword, kv),
     // Free-to-apply sources (direct company APIs - no paywall)
     scrapeGreenhouseFiltered(keyword, kv),
-    scrapeLeverFiltered(keyword, kv)
   ]);
 
   const all = results

@@ -269,7 +269,7 @@ async function scrapeGreenhouse(board, keyword) {
 
 async function scrapeGreenhouseFiltered(keyword) {
   // Companies using Greenhouse with cloud/GCP/engineering roles
-  const boards = ['Google', 'Cloudflare', 'Stripe', 'Datadog', 'Vercel', 'GitLab'];
+  const boards = ['Google', 'Cloudflare', 'Stripe', 'Datadog', 'Vercel', 'GitLab', 'Elastic', 'Twilio', 'Figma', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox'];
   const allResults = await Promise.allSettled(
     boards.map(board => scrapeGreenhouse(board, keyword))
   );
@@ -336,14 +336,10 @@ async function scrapeAllSources(keywords) {
   const keyword = keywords?.[0] || 'GCP Engineer';
 
   const results = await Promise.allSettled([
-    scrapeRemoteOK(),
-    scrapeRemotive(keyword),
-    scrapeWeWorkRemotely(),
     scrapeLinkedInRSS(keyword),
     scrapeLinkedInCookie(keyword),
     // Free-to-apply sources (direct company APIs - no paywall)
     scrapeGreenhouseFiltered(keyword),
-    scrapeLeverFiltered(keyword),
     // Placeholders for blocked sources — they return empty gracefully
     scrapeNaukri(),
     scrapeIndeedIndia(),
@@ -363,4 +359,4 @@ async function scrapeAllSources(keywords) {
   });
 }
 
-module.exports = { scrapeAllSources, parseSalaryMin, scrapeLinkedInCookie };
+module.exports = { scrapeAllSources, parseSalaryMin, scrapeLinkedInCookie, scrapeGreenhouseFiltered, scrapeLeverFiltered };
