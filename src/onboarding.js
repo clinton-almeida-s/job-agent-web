@@ -123,7 +123,7 @@ async function runSetup() {
       default: undefined
     },
     {
-      type: 'list', name: 'currency', message: 'Primary salary currency',
+      type: 'rawlist', name: 'currency', message: 'Primary salary currency',
       choices: ['INR', 'USD', 'EUR', 'GBP'],
       default: profile.target_salary?.currency || 'INR'
     },
