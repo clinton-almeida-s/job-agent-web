@@ -278,6 +278,97 @@ The workflow:
 
 ---
 
+## Cloudflare Workers Deployment (Free 24/7 Hosting)
+
+For a free, always-on deployment that runs daily scrapes automatically:
+
+### 1. Install Wrangler CLI
+
+```bash
+npm install -g wrangler
+```
+
+### 2. Login to Cloudflare
+
+```bash
+wrangler login
+```
+
+### 3. Create KV Namespace for Storage
+
+```bash
+# Production namespace
+wrangler kv namespace create JOBS_KV
+
+# Preview namespace (for local development)
+wrangler kv namespace create JOBS_KV --preview
+```
+
+### 4. Update `wrangler.toml` with your KV namespace IDs
+
+```toml
+[[kv_namespaces]]
+binding = "JOBS_KV"
+id = "YOUR_PRODUCTION_KV_ID"
+preview_id = "YOUR_PREVIEW_KV_ID"
+```
+
+### 5. Set Secrets (Environment Variables)
+
+```bash
+wrangler secret put ANTHROPIC_API_KEY
+wrangler secret put RESEND_API_KEY
+wrangler secret put EMAIL_TO
+# Optional: for browser-based scraping
+wrangler secret put LINKEDIN_COOKIES
+```
+
+### 6. Deploy
+
+```bash
+wrangler deploy
+```
+
+Your dashboard will be live at `https://job-agent-web.<your-subdomain>.workers.dev`
+
+### Cron Schedule
+
+The worker includes a daily cron trigger at `0 2 * * *` (2:00 AM UTC / 7:30 AM IST) in `wrangler.toml`:
+
+```toml
+[triggers]
+crons = ["0 2 * * *"]
+```
+
+> **Note:** Free Cloudflare Workers plan allows up to 1 cron trigger. For production, upgrade to Workers Paid for 1,000 triggers/month.
+
+### Worker API Endpoints
+
+Once deployed, the same REST API is available:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/stats` | GET | Dashboard statistics |
+| `/api/jobs` | GET | List jobs (filter: status, source, limit) |
+| `/api/profile` | GET | Get profile |
+| `/api/profile` | PUT | Update profile |
+| `/api/apply` | POST | Mark job as applied |
+| `/api/skip` | POST | Skip job |
+| `/api/save` | POST | Save job for later |
+| `/api/ignore` | POST | Ignore job |
+| `/api/scrape` | POST | Trigger manual scrape |
+
+### Local Development
+
+```bash
+# Start local dev server with KV
+wrangler dev --test-scheduled
+```
+
+---
+
+## File Structure
+
 ## File Structure
 
 | File | Purpose |
@@ -296,6 +387,8 @@ The workflow:
 | `public/app.js` | Dashboard JavaScript |
 | `public/styles.css` | Dashboard styling |
 | `.github/workflows/daily-jobs.yml` | GitHub Actions schedule |
+| `worker.js` | Cloudflare Worker — API + scheduled scraping |
+| `wrangler.toml` | Cloudflare Worker configuration |
 
 ---
 
