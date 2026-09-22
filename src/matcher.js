@@ -25,6 +25,7 @@ const SIGNALS = {
 const MIN_SCORE = 20;
 const DEAL_BREAKER_PENALTY = -999;
 const SOFT_BREAKERS = ['sales', 'marketing', 'business development', 'customer service', 'customer success'];
+const HARD_BREAKERS = ['sales engineer', 'sales engineering', 'pre-sales', 'presales', 'solutions engineer', 'solutions architect - sales', 'technical sales', 'field sales'];
 const TECH_TITLE_KEYWORDS = ['engineer', 'architect', 'developer', 'technical', 'consultant', 'lead', 'manager'];
 
 function normalize(str) {
@@ -87,7 +88,7 @@ function isTechnicalTitle(title) {
 
 function checkDealBreakers(job) {
   const text = [job.title, job.company].join(' ');
-  const breakers = containsAny(text, profile.deal_breakers, true);
+  const breakers = containsAny(text, (profile.deal_breakers || []), true);
   if (breakers.length === 0) return null;
 
   const hardBlockers = breakers.filter(b => !SOFT_BREAKERS.includes(b));
@@ -96,6 +97,12 @@ function checkDealBreakers(job) {
   }
   if (!isTechnicalTitle(job.title)) {
     return { blocked: true, reason: `Deal-breaker: ${breakers.join(', ')}` };
+  }
+  // Additional hard blockers for sales engineer roles that slip through
+  const titleLower = normalize(job.title);
+  const salesEngineerBlocks = containsAny(titleLower, HARD_BREAKERS, true);
+  if (salesEngineerBlocks.length > 0) {
+    return { blocked: true, reason: `Deal-breaker: ${salesEngineerBlocks.join(', ')}` };
   }
   return { blocked: false, softBreakers: breakers };
 }

@@ -31,6 +31,11 @@ function cleanText(str) {
   return str.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
+function truncateDesc(str, maxLen) {
+  if (!str) return '';
+  return cleanText(str).slice(0, maxLen || 500);
+}
+
 function parseSalaryMin(salaryStr) {
   if (!salaryStr) return 0;
   const s = salaryStr.trim();
@@ -79,7 +84,7 @@ async function scrapeRemoteOK(kv) {
       return {
         id: 'remoteok-' + j.id, source: 'RemoteOK', title: j.position || '',
         company: j.company || '', location: 'Remote', remote: true,
-        description: cleanText(j.description || ''),
+        description: truncateDesc(j.description || '', 300),
         tags: (j.tags || []).join(', '), salary: j.salary || '',
         salary_min_inr: parseSalaryMin(j.salary || ''),
         url: j.url || 'https://remoteok.com/remote-jobs/' + j.slug,
@@ -102,7 +107,7 @@ async function scrapeRemotive(keyword, kv) {
         id: 'remotive-' + j.id, source: 'Remotive',
         title: j.title || '', company: j.company_name || '',
         location: j.candidate_required_location || 'Remote', remote: true,
-        description: cleanText(j.description || ''),
+        description: truncateDesc(j.description || '', 300),
         tags: (j.tags || []).join(', '), salary: j.salary || '',
         salary_min_inr: parseSalaryMin(j.salary || ''),
         url: j.url || '', posted_at: j.publication_date || new Date().toISOString(),
@@ -124,7 +129,7 @@ async function scrapeWeWorkRemotely(kv) {
         source: 'WeWorkRemotely', title: item.title || '',
         company: item.company || item['wwr:company_name'] || '',
         location: 'Remote', remote: true,
-        description: cleanText(item.description || ''),
+        description: truncateDesc(item.description || '', 300),
         tags: '', salary: '', salary_min_inr: 0,
         url: item.link || '', posted_at: item.pubDate || new Date().toISOString(),
         score: 0, match_reasons: [], warnings: []
@@ -144,13 +149,90 @@ async function scrapeLinkedInRSS(keyword, kv) {
         id: 'linkedin-rss-' + Buffer.from(item.link).toString('base64').slice(0, 12),
         source: 'LinkedIn', title: item.title || '', company: item.source || '',
         location: 'Remote', remote: true,
-        description: cleanText(item.description || ''),
+        description: truncateDesc(item.description || '', 300),
         tags: '', salary: '', salary_min_inr: 0,
         url: item.link || '', posted_at: item.pubDate || new Date().toISOString(),
         score: 0, match_reasons: [], warnings: []
       };
     });
   } catch { return []; }
+}
+
+// ── Free-to-apply sources (Greenhouse API - direct company careers) ────────────
+
+async function scrapeGreenhouse(board, kv) {
+  const url = 'https://boards-api.greenhouse.io/v1/boards/' + board + '/jobs?content=true&limit=30';
+  const { status, body } = await fetchUrl(url);
+  if (status !== 200) return [];
+  try {
+    const parsed = JSON.parse(body);
+    const jobs = parsed.jobs || [];
+    return jobs
+      .filter(function(j) { return j.title && j.title.length > 3; })
+      .map(function(j) {
+        const location = j.location?.name || 'Remote';
+        const isRemote = location.toLowerCase().includes('remote');
+        const desc = j.content ? cleanText(j.content).slice(0, 200) : '';
+        return {
+          id: 'greenhouse-' + board + '-' + j.id,
+          source: 'Greenhouse:' + board,
+          title: j.title || '',
+          company: board,
+          location: location,
+          remote: isRemote,
+          description: desc,
+          tags: (j.departments || []).join(', '),
+          salary: '',
+          salary_min_inr: 0,
+          url: j.absolute_url || '',
+          posted_at: j.updated_at || new Date().toISOString(),
+          score: 0, match_reasons: [], warnings: []
+        };
+      });
+  } catch { return []; }
+}
+
+async function scrapeGreenhouseFiltered(keyword, kv) {
+  const boards = ['Vercel', 'GitLab', 'Stripe'];
+  const allResults = await Promise.allSettled(
+    boards.map(function(board) { return scrapeGreenhouse(board, kv); })
+  );
+  return allResults
+    .filter(function(r) { return r.status === 'fulfilled'; })
+    .flatMap(function(r) { return r.value.filter(Boolean); });
+}
+
+async function scrapeLever(board, kv) {
+  const url = 'https://lever.co/' + board + '/feed.xml';
+  const { status, body } = await fetchUrl(url);
+  if (status !== 200 && status !== 308) return [];
+  try {
+    const items = parseRssXml(body);
+    return items.map(function(item) {
+      return {
+        id: 'lever-' + board + '-' + Buffer.from(item.link).toString('base64').slice(0, 12),
+        source: 'Lever:' + board,
+        title: item.title || '',
+        company: board,
+        location: item.location || 'Remote',
+        remote: (item.location || '').toLowerCase().includes('remote'),
+        description: truncateDesc(item.description || '', 300),
+        tags: '', salary: '', salary_min_inr: 0,
+        url: item.link || '', posted_at: item.pubDate || new Date().toISOString(),
+        score: 0, match_reasons: [], warnings: []
+      };
+    });
+  } catch { return []; }
+}
+
+async function scrapeLeverFiltered(keyword, kv) {
+  const boards = ['airbnb', 'uber', 'spotify', 'shopify', 'coinbase', 'discord', 'slack', 'netflix'];
+  const allResults = await Promise.allSettled(
+    boards.map(function(board) { return scrapeLever(board, kv); })
+  );
+  return allResults
+    .filter(function(r) { return r.status === 'fulfilled'; })
+    .flatMap(function(r) { return r.value.filter(Boolean); });
 }
 
 async function scrapeAllSources(profile, kv) {
@@ -161,7 +243,10 @@ async function scrapeAllSources(profile, kv) {
     scrapeRemoteOK(kv),
     scrapeRemotive(keyword, kv),
     scrapeWeWorkRemotely(kv),
-    scrapeLinkedInRSS(keyword, kv)
+    scrapeLinkedInRSS(keyword, kv),
+    // Free-to-apply sources (direct company APIs - no paywall)
+    scrapeGreenhouseFiltered(keyword, kv),
+    scrapeLeverFiltered(keyword, kv)
   ]);
 
   const all = results
@@ -256,6 +341,11 @@ function scoreJob(job, profile) {
   if (hardBlockers.length > 0) return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['Deal-breaker: ' + hardBlockers.join(', ')] });
   if (breakers.length > 0 && !isTechnicalTitle(job.title)) {
     return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['Deal-breaker: ' + breakers.join(', ')] });
+  }
+  // Hard blockers for sales engineer roles
+  const salesEngineerBlocks = containsAny(normalize(job.title), ['sales engineer', 'pre-sales', 'presales', 'technical sales'], true);
+  if (salesEngineerBlocks.length > 0) {
+    return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['Deal-breaker: ' + salesEngineerBlocks.join(', ')] });
   }
 
   // Title match

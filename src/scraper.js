@@ -235,6 +235,101 @@ async function scrapeIndeedIndia() {
   return [];
 }
 
+// ── Free-to-apply sources (Greenhouse/Lever/Workable APIs) ────────────────────────
+
+async function scrapeGreenhouse(board, keyword) {
+  const { status, body } = await fetchUrl(
+    `https://boards-api.greenhouse.io/v1/boards/${board}/jobs?content=true&limit=50`
+  );
+  if (status !== 200) return [];
+  try {
+    const { jobs = [] } = JSON.parse(body);
+    return jobs
+      .filter(j => j.title && j.title.length > 3)
+      .map(j => {
+        const location = j.location?.name || 'Remote';
+        const isRemote = location.toLowerCase().includes('remote');
+        return {
+          id: `greenhouse-${board}-${j.id}`,
+          source: `Greenhouse:${board}`,
+          title: j.title || '',
+          company: board,
+          location: location,
+          remote: isRemote,
+          description: cleanText(j.content || '').slice(0, 500),
+          tags: (j.departments || []).join(', '),
+          salary: '',
+          salary_min_inr: 0,
+          url: j.absolute_url || '',
+          posted_at: j.updated_at || new Date().toISOString(),
+        };
+      });
+  } catch { return []; }
+}
+
+async function scrapeGreenhouseFiltered(keyword) {
+  // Companies using Greenhouse with cloud/GCP/engineering roles
+  const boards = ['Google', 'Cloudflare', 'Stripe', 'Datadog', 'Vercel', 'GitLab'];
+  const allResults = await Promise.allSettled(
+    boards.map(board => scrapeGreenhouse(board, keyword))
+  );
+  return allResults
+    .filter(r => r.status === 'fulfilled')
+    .flatMap(r => r.value.filter(Boolean));
+}
+
+async function scrapeLever(board, keyword) {
+  const { status, body } = await fetchUrl(
+    `https://lever.co/${board}/feed.xml`
+  );
+  if (status !== 200 && status !== 308) return [];
+  try {
+    const items = parseRssXml(body);
+    return items.map(item => ({
+      id: `lever-${board}-${Buffer.from(item.link).toString('base64').slice(0, 12)}`,
+      source: `Lever:${board}`,
+      title: item.title || '',
+      company: board,
+      location: item.location || 'Remote',
+      remote: (item.location || '').toLowerCase().includes('remote'),
+      description: cleanText(item.description || ''),
+      tags: '', salary: '', salary_min_inr: 0,
+      url: item.link || '', posted_at: item.pubDate || new Date().toISOString(),
+    }));
+  } catch { return []; }
+}
+
+async function scrapeLeverFiltered(keyword) {
+  const boards = ['airbnb', 'uber', 'spotify', 'shopify', 'coinbase', 'discord', 'slack', 'netflix'];
+  const allResults = await Promise.allSettled(
+    boards.map(board => scrapeLever(board, keyword))
+  );
+  return allResults
+    .filter(r => r.status === 'fulfilled')
+    .flatMap(r => r.value.filter(Boolean));
+}
+
+async function scrapeWorkable(board, keyword) {
+  const { status, body } = await fetchUrl(
+    `https://wblinks.workable.com/previews/${board}/feed.xml`
+  );
+  if (status !== 200) return [];
+  try {
+    const items = parseRssXml(body);
+    return items.map(item => ({
+      id: `workable-${board}-${Buffer.from(item.link).toString('base64').slice(0, 12)}`,
+      source: `Workable:${board}`,
+      title: item.title || '',
+      company: board,
+      location: item.location || 'Remote',
+      remote: (item.location || '').toLowerCase().includes('remote'),
+      description: cleanText(item.description || ''),
+      tags: '', salary: '', salary_min_inr: 0,
+      url: item.link || '', posted_at: item.pubDate || new Date().toISOString(),
+    }));
+  } catch { return []; }
+}
+
 // ── Orchestrator ──────────────────────────────────────────────────────────────
 
 async function scrapeAllSources(keywords) {
@@ -246,6 +341,9 @@ async function scrapeAllSources(keywords) {
     scrapeWeWorkRemotely(),
     scrapeLinkedInRSS(keyword),
     scrapeLinkedInCookie(keyword),
+    // Free-to-apply sources (direct company APIs - no paywall)
+    scrapeGreenhouseFiltered(keyword),
+    scrapeLeverFiltered(keyword),
     // Placeholders for blocked sources — they return empty gracefully
     scrapeNaukri(),
     scrapeIndeedIndia(),
