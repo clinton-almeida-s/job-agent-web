@@ -87,7 +87,7 @@ function isTechnicalTitle(title) {
 
 function checkDealBreakers(job) {
   const text = [job.title, job.company].join(' ');
-  const breakers = containsAny(text, profile.deal_breakers, true);
+  const breakers = containsAny(text, (profile.deal_breakers || []), true);
   if (breakers.length === 0) return null;
 
   const hardBlockers = breakers.filter(b => !SOFT_BREAKERS.includes(b));
@@ -120,7 +120,7 @@ function scoreJob(job) {
   }
 
   // 1. Title exact match
-  const titleMatch = containsAny(job.title, profile.target_titles, false);
+  const titleMatch = containsAny(job.title, (profile.target_titles || []), false);
   if (titleMatch.length > 0) {
     score += SIGNALS.titleExact.weight;
     reasons.push(`${SIGNALS.titleExact.label}: "${titleMatch[0]}"`);
@@ -128,7 +128,7 @@ function scoreJob(job) {
 
   // 2. Title similarity (fuzzy)
   if (titleMatch.length === 0) {
-    const simScore = titleSimilarity(job.title, profile.target_titles);
+    const simScore = titleSimilarity(job.title, (profile.target_titles || []));
     if (simScore > 0.3) {
       const bonus = Math.round(SIGNALS.titleSimilar.weight * simScore);
       score += bonus;
@@ -137,14 +137,14 @@ function scoreJob(job) {
   }
 
   // 3. Required skills
-  const reqMatches = containsAny(fullText, profile.required_keywords, false);
+  const reqMatches = containsAny(fullText, (profile.required_keywords || []), false);
   score += reqMatches.length * 8;
   if (reqMatches.length > 0) {
     reasons.push(`${SIGNALS.requiredSkills.label}: ${reqMatches.slice(0, 4).join(', ')}${reqMatches.length > 4 ? '...' : ''}`);
   }
 
   // 4. Bonus skills
-  const bonusMatches = containsAny(fullText, profile.bonus_keywords, false);
+  const bonusMatches = containsAny(fullText, (profile.bonus_keywords || []), false);
   score += bonusMatches.length * SIGNALS.bonusSkills.weight;
   if (bonusMatches.length > 0) {
     reasons.push(`${SIGNALS.bonusSkills.label}: ${bonusMatches.slice(0, 3).join(', ')}`);
