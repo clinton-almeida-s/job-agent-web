@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Job Report — Friday, 18 September 2026</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%); padding: 2rem; border-bottom: 1px solid #334155; }
+    header h1 { font-size: 1.6rem; color: #60a5fa; }
+    header .meta { color: #94a3b8; margin-top: .5rem; font-size: .9rem; }
+    .stats { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+    .stat { background: #1e293b; border-radius: 8px; padding: .5rem 1rem; font-size: .85rem; border: 1px solid #334155; }
+    .stat b { color: #60a5fa; }
+    main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .job-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; }
+    .job-header { display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem; background: #162032; border-bottom: 1px solid #334155; }
+    .job-rank { font-size: 1.5rem; font-weight: 700; color: #60a5fa; min-width: 2.5rem; padding-top: 2px; }
+    .job-title-block { flex: 1; }
+    .job-title-block h2 { font-size: 1.1rem; color: #f1f5f9; }
+    .company { color: #94a3b8; font-size: .9rem; margin-top: 2px; }
+    .badges { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .5rem; }
+    .badge { font-size: .75rem; padding: 2px 8px; border-radius: 12px; font-weight: 500; }
+    .badge.source { background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb44; }
+    .badge.remote { background: #14532d; color: #4ade80; border: 1px solid #16a34a44; }
+    .badge.salary { background: #422006; color: #fb923c; border: 1px solid #ea580c44; }
+    .score-bar-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 110px; }
+    .score-bar-wrap span { font-size: .75rem; color: #94a3b8; }
+    .score-bar { height: 8px; border-radius: 4px; min-width: 4px; }
+    .job-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+    .match-info h4, .description h4 { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: #64748b; margin-bottom: .5rem; }
+    .match-info ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .match-info li { font-size: .875rem; color: #cbd5e1; }
+    .warnings li { color: #fbbf24; }
+    .description p { font-size: .875rem; color: #94a3b8; line-height: 1.6; }
+    .cover-letter { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 1rem; }
+    .cover-letter h4 { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: #64748b; margin-bottom: .75rem; }
+    .cover-letter pre { font-family: inherit; font-size: .875rem; color: #cbd5e1; white-space: pre-wrap; line-height: 1.7; }
+    .cover-letter button { margin-top: .75rem; background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb44; padding: .4rem .9rem; border-radius: 6px; cursor: pointer; font-size: .8rem; }
+    .no-cl { font-size: .8rem; color: #475569; font-style: italic; }
+    .actions { display: flex; gap: .75rem; flex-wrap: wrap; padding-top: .5rem; border-top: 1px solid #334155; }
+    .btn-apply { background: #2563eb; color: white; padding: .5rem 1.25rem; border-radius: 8px; font-size: .875rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-apply:hover { background: #1d4ed8; }
+    button { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: .5rem 1rem; border-radius: 8px; cursor: pointer; font-size: .8rem; }
+    button:hover { background: #334155; color: #e2e8f0; }
+    #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #22c55e; color: white; padding: .75rem 1.25rem; border-radius: 8px; font-size: .875rem; display: none; z-index: 100; }
+    footer { text-align: center; color: #334155; font-size: .75rem; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔎 Daily Job Report — Clinton Almeida</h1>
+    <div class="meta">Generated: Friday, 18 September 2026 &nbsp;|&nbsp; 15 top matches found</div>
+    <div class="stats">
+      <div class="stat">Total seen (all time): <b>15</b></div>
+      <div class="stat">Total applied: <b>0</b></div>
+      <div class="stat">Last applied: <b>never</b></div>
+    </div>
+  </header>
+  <main>
+    
+  <div class="job-card" id="job-0">
+    <div class="job-header">
+      <div class="job-rank">#1</div>
+      <div class="job-title-block">
+        <h2>Senior DevOps Engineer</h2>
+        <div class="company">Lemon.io</div>
+        <div class="badges"><span class="badge source">Remotive</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:83%;background:#22c55e"></div><span>99 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: DevOps Engineer</li><li>✅ Keywords: GCP</li><li>✅ Bonus keywords: MLOps, Terraform, Infrastructure</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Are you a talented Senior DevOps looking for a remote job that lets you show your skills and get decent compensation? Look no further than Lemon.io — the marketplace that connects you with hand-picked startups in the US and Europe. We currently have multiple DevOps openings open at once, each with a different setup, stack, and benefits. Check which one fits you: Direct hire for our client in the gambling industry. Relocation and visa assistance included. This role bridges infrastructure and application operations: you’ll keep environments reliable, redundant, and secure, investigate production...</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remotive.com/remote-jobs/devops/senior-devops-engineer-2091099" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remotive-2091099', 'Senior DevOps Engineer', 'Lemon.io')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remotive-2091099')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-1">
+    <div class="job-header">
+      <div class="job-rank">#2</div>
+      <div class="job-title-block">
+        <h2>AI agent engineer</h2>
+        <div class="company">Sticker Mule</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:54%;background:#f59e0b"></div><span>65 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Keywords: GCP</li><li>✅ Cloud-related role</li><li>✅ Remote confirmed</li><li>✅ Posted within last 7 days</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Sticker Mule is building the most lucrative commerce platform on the Internet by combining software, manufacturing, and AI in one stack. We're hiring an engineer to build, run and manage a team of AI agents to help us innovate faster, improve performance, and better serve customers. Work performed Identify where agents can help and build them accordingly. Work with department leads to assess AI needs. Help connect agents to appropriate third-party and internal tools. Measure results and remove agents that don't deliver. Test new tools and models as they ship and adopt what works. Advise others...</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-ai-agent-engineer-sticker-mule-1137399" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1137399', 'AI agent engineer', 'Sticker Mule')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1137399')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-2">
+    <div class="job-header">
+      <div class="job-rank">#3</div>
+      <div class="job-title-block">
+        <h2>Software Engineer</h2>
+        <div class="company">Mirantis</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:48%;background:#f59e0b"></div><span>58 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Bonus keywords: Infrastructure</li><li>✅ Remote confirmed</li><li>✅ Posted within last 7 days</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Remote - Mirantis, an IREN company, is the Kubernetes-native AI infrastructure company, enabling organizations to build and operate scalable, secure, and sovereign infrastructure for modern AI, machine learning, and data-intensive applications. By combining open source innovatio... Please mention the word **SEAMLESS** and tag RMTAzLjI0NS42Ni4yNQ== when applying to show you read the job post completely (#RMTAzLjI0NS42Ni4yNQ==). This is a beta feature to avoid spam applicants. Companies can search these words to find applicants that read this and see they're human.</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-software-engineer-mirantis-1137387" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1137387', 'Software Engineer', 'Mirantis')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1137387')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-3">
+    <div class="job-header">
+      <div class="job-rank">#4</div>
+      <div class="job-title-block">
+        <h2>Senior Data Scientist</h2>
+        <div class="company">Lemon.io</div>
+        <div class="badges"><span class="badge source">Remotive</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:48%;background:#f59e0b"></div><span>58 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Bonus keywords: MLOps</li><li>✅ Remote confirmed</li><li>✅ Posted within last 7 days</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Are you a talented Senior Data Scientist looking for a remote job that lets you show your skills and get decent compensation? Look no further than Lemon.io — the marketplace that connects you with hand-picked startups in the US and Europe. What we offer: The rate depends on your skills and experience. We've already paid out over $11M to our engineers. No more hunting for clients or negotiating rates — let us handle the business side of things so you can focus on what you do best. We'll manually find the best project for you according to your skills and preferences. Choose a schedule that works...</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remotive.com/remote-jobs/data/senior-data-scientist-2091129" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remotive-2091129', 'Senior Data Scientist', 'Lemon.io')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remotive-2091129')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-4">
+    <div class="job-header">
+      <div class="job-rank">#5</div>
+      <div class="job-title-block">
+        <h2>Golang Kubernetes Engineer</h2>
+        <div class="company">Arango</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:42%;background:#f59e0b"></div><span>50 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Remote confirmed</li><li>✅ Posted within last 7 days</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Remote - Arango delivers a unified, natively multimodel contextual data platform that powers AI agents, assistants, and applications with the unified, current, and trusted business context needed to reason, decide, and act at scale.The Arango Contextual Data Platform connects... Please mention the word **FESTIVE** and tag RMTAzLjI0NS42Ni4yNQ== when applying to show you read the job post completely (#RMTAzLjI0NS42Ni4yNQ==). This is a beta feature to avoid spam applicants. Companies can search these words to find applicants that read this and see they're human.</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-golang-kubernetes-engineer-arango-1137400" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1137400', 'Golang Kubernetes Engineer', 'Arango')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1137400')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-5">
+    <div class="job-header">
+      <div class="job-rank">#6</div>
+      <div class="job-title-block">
+        <h2>Real Time Drilling Ops Centre Analyst</h2>
+        <div class="company">SLB</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:36%;background:#6b7280"></div><span>43 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Bonus keywords: Infrastructure</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>The DrillOps Field Deployment Lead is comfortable in the rig environment and has advanced knowledge and access to the IT infrastructure at the wellsite. The DrillOps Field Deployment Lead is essentially responsible for the rig-IT infrastructure and software updates, IT equipment inventory control, data management and communication between rig site and any remote center. This person is a basic user of the data acquisition/core and services elements of the wellsite execution systems. The DrillOps Field Deployment Lead needs to understand town-based Orchestra &amp; Prism systems. Establish and ma...</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-real-time-drilling-ops-centre-analyst-slb-1136857" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1136857', 'Real Time Drilling Ops Centre Analyst', 'SLB')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1136857')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-6">
+    <div class="job-header">
+      <div class="job-rank">#7</div>
+      <div class="job-title-block">
+        <h2>Java Developer</h2>
+        <div class="company">Clera</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:36%;background:#6b7280"></div><span>43 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Bonus keywords: Infrastructure</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>About the Role We are an early-stage, venture-backed AI infrastructure company building production-ready Kubernetes-based systems for GPU-intensive workloads. Our platform helps companies go from bare metal to fully operational AI clusters in days, and we're looking for a Java Developer to join our small, high-impact engineering team. What You'll Do Understand customer requirements and translate them into robust, scalable Java-based solutions. Design, develop, and maintain backend services and infrastructure tooling that supports our distributed systems platform. Collaborate closely with produ...</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-java-developer-clera-1136188" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1136188', 'Java Developer', 'Clera')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1136188')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-7">
+    <div class="job-header">
+      <div class="job-rank">#8</div>
+      <div class="job-title-block">
+        <h2>Senior QA Engineer</h2>
+        <div class="company">Lemon.io</div>
+        <div class="badges"><span class="badge source">Remotive</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:36%;background:#6b7280"></div><span>43 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Bonus keywords: MLOps</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Are you a talented QA looking for a remote job that lets you show your skills and get better compensation and career growth? Look no further than Lemon.io - the marketplace that connects you with hand-picked startups in the US and Europe. Requirements: 3+ years of experience in automation testing 2+ years of experience in manual testing 3+ years of experience working with Cypress or Selenium Exceptional attention to detail Good command of English, both written and spoken. Strong organizational skills — ability to work full-time remotely with no supervision Responsibility — we want to trust you...</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remotive.com/remote-jobs/qa/senior-qa-engineer-2091100" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remotive-2091100', 'Senior QA Engineer', 'Lemon.io')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remotive-2091100')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-8">
+    <div class="job-header">
+      <div class="job-rank">#9</div>
+      <div class="job-title-block">
+        <h2>Programmatic Campaign Operations Specialist Trader</h2>
+        <div class="company">VirtuHire</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:29%;background:#6b7280"></div><span>35 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Location: South Africa â Remote Hours: 14:00â23:00 SAST, MondayâFriday, aligned with U.S. Eastern business hours Employment: Permanent, Full-Time Role Purpose Execute and maintain programmatic campaigns accurately and efficiently within MediaPath's established strategy, workflows, and QA standards. This is a hands-on campaign execution role focused on campaign builds, trafficking, pacing, optimisation, troubleshooting, and maintenance. Key Responsibilities Build campaigns, line items, targeting structures, and campaign components within assigned DSPs. Traffic creative assets and third-pa...</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-programmatic-campaign-operations-specialist-trader-virtuhire-1137169" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1137169', 'Programmatic Campaign Operations Specialist Trader', 'VirtuHire')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1137169')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-9">
+    <div class="job-header">
+      <div class="job-rank">#10</div>
+      <div class="job-title-block">
+        <h2>Principal Engineer</h2>
+        <div class="company">The AI Whistleblower Initiative</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:29%;background:#6b7280"></div><span>35 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Remote - About AIWIAIWI is an independent non-profit that exists to ensure that insiders at frontier AI companies can speak up safely and effectively when they see something that should be addressed. We do this by integrating the ecosystem of lawyers, AI researchers, AI advoc... Please mention the word **EARNESTNESS** and tag RMTAzLjI0NS42Ni4yNQ== when applying to show you read the job post completely (#RMTAzLjI0NS42Ni4yNQ==). This is a beta feature to avoid spam applicants. Companies can search these words to find applicants that read this and see they're human.</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-principal-engineer-the-ai-whistleblower-initiative-1137162" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1137162', 'Principal Engineer', 'The AI Whistleblower Initiative')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1137162')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-10">
+    <div class="job-header">
+      <div class="job-rank">#11</div>
+      <div class="job-title-block">
+        <h2>QA Tester Entry Level</h2>
+        <div class="company">Ace IT Careers</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:29%;background:#6b7280"></div><span>35 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Looking to start or restart your career in Software Quality Assurance?Ace IT Careers is reviewing candidates for QA Tester and QA Analyst opportunities with employers and staffing partners across the United States.This opportunity may be suitable for r... Please mention the word **SMOOTHES** and tag RMTAzLjI0NS42Ni4yNQ== when applying to show you read the job post completely (#RMTAzLjI0NS42Ni4yNQ==). This is a beta feature to avoid spam applicants. Companies can search these words to find applicants that read this and see they're human.</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-qa-tester-entry-level-ace-it-careers-1136701" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1136701', 'QA Tester Entry Level', 'Ace IT Careers')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1136701')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-11">
+    <div class="job-header">
+      <div class="job-rank">#12</div>
+      <div class="job-title-block">
+        <h2>Software Engineer III Mobile</h2>
+        <div class="company">Stone</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:29%;background:#6b7280"></div><span>35 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Sobre a Stone: Somos muito mais do que uma empresa de maquininhas! A Stone Ã© uma empresa de tecnologia e serviÃ§os financeiros focada no(a) cliente. Nascemos com o propÃ³sito de ser protagonistas na transformaÃ§Ã£o da indÃºstria de pagamentos, servindo o(a) empreendedor(a) brasileiro(a) e transformando seus sonhos em resultados. Somos a maior empresa independente de meios de pagamentos do Brasil, com mais de quinze mil pessoas espalhadas pelas cinco regiÃµes do paÃ­s, em um cenÃ¡rio repleto de desafios e oportunidades. Valorizamos o trabalho em equipe, a flexibilidade, o desenvolvimento contÃ...</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-software-engineer-iii-mobile-stone-1136570" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1136570', 'Software Engineer III Mobile', 'Stone')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1136570')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-12">
+    <div class="job-header">
+      <div class="job-rank">#13</div>
+      <div class="job-title-block">
+        <h2>Software Engineer II Golang</h2>
+        <div class="company">Stone</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:29%;background:#6b7280"></div><span>35 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Sobre a Stone: Somos muito mais do que uma empresa de maquininhas! A Stone Ã© uma empresa de tecnologia e serviÃ§os financeiros focada no(a) cliente. Nascemos com o propÃ³sito de ser protagonistas na transformaÃ§Ã£o da indÃºstria de pagamentos, servindo o(a) empreendedor(a) brasileiro(a) e transformando seus sonhos em resultados. Somos a maior empresa independente de meios de pagamentos do Brasil, com mais de quinze mil pessoas espalhadas pelas cinco regiÃµes do paÃ­s, &nbsp;em um cenÃ¡rio repleto de desafios e oportunidades. Valorizamos o trabalho em equipe, a flexibilidade, o desenvolvimento...</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-software-engineer-ii-golang-stone-1136569" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1136569', 'Software Engineer II Golang', 'Stone')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1136569')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-13">
+    <div class="job-header">
+      <div class="job-rank">#14</div>
+      <div class="job-title-block">
+        <h2>Voice Over Artist</h2>
+        <div class="company">Bored Panda</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:29%;background:#6b7280"></div><span>35 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>We are one of the leading tech-driven media and entertainment companies, producing uplifting content in 17 languages for audiences of all ages. Known for the award-winning digital publisher boredpanda.com and the Crafty Panda DIY channel, we fight the worldâs boredom at scale - reaching 160 million site views per month and 62 billion video views per year. Our team consists of around 350 creative professionals from 36 countries, with 2 offices in Vilnius, Lithuania. Spike, the global animated series, is searching for talented voice actors to bring its characters to life! Our YouTube channel h...</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-voice-over-artist-bored-panda-1135765" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1135765', 'Voice Over Artist', 'Bored Panda')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1135765')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-14">
+    <div class="job-header">
+      <div class="job-rank">#15</div>
+      <div class="job-title-block">
+        <h2>Software Engineer GO</h2>
+        <div class="company">Wakacje.pl</div>
+        <div class="badges"><span class="badge source">RemoteOK</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:29%;background:#6b7280"></div><span>35 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Cloud-related role</li><li>✅ Remote confirmed</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>Remote - Market-leading travel agency (part of an international holding) working with numerous tour operator partners is looking for a Golang Developers to join our core backend engineering team. Our developers focus heavily on building robust API integrations between our inter... Please mention the word **HEARTFELT** and tag RMTAzLjI0NS42Ni4yNQ== when applying to show you read the job post completely (#RMTAzLjI0NS42Ni4yNQ==). This is a beta feature to avoid spam applicants. Companies can search these words to find applicants that read this and see they're human.</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://remoteOK.com/remote-jobs/remote-software-engineer-go-wakacje-pl-1135634" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        <button onclick="markApplied('remoteok-1135634', 'Software Engineer GO', 'Wakacje.pl')">✅ Mark as Applied</button>
+        <button onclick="skipJob('remoteok-1135634')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+  </main>
+  <footer>Semi-automated job search agent — review all applications before submitting.</footer>
+  <div id="toast"></div>
+  <script>
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 3000);
+    }
+    function copyText(id) {
+      const el = document.getElementById(id);
+      navigator.clipboard.writeText(el.value).then(() => toast('Cover letter copied!'));
+    }
+    function markApplied(id, title, company) {
+      // In future: call tracker API or write to local file
+      toast('Marked as applied: ' + title + ' @ ' + company);
+      document.querySelector('#job-' + [...document.querySelectorAll('[id^=job-]')].findIndex(el => el.querySelector('.btn-apply')?.href?.includes(id))).style.opacity = '0.4';
+    }
+    function skipJob(id) {
+      toast('Job hidden from future reports');
+    }
+  </script>
+</body>
+</html>

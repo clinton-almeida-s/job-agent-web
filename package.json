@@ -1,0 +1,39 @@
+{
+  "name": "job-agent",
+  "version": "2.0.0",
+  "description": "Interactive job search agent: browser-scrapes 12+ sources, ranks, auto-applies (review-only), web dashboard, email alerts.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "run": "node runner.js",
+    "run:headless": "node runner.js --headless",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "dotenv": "^18.0.2",
+    "express": "^4.19.2",
+    "inquirer": "^14.2.2",
+    "pdf-parse": "^2.4.5",
+    "playwright": "^1.49.1",
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clinton-almeida-s/job-agent.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/clinton-almeida-s/job-agent/issues"
+  },
+  "homepage": "https://github.com/clinton-almeida-s/job-agent#readme"
+}

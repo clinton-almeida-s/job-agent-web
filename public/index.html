@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Job Agent Dashboard</title>
+  <link rel="stylesheet" href="/styles.css"/>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>🔎 Job Agent</h1>
+      <span class="sub" id="profileName">Loading...</span>
+    </div>
+    <div class="actions">
+      <button id="scrapeBtn" class="btn-primary">🔄 Scrape Now</button>
+      <button id="profileBtn" class="btn-ghost">👤 Profile</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="stats" id="statsBar">
+      <div class="stat"><b>—</b><span>Total Jobs</span></div>
+      <div class="stat"><b>—</b><span>New</span></div>
+      <div class="stat"><b>—</b><span>Saved</span></div>
+      <div class="stat"><b>—</b><span>Applied</span></div>
+      <div class="stat"><b>—</b><span>Skipped</span></div>
+    </section>
+
+    <section class="toolbar">
+      <div class="filters">
+        <select id="statusFilter" title="Filter by status">
+          <option value="new">New Jobs</option>
+          <option value="saved">Saved</option>
+          <option value="applied">Applied</option>
+          <option value="skipped">Skipped</option>
+          <option value="ignored">Ignored</option>
+        </select>
+        <select id="sourceFilter" title="Filter by source">
+          <option value="">All Sources</option>
+        </select>
+        <select id="sortFilter" title="Sort by">
+          <option value="score">Sort: Score (desc)</option>
+          <option value="posted">Sort: Newest</option>
+        </select>
+        <input id="searchInput" type="text" placeholder="🔍 Search title, company, keywords..."/>
+      </div>
+      <div class="bulk-actions">
+        <button id="bulkSave" class="btn-ghost">Save All Visible</button>
+        <button id="bulkSkip" class="btn-ghost">Skip All Below 30</button>
+      </div>
+    </section>
+
+    <section class="queue" id="jobQueue">
+      <div class="empty-state">Loading jobs...</div>
+    </section>
+  </main>
+
+  <!-- Profile Modal -->
+  <div id="profileModal" class="modal" style="display:none">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>👤 Edit Profile</h2>
+        <button id="closeProfileBtn" class="close">✕</button>
+      </div>
+      <form id="profileForm">
+        <div class="form-grid">
+          <label>Name<input id="p_name" name="name"/></label>
+          <label>Email<input id="p_email" name="email" type="email"/></label>
+          <label>Phone<input id="p_phone" name="phone"/></label>
+          <label>LinkedIn<input id="p_linkedin" name="linkedin"/></label>
+          <label>Location<input id="p_location" name="location"/></label>
+          <label>Resume Path<input id="p_resume_path" name="resume_path"/></label>
+          <label>Experience (years)<input id="p_exp" name="experience_years" type="number"/></label>
+          <label>Current Role<input id="p_role" name="current_role"/></label>
+          <label>Current Company<input id="p_company" name="current_company"/></label>
+          <label>Skills (comma-separated)<input id="p_skills" name="skills"/></label>
+          <label>Target Titles (comma-separated)<input id="p_titles" name="target_titles"/></label>
+          <label>Required Keywords<input id="p_req_kw" name="required_keywords"/></label>
+          <label>Bonus Keywords<input id="p_bonus_kw" name="bonus_keywords"/></label>
+          <label>Min Salary (Lakhs INR)<input id="p_min_salary" name="salary_min_lakhs" type="number"/></label>
+          <label>Salary Currency
+            <select id="p_currency" name="salary_currency">
+              <option>INR</option><option>USD</option><option>EUR</option><option>GBP</option>
+            </select>
+          </label>
+          <label>Work Type
+            <select id="p_work_type" name="work_type" multiple size="3">
+              <option value="remote">Remote</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="on-site">On-site</option>
+            </select>
+          </label>
+          <label>Preferred Locations<input id="p_locations" name="locations"/></label>
+          <label>Summary<textarea id="p_summary" name="summary" rows="3"></textarea></label>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Save Profile</button>
+          <button type="button" id="cancelProfileBtn" class="btn-ghost">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Apply Modal -->
+  <div id="applyModal" class="modal" style="display:none">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🚀 Prepare Application</h2>
+        <button id="closeApplyBtn" class="close">✕</button>
+      </div>
+      <div id="applyContent"></div>
+      <div class="modal-actions">
+        <a id="applyUrlBtn" href="#" target="_blank" class="btn-primary">Open Job Page</a>
+        <button id="markAppliedBtn" class="btn-success">✅ Mark as Applied</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

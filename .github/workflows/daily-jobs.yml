@@ -1,0 +1,107 @@
+name: Daily Job Agent
+
+on:
+  schedule:
+    # Run at 2:00 AM UTC daily (8:30 AM IST) — adjusted for cleaner scheduling
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    # Allow manual trigger
+
+jobs:
+  job-search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install xml2js
+        run: npm install xml2js
+
+      - name: Install dependencies
+        run: npm install
+
+      # NOTE: Do NOT clear job tracker here — doing so would lose persistence of applied/jobs across runs.
+      # The local data/applied.json is preserved between workflow runs; if you need to reset,
+      # delete the file manually or commit an empty state to the repo.
+
+      - name: Run job agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LINKEDIN_COOKIES: ${{ secrets.LINKEDIN_COOKIES }}
+        run: node main.js --no-ai
+
+      - name: Rename report to consistent name
+        run: |
+          REPORT_FILE=$(ls -t output/report-*.html | head -1)
+          cp "$REPORT_FILE" output/report-latest.html
+
+      - name: Upload report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: job-report
+          path: output/report-latest.html
+          retention-days: 7
+
+      - name: Check secrets
+        run: |
+          echo "Checking secrets configuration..."
+          if [ -z "${{ secrets.RESEND_API_KEY }}" ]; then
+            echo "WARNING: RESEND_API_KEY is not set"
+          else
+            echo "RESEND_API_KEY is configured (hidden)"
+          fi
+          if [ -z "${{ secrets.EMAIL_TO }}" ]; then
+            echo "WARNING: EMAIL_TO is not set"
+          else
+            echo "EMAIL_TO is configured (hidden)"
+          fi
+
+      - name: Send email with Resend API
+        run: |
+          if [ -z "${{ secrets.RESEND_API_KEY }}" ]; then
+            echo "RESEND_API_KEY not set, skipping email"
+            exit 0
+          fi
+
+          if [ -z "${{ secrets.EMAIL_TO }}" ]; then
+            echo "EMAIL_TO not set, skipping email"
+            exit 0
+          fi
+
+          # Get the latest report file
+          REPORT_FILE=$(ls -t output/report-*.html | head -1)
+          echo "Report file: $REPORT_FILE"
+
+          if [ -z "$REPORT_FILE" ]; then
+            echo "No report file found"
+            exit 0
+          fi
+
+          # Convert HTML file to base64 for attachment
+          BASE64_CONTENT=$(base64 -w 0 "$REPORT_FILE")
+
+          echo "Sending email via Resend..."
+          RESPONSE=$(curl -s -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"from\": \"Job Agent <onboarding@resend.dev>\",
+              \"to\": [\"${{ secrets.EMAIL_TO }}\"],
+              \"subject\": \"Daily GCP Jobs Report - $(date +%Y-%m-%d)\",
+              \"html\": \"<p>Your daily GCP/Cloud job report is ready.</p><p>See attached HTML report.</p>\",
+              \"attachments\": [
+                {
+                  \"filename\": \"job-report.html\",
+                  \"content\": \"$BASE64_CONTENT\"
+                }
+              ]
+            }")
+          echo "Response: $RESPONSE"
+          echo "Email sent with attachment!"
