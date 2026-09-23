@@ -1,0 +1,24 @@
+{
+  "sources": {
+    "greenhouse": {
+      "type": "manual",
+      "description": "Add company names manually or fetch from API",
+      "api_url": "",
+      "headers": {},
+      "transform": ""
+    },
+    "lever": {
+      "type": "manual",
+      "description": "Add company names manually or fetch from API",
+      "api_url": "",
+      "headers": {},
+      "transform": ""
+    }
+  },
+  "update_rules": {
+    "auto_merge": true,
+    "deduplicate": true,
+    "worker_limit": 20,
+    "notification_channels": ["github"]
+  }
+}

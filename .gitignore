@@ -2,6 +2,7 @@ node_modules/
 .wrangler/
 data/*.json
 !data/boards.json
+!data/board_sources.json
 package-lock.json
 worker-inline.js
 *.log
