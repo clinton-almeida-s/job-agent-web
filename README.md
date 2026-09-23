@@ -12,7 +12,9 @@ An automated job search agent that scrapes 50+ engineering career pages, ranks p
 2. **Ranks jobs intelligently** — Multi-signal scoring: title match, skills overlap, remote/hybrid fit, salary, recency, deal-breaker filtering (sales/PE roles blocked)
 3. **Always-online dashboard** — Accessible from any device at https://job-agent-web.clinton-s-almeida.workers.dev with filters, scores, one-click apply prep
 4. **Daily email digest** — Automatically emailed every morning at 8:00 AM IST via GitHub Actions, even when your computer is off
-5. **Persistent tracking** — Jobs, applications, and scrape history stored locally; survives across runs
+5. **Persistent tracking** — Jobs, applications, and scrape history stored in Cloudflare KV; survives across runs and devices
+6. **Auto-discovery** — Automatically finds new companies using Greenhouse every 2 days
+7. **Rate limiting** — Configurable limits prevent exponential job growth (15 jobs/board, 3000 total)
 
 ---
 
@@ -34,6 +36,10 @@ graph TD
     
     D --> I[Apply/Skip/Save jobs]
     I --> G
+    
+    J[Auto-Discover] -->|Every 2 days| K[Finds new companies]
+    K -->|Auto-adds| L[boards.json]
+    L -->|Syncs| A
 ```
 
 **Why two systems?**
@@ -41,6 +47,7 @@ graph TD
 - The Cloudflare Worker keeps the dashboard live 24/7 with fast updates (20 boards due to CPU limits)
 - GitHub Actions runs the deeper, full scrape (50 boards) and handles email delivery
 - They're independent — one failing doesn't break the other
+- Auto-discovery finds new Greenhouse companies automatically every 2 days
 
 ---
 
@@ -56,6 +63,7 @@ Open it on any phone, tablet, or computer. Features:
 - **Save** — Bookmark a job for later
 - **Scrape Now** — Trigger an immediate fresh scrape from the dashboard
 - **Filters** — View by status (new / applied / skipped / saved) and by source
+- **Stats panel** — See total jobs, new jobs, applied count, last run time
 
 All actions are saved in the cloud. Switch devices and your history follows you.
 
@@ -74,6 +82,7 @@ job-agent-web/
 │   ├── scraper.js         # Fetches jobs from Greenhouse, LinkedIn RSS, etc.
 │   ├── matcher.js         # Scores each job against your profile (0–120+ pts)
 │   ├── runner.js          # Pipeline: scrape → rank → save → email
+│   ├── discover.js        # Auto-discovers new Greenhouse companies
 │   ├── email.js           # Sends daily digest via Resend API
 │   ├── reporter.js        # Generates the HTML report attached to emails
 │   ├── onboarding.js      # Interactive setup wizard (first-time users)
@@ -84,11 +93,14 @@ job-agent-web/
 │   ├── app.js             # Dashboard interactivity
 │   └── styles.css         # Dashboard styling
 ├── data/
-│   ├── boards.json        # Job board list (updated by auto-update workflow)
+│   ├── boards.json        # Job board list + rate limits (auto-updated)
+│   ├── board_sources.json # Configuration for board discovery sources
+│   ├── discovery_results.json # Latest discovery run results
 │   └── jobs.db.json       # Local persistent job database
 └── .github/workflows/
     ├── daily-jobs.yml     # GitHub Actions cron — runs every day at 8:00 AM IST
-    └── auto-update-boards.yml  # Auto-updates board list every 2 days
+    ├── auto-update-boards.yml  # Syncs boards.json to Worker every 2 days
+    └── auto-discover-boards.yml  # Discovers new companies every 2 days
 ```
 
 ---
@@ -195,6 +207,47 @@ Go to Actions → Daily Job Agent → "Run workflow"
 
 ---
 
+## Auto-Discovery System
+
+The agent automatically discovers new companies using Greenhouse every 2 days.
+
+### How It Works
+
+1. **Scans 100+ seed companies** daily (Airbnb, Uber, Spotify, Shopify, etc.)
+2. **Validates** if each company uses Greenhouse API
+3. **Adds new boards** to `data/boards.json` automatically
+4. **Commits changes** to git and updates the Cloudflare Worker
+5. **Emails you** a list of newly discovered companies
+
+### Discovery Schedule
+
+| Time (IST) | Action |
+|------------|--------|
+| 6:30 AM | Auto-discover new companies |
+| 8:00 AM | Sync boards to Worker |
+| 8:00 AM | Daily job scrape + email |
+
+### Configuration
+
+Edit `data/boards.json` to customize:
+
+```json
+{
+  "greenhouse": [...],
+  "lever": [...],
+  "worker_limit": 20,
+  "max_jobs_per_board": 15,
+  "max_total_jobs": 3000
+}
+```
+
+**Rate Limits:**
+- `max_jobs_per_board`: Maximum jobs fetched per company (default: 15)
+- `max_total_jobs`: Hard cap on total jobs in database (default: 3000)
+- `worker_limit`: Boards scraped by Worker (default: 20)
+
+---
+
 ## Cloudflare Workers Deployment (Already Done)
 
 The dashboard is already deployed and live. If you ever need to redeploy:
@@ -226,7 +279,7 @@ Your dashboard URL: `https://job-agent-web.<your-subdomain>.workers.dev`
 
 | Source | Boards | Notes |
 |--------|--------|-------|
-| **Greenhouse API** | 50 companies | Direct company career APIs, no paywall |
+| **Greenhouse API** | 50+ companies | Direct company career APIs, no paywall |
 | **LinkedIn RSS** | Real-time | Lightweight fetch, limited results |
 
 ### Blocked / Removed Sources
@@ -244,7 +297,7 @@ Your dashboard URL: `https://job-agent-web.<your-subdomain>.workers.dev`
 
 **Space / Defense:** SpaceX, RocketLab, Relativity Space, BlackSky
 
-> To add more companies, edit the `boards` array in `src/scraper.js` line 272.
+**Recently Discovered:** Airtable, Amwell, Zocdoc, Coursera, Udemy, Duolingo, Kayak, BuzzFeed, Gemini
 
 ---
 
@@ -269,6 +322,26 @@ Each job gets a score from 0 to 120+ based on these signals:
 - Sales, marketing, HR, recruiter roles are blocked entirely
 - Non-technical roles get penalized automatically
 - Jobs scoring below 20 points are excluded from results
+
+---
+
+## API Endpoints
+
+The Cloudflare Worker exposes these REST endpoints:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/stats` | GET | Get dashboard statistics |
+| `/api/jobs` | GET | List jobs with filters (status, limit, source) |
+| `/api/profile` | GET | Get current profile |
+| `/api/profile` | POST | Update profile |
+| `/api/scrape` | POST | Trigger manual scrape |
+| `/api/applied` | POST | Mark job as applied |
+| `/api/skip` | POST | Mark job as skipped |
+| `/api/save` | POST | Save/bookmark a job |
+| `/api/ignore` | POST | Ignore a job |
+| `/api/config` | GET | Get boards configuration |
+| `/api/config` | POST | Update boards configuration |
 
 ---
 
@@ -314,6 +387,12 @@ Your cookies have expired. Refresh them:
 ### Dashboard shows old data
 
 Click the **"Scrape Now"** button on the dashboard, or wait for the next automatic run at 7:30 AM IST.
+
+### Want to add more companies?
+
+1. Edit `data/boards.json` and add to the `greenhouse` array
+2. Commit and push to git
+3. The auto-update workflow will sync to the Worker automatically
 
 ---
 
