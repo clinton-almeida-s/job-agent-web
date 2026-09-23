@@ -11,8 +11,8 @@ EMAIL_TO = ""
 # KV namespace for persistent storage (jobs, profile, scrape runs)
 [[kv_namespaces]]
 binding = "JOBS_KV"
-id = "f555d53d9f1d4ba08da09edb9300643c"
-preview_id = "2211f96cac6f49ea80c9202c0698a515"
+id = "8a762a3f957f41c1bb5d3a7166442478"
+preview_id = "dc97052be34d450aa1749a788964cfe1"
 
 [triggers]
 crons = ["0 2 * * *"]  # Daily at 02:00 UTC (7:30 AM IST)

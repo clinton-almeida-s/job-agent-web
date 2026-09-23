@@ -205,9 +205,18 @@ async function scrapeGreenhouseFiltered(keyword, kv) {
     // Industrial/Manufacturing
     'Engine', 'CFM', 'Alliance', 'Space', 'General'
   ];
-  const allResults = await Promise.allSettled(
-    boards.map(function(board) { return scrapeGreenhouse(board, kv); })
-  );
+  // Batch to avoid CPU timeout (41 boards → 5 batches of ~8)
+  const batches = [];
+  for (let i = 0; i < boards.length; i += 8) {
+    batches.push(boards.slice(i, i + 8));
+  }
+  const allResults = [];
+  for (const batch of batches) {
+    const batchResults = await Promise.allSettled(
+      batch.map(function(board) { return scrapeGreenhouse(board, kv); })
+    );
+    allResults.push(...batchResults);
+  }
   return allResults
     .filter(function(r) { return r.status === 'fulfilled'; })
     .flatMap(function(r) { return r.value.filter(Boolean); });

@@ -78,7 +78,7 @@ async function sendDailyDigest(jobs, recipient) {
     <p>Found <strong>${jobs.length} new jobs</strong> matching your profile today:</p>
     <ul>${topJobs}</ul>
     <p style="margin-top:1.5rem">
-      <a href="http://localhost:3000" style="padding:.75rem 1.5rem;background:#2563eb;color:white;border-radius:8px;text-decoration:none;font-weight:600">View All Jobs in Dashboard</a>
+      <a href="https://job-agent-web.clinton-s-almeida.workers.dev" style="padding:.75rem 1.5rem;background:#2563eb;color:white;border-radius:8px;text-decoration:none;font-weight:600">View All Jobs in Dashboard</a>
     </p>
     <div class="footer">
       <p>You're receiving this because you have a job search agent running.</p>
@@ -117,7 +117,7 @@ async function sendWeeklyDigest(jobs, stats, recipient) {
     </div>
     <p>You have <strong>${jobs.length} pending jobs</strong> in your dashboard.</p>
     <p style="margin-top:1.5rem">
-      <a href="http://localhost:3000" style="padding:.75rem 1.5rem;background:#2563eb;color:white;border-radius:8px;text-decoration:none;font-weight:600">Open Dashboard</a>
+      <a href="https://job-agent-web.clinton-s-almeida.workers.dev" style="padding:.75rem 1.5rem;background:#2563eb;color:white;border-radius:8px;text-decoration:none;font-weight:600">Open Dashboard</a>
     </p>
     <div class="footer">
       <p>Job Agent — Weekly digest</p>
