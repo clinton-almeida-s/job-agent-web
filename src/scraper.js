@@ -276,7 +276,11 @@ async function scrapeGreenhouseFiltered(keyword) {
     // Added 2026-09-23
     'Twilio', 'Lyft', 'Airbnb', 'Discord', 'Twitch', 'Reddit', 'Instacart',
     'Figma', 'Vercel', 'NewRelic', 'SumoLogic', 'PagerDuty',
-    'Baidu', 'DiDi', 'Coupang', 'Mercari'
+    'Baidu', 'DiDi', 'Coupang', 'Mercari',
+    // Space/Defense (high volume)
+    'SpaceX', 'RocketLab', 'Relativity', 'BlackSky',
+    // Industrial/Manufacturing
+    'Engine', 'CFM', 'Alliance', 'Space', 'General'
   ];
   const allResults = await Promise.allSettled(
     boards.map(board => scrapeGreenhouse(board, keyword))
