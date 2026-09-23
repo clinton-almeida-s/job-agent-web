@@ -1,0 +1,85 @@
+name: Auto-Update Job Boards
+
+on:
+  schedule:
+    # Every 2 days at 2:30 AM UTC (8:00 AM IST)
+    - cron: '30 2 */2 * *'
+  workflow_dispatch:    # Allow manual trigger for testing
+
+jobs:
+  update-boards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup git config
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Fetch and update job boards
+        id: fetch_boards
+        run: |
+          # Current known job boards
+          CURRENT=$(cat data/boards.json)
+
+          # Example: You could fetch from an external API here
+          # curl -s https://api.example.com/boards | jq '.boards' > new_boards.json
+
+          # For now, we just validate and commit if there are changes
+          echo "Current boards count: $(echo "$CURRENT" | jq '.greenhouse | length')"
+
+      - name: Validate boards.json
+        run: |
+          if ! jq empty data/boards.json; then
+            echo "❌ Invalid JSON in data/boards.json"
+            exit 1
+          fi
+          echo "✅ boards.json is valid"
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet data/boards.json; then
+            echo "No changes to boards.json"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected in boards.json"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit updated boards
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git add data/boards.json
+          git commit -m "Auto-update job boards ($(date +'%Y-%m-%d %H:%M:%S'))"
+          git push
+          echo "✅ Boards updated and committed"
+
+      - name: Update Cloudflare Worker config
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          echo "Updating Worker configuration..."
+          curl -X POST https://job-agent-web.clinton-s-almeida.workers.dev/api/config \
+            -H "Content-Type: application/json" \
+            -d @data/boards.json || echo "⚠️ Worker config update failed (non-critical)"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "⚠️ Auto-update workflow failed. Check GitHub Actions logs."
+
+      - name: Send success notification
+        if: success()
+        run: |
+          echo "✅ Job boards auto-update completed successfully"

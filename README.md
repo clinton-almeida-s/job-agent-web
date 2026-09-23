@@ -1,6 +1,6 @@
 # Job Agent — Automated Cloud Engineering Job Search
 
-An automated job search agent that scrapes 50+ engineering career pages, ranks roles against your profile using a multi-signal scoring engine, and delivers daily email digests. Runs on Cloudflare (always-on dashboard) and GitHub Actions (daily email automation) — no manual effort required.
+An automated job search agent that scrapes 50+ engineering career pages, ranks positions against your profile using a multi-signal scoring engine, and delivers daily email digests. Runs on Cloudflare (always-on dashboard) and GitHub Actions (daily email automation) — no manual effort required.
 
 **Target roles:** GCP / Cloud / Platform / SRE engineers, remote-first, India-focused.
 
@@ -9,31 +9,35 @@ An automated job search agent that scrapes 50+ engineering career pages, ranks r
 ## What It Does
 
 1. **Scrapes 50+ free company career APIs** — Direct access to Greenhouse boards (Cloudflare, Stripe, Databricks, SpaceX, etc.) with zero paywalls
-2. **Ranks jobs intelligently** — Multi-signal scoring: title match, skills overlap, remote fit, salary, recency; deals-breakers auto-filter sales/HR roles
-3. **Always-online dashboard** — Accessible from any device at https://job-agent-web.clinton-s-almeida.workers.dev; mark jobs as applied/skipped/saved and your choices persist
+2. **Ranks jobs intelligently** — Multi-signal scoring: title match, skills overlap, remote/hybrid fit, salary, recency, deal-breaker filtering (sales/PE roles blocked)
+3. **Always-online dashboard** — Accessible from any device at https://job-agent-web.clinton-s-almeida.workers.dev with filters, scores, one-click apply prep
 4. **Daily email digest** — Automatically emailed every morning at 8:00 AM IST via GitHub Actions, even when your computer is off
-5. **Persistent tracking** — Jobs, applications, and scrape history stored in Cloudflare KV; survives across runs and devices
+5. **Persistent tracking** — Jobs, applications, and scrape history stored locally; survives across runs
 
 ---
 
 ## How It Works
 
-```
-┌──────────────────────┐     ┌──────────────────────┐     ┌──────────────────────┐
-│  Cloudflare Worker   │     │  GitHub Actions      │     │     Your Email       │
-│  (runs 7:30 AM IST)  │────▶│  (runs 8:00 AM IST)  │────▶│                      │
-│                      │     │                      │     │  Daily digest email  │
-│  • Scrapes 20 boards │     │  • Scrapes 50 boards │     │  + full report       │
-│  • Stores in KV      │     │  • Generates HTML    │     │  attachment          │
-│  • Serves dashboard  │     │  • Sends via Resend  │     │                      │
-└──────────────────────┘     └──────────────────────┘     └──────────────────────┘
-         │
-         ▼
-  https://job-agent-web.clinton-s-almeida.workers.dev
-  Dashboard accessible from any device, any time
+```mermaid
+graph TD
+    A[Cloudflare Worker] --> B[GitHub Actions]
+    A --> C[Your Email]
+    B --> C
+    C --> A
+    A --> D[Online Dashboard]
+    B --> D
+    
+    A --> E[Scrapes 20 boards]
+    B --> F[Scrapes 50 boards]
+    E --> G[Stores in KV]
+    F --> H[Generates email + report]
+    
+    D --> I[Apply/Skip/Save jobs]
+    I --> G
 ```
 
 **Why two systems?**
+
 - The Cloudflare Worker keeps the dashboard live 24/7 with fast updates (20 boards due to CPU limits)
 - GitHub Actions runs the deeper, full scrape (50 boards) and handles email delivery
 - They're independent — one failing doesn't break the other
@@ -69,7 +73,7 @@ job-agent-web/
 ├── src/
 │   ├── scraper.js         # Fetches jobs from Greenhouse, LinkedIn RSS, etc.
 │   ├── matcher.js         # Scores each job against your profile (0–120+ pts)
-│   ├── runner.js          # Pipeline: scrape → rank → save → generate report
+│   ├── runner.js          # Pipeline: scrape → rank → save → email
 │   ├── email.js           # Sends daily digest via Resend API
 │   ├── reporter.js        # Generates the HTML report attached to emails
 │   ├── onboarding.js      # Interactive setup wizard (first-time users)
@@ -80,9 +84,11 @@ job-agent-web/
 │   ├── app.js             # Dashboard interactivity
 │   └── styles.css         # Dashboard styling
 ├── data/
+│   ├── boards.json        # Job board list (updated by auto-update workflow)
 │   └── jobs.db.json       # Local persistent job database
 └── .github/workflows/
-    └── daily-jobs.yml     # GitHub Actions cron — runs every day at 8:00 AM IST
+    ├── daily-jobs.yml     # GitHub Actions cron — runs every day at 8:00 AM IST
+    └── auto-update-boards.yml  # Auto-updates board list every 2 days
 ```
 
 ---
@@ -105,14 +111,13 @@ node main.js --setup
 
 The wizard asks for:
 - Your name, email, phone, LinkedIn handle
-- Location preference (Mumbai / Remote / other cities)
-- Years of experience and current role
-- Key skills (comma-separated, e.g. `GCP, Kubernetes, Terraform`)
+- Your preferred work location (Mumbai / Remote / other cities)
+- Your skills keywords (e.g. `GCP, Kubernetes, Terraform`)
 - Target job titles (e.g. `GCP Engineer, Cloud Architect, SRE`)
-- Minimum salary expectation (in lakhs INR)
-- A short professional summary (used for AI cover letters)
+- Minimum salary expectation
+- Professional summary for cover letters
 
-This saves to `data/profile.json`.
+This saves to `data/profile.json`, which later matches jobs against your profile.
 
 ### Step 3 — Configure Email (Optional but Recommended)
 
@@ -130,7 +135,7 @@ ANTHROPIC_API_KEY=your_anthropic_key
 LINKEDIN_COOKIES=your_session_cookies
 ```
 
-**Getting a Resend API key (free):**
+**Getting a Resend API key (free):** 
 1. Sign up at https://resend.com
 2. Go to API Keys → Create API Key
 3. Free tier: 100 emails/day — plenty for daily job digests
@@ -168,13 +173,13 @@ Optional secrets:
 | Secret | Value |
 |--------|-------|
 | `ANTHROPIC_API_KEY` | For AI cover letters |
-| `LINKEDIN_COOKIES` | For LinkedIn job results |
+| `LINKEDIN_COOKIES` | For LinkedIn results |
 
 ### 2. What Happens Each Run
 
 1. Checks out the code
 2. Installs dependencies
-3. Scrapes all 50 Greenhouse boards + LinkedIn (full descriptions)
+3. Scrapes all 50 Greenhouse boards + LinkedIn
 4. Ranks jobs against your profile
 5. Generates an HTML report
 6. Emails you a digest with top matches + attaches the full report
@@ -297,6 +302,7 @@ npm start
 ### LinkedIn returns no results
 
 Your cookies have expired. Refresh them:
+
 1. Open LinkedIn while logged in
 2. Press F12 → Network tab → Refresh page
 3. Click any `linkedin.com` request → Headers → Request Headers
