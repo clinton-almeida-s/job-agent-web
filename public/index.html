@@ -36,6 +36,22 @@
           <option value="skipped">Skipped</option>
           <option value="ignored">Ignored</option>
         </select>
+        <select id="companyFilter" title="Filter by company">
+          <option value="">All Companies</option>
+        </select>
+        <select id="regionFilter" title="Filter by region">
+          <option value="">All Regions</option>
+          <option value="india">🇮🇳 India</option>
+          <option value="remote">🌐 Remote</option>
+          <option value="usa">🇺🇸 USA</option>
+          <option value="europe">🇪🇺 Europe</option>
+          <option value="asia-pacific">🌏 Asia-Pacific</option>
+        </select>
+        <select id="jobTypeFilter" title="Filter by job type">
+          <option value="">All Types</option>
+          <option value="remote">Remote Only</option>
+          <option value="onsite">On-site Only</option>
+        </select>
         <select id="sourceFilter" title="Filter by source">
           <option value="">All Sources</option>
         </select>
@@ -43,7 +59,8 @@
           <option value="score">Sort: Score (desc)</option>
           <option value="posted">Sort: Newest</option>
         </select>
-        <input id="searchInput" type="text" placeholder="🔍 Search title, company, keywords..."/>
+        <input id="searchInput" type="text" placeholder="🔍 Search title, keywords..."/>
+        <button id="clearFilters" class="btn-ghost" style="display:none">✕ Clear</button>
       </div>
       <div class="bulk-actions">
         <button id="bulkSave" class="btn-ghost">Save All Visible</button>

@@ -23,7 +23,7 @@ async function loadProfile() {
 }
 
 async function loadSources() {
-  const r = await fetch(`${API}/jobs?limit=1000`);
+  const r = await fetch(`${API}/jobs?limit=5000`);
   const jobs = await r.json();
   const sources = [...new Set(jobs.map(j => j.source))].sort();
   const sel = document.getElementById('sourceFilter');
@@ -31,6 +31,15 @@ async function loadSources() {
     const opt = document.createElement('option');
     opt.value = s; opt.textContent = s;
     sel.appendChild(opt);
+  });
+
+  // Populate company filter
+  const companies = [...new Set(jobs.map(j => j.company))].sort();
+  const companySel = document.getElementById('companyFilter');
+  companies.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    companySel.appendChild(opt);
   });
 }
 
@@ -48,11 +57,17 @@ async function loadStats() {
 // ── Jobs ──────────────────────────────────────────────────────────────────────
 async function loadJobs() {
   const status = document.getElementById('statusFilter').value;
+  const company = document.getElementById('companyFilter').value;
+  const region = document.getElementById('regionFilter').value;
+  const jobType = document.getElementById('jobTypeFilter').value;
   const source = document.getElementById('sourceFilter').value;
   const sort = document.getElementById('sortFilter').value;
   const search = document.getElementById('searchInput').value.toLowerCase();
 
-  let params = new URLSearchParams({ status, sort, limit: 200 });
+  let params = new URLSearchParams({ status, sort, limit: 500 });
+  if (company) params.set('company', company);
+  if (region) params.set('region', region);
+  if (jobType) params.set('jobType', jobType);
   if (source) params.set('source', source);
   const r = await fetch(`${API}/jobs?${params}`);
   allJobs = await r.json();
@@ -68,6 +83,15 @@ async function loadJobs() {
 
   renderJobs(allJobs);
   loadStats();
+  updateClearButton();
+}
+
+function updateClearButton() {
+  const hasFilter = document.getElementById('companyFilter').value ||
+                    document.getElementById('regionFilter').value ||
+                    document.getElementById('jobTypeFilter').value ||
+                    document.getElementById('searchInput').value;
+  document.getElementById('clearFilters').style.display = hasFilter ? '' : 'none';
 }
 
 function renderJobs(jobs) {
@@ -214,10 +238,24 @@ function bindEvents() {
     await fetch(`${API}/scrape`, { method: 'POST' });
     setTimeout(() => { loadJobs(); document.getElementById('scrapeBtn').disabled = false; document.getElementById('scrapeBtn').textContent = '🔄 Scrape Now'; }, 2000);
   };
+  document.getElementById('clearFilters').onclick = () => {
+    document.getElementById('companyFilter').value = '';
+    document.getElementById('regionFilter').value = '';
+    document.getElementById('jobTypeFilter').value = '';
+    document.getElementById('searchInput').value = '';
+    loadJobs();
+  };
+
   document.getElementById('statusFilter').onchange = loadJobs;
+  document.getElementById('companyFilter').onchange = loadJobs;
+  document.getElementById('regionFilter').onchange = loadJobs;
+  document.getElementById('jobTypeFilter').onchange = loadJobs;
   document.getElementById('sourceFilter').onchange = loadJobs;
   document.getElementById('sortFilter').onchange = loadJobs;
-  document.getElementById('searchInput').oninput = () => { clearTimeout(window._searchTimer); window._searchTimer = setTimeout(loadJobs, 300); };
+  document.getElementById('searchInput').oninput = () => { clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => { loadJobs(); updateClearButton(); }, 300); };
+  document.getElementById('companyFilter').onchange = updateClearButton;
+  document.getElementById('regionFilter').onchange = updateClearButton;
+  document.getElementById('jobTypeFilter').onchange = updateClearButton;
   document.getElementById('bulkSave').onclick = bulkSave;
   document.getElementById('bulkSkip').onclick = bulkSkipLow;
   document.getElementById('closeProfileBtn').onclick = () => document.getElementById('profileModal').style.display = 'none';

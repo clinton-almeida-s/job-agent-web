@@ -291,13 +291,13 @@ Your dashboard URL: `https://job-agent-web.<your-subdomain>.workers.dev`
 
 ### Sample Greenhouse Companies
 
-**India-friendly:** Baidu, DiDi, Coupang (Korea), Mercari (Japan)
+**India-friendly (with engineering roles in India):** Zscaler, GitLab, Anthropic, Okta, Databricks, Stripe, MongoDB, Twilio, Coinbase, Airbnb
 
 **Remote-friendly:** Cloudflare, Stripe, Datadog, Databricks, MongoDB, Elastic, Okta, Figma, Vercel, Airbnb, Discord, Twitch, Reddit
 
 **Space / Defense:** SpaceX, RocketLab, Relativity Space, BlackSky
 
-**Recently Discovered:** Airtable, Amwell, Zocdoc, Coursera, Udemy, Duolingo, Kayak, BuzzFeed, Gemini
+**Recently Discovered:** Airtable, Amwell, Zocdoc, Coursera, Udemy, Duolingo, Kayak, BuzzFeed, Gemini, Zscaler, GitLab, Anthropic
 
 ---
 
