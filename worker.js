@@ -522,6 +522,14 @@ async function handleRequest(req, env) {
     return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } });
   }
 
+  // Serve static assets
+  if (path === '/styles.css') {
+    return new Response(getStylesCss(), { headers: { 'Content-Type': 'text/css' } });
+  }
+  if (path === '/app.js') {
+    return new Response(getAppJs(), { headers: { 'Content-Type': 'application/javascript' } });
+  }
+
   // Serve dashboard HTML for SPA fallback
   return new Response(getDashboardHtml(), {
     headers: { 'Content-Type': 'text/html' }
