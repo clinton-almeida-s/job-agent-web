@@ -161,7 +161,8 @@ async function scrapeLinkedInRSS(keyword, kv) {
 // ── Free-to-apply sources (Greenhouse API - direct company careers) ────────────
 
 async function scrapeGreenhouse(board, kv) {
-  const url = 'https://boards-api.greenhouse.io/v1/boards/' + board + '/jobs?content=true&limit=30';
+  // Use content=false for speed — no description needed in Worker
+  const url = 'https://boards-api.greenhouse.io/v1/boards/' + board + '/jobs?content=false&limit=20';
   const { status, body } = await fetchUrl(url);
   if (status !== 200) return [];
   try {
@@ -172,7 +173,6 @@ async function scrapeGreenhouse(board, kv) {
       .map(function(j) {
         const location = j.location?.name || 'Remote';
         const isRemote = location.toLowerCase().includes('remote');
-        const desc = j.content ? cleanText(j.content).slice(0, 200) : '';
         return {
           id: 'greenhouse-' + board + '-' + j.id,
           source: 'Greenhouse:' + board,
@@ -180,7 +180,7 @@ async function scrapeGreenhouse(board, kv) {
           company: board,
           location: location,
           remote: isRemote,
-          description: desc,
+          description: '',
           tags: (j.departments || []).join(', '),
           salary: '',
           salary_min_inr: 0,
@@ -196,14 +196,7 @@ async function scrapeGreenhouseFiltered(keyword, kv) {
   const boards = [
     'Cloudflare', 'Stripe', 'Datadog', 'Databricks', 'MongoDB', 'Elastic', 'Okta', 'Block',
     'Roku', 'Roblox', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox', 'Asana',
-    'Intercom', 'Mixpanel', 'Amplitude', 'Monzo', 'Chime', 'GoCardless', 'Fastly', 'Netlify',
-    'Twilio', 'Lyft', 'Airbnb', 'Discord', 'Twitch', 'Reddit', 'Instacart',
-    'Figma', 'Vercel', 'NewRelic', 'SumoLogic', 'PagerDuty',
-    'Baidu', 'DiDi', 'Coupang', 'Mercari',
-    // Space/Defense (high volume)
-    'SpaceX', 'RocketLab', 'Relativity', 'BlackSky',
-    // Industrial/Manufacturing
-    'Engine', 'CFM', 'Alliance', 'Space', 'General'
+    'Intercom', 'Figma', 'Vercel', 'Coupang'
   ];
   // Batch to avoid CPU timeout (41 boards → 5 batches of ~8)
   const batches = [];
