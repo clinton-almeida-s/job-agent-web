@@ -1,45 +1,47 @@
-# Job Agent — Interactive Cloud Job Search
+# Job Agent — Automated Cloud Engineering Job Search
 
-An interactive job search agent that scrapes GCP / Cloud / Platform Engineering roles, ranks them against your profile, and presents them in a web dashboard with one-click apply preparation.
+An automated job search agent that scrapes 25+ engineering career boards, ranks roles against your profile using a multi-signal scoring engine, and delivers daily email digests. Runs locally or on GitHub Actions — no manual effort required.
 
-**Target:** Mumbai-based or remote cloud roles with salary ₹35 LPA+.
+**Target:** GCP / Cloud / Platform / SRE roles, remote-first, India.
 
 ---
 
 ## What It Does
 
-1. **Scrapes job boards** — RemoteOK, Remotive, We Work Remotely, LinkedIn RSS (and cookie-based), with graceful fallbacks for blocked sources
-2. **Ranks jobs** — Multi-signal scoring: title similarity, skill overlap, remote/hybrid fit, salary, recency, deal-breaker filtering
-3. **Web dashboard** — Review queue with filters, scores, match reasons, and one-click apply prep
-4. **Interactive setup** — `node main.js --setup` wizard collects your preferences
-5. **Email notifications** — Daily/weekly digests via Resend API (optional)
-6. **Persistent tracking** — SQLite (or JSON fallback) stores jobs, applications, scrape history
+1. **Scrapes 25+ free job boards** — Greenhouse APIs (Cloudflare, Stripe, Datadog, Databricks, MongoDB, etc.), LinkedIn RSS, all without paywalls or subscriptions
+2. **Ranks jobs intelligently** — Multi-signal scoring: title match, skills overlap, remote/hybrid fit, salary, recency, deal-breaker filtering (sales/PE roles blocked)
+3. **Web dashboard** — Interactive UI at http://localhost:3000 with filters, scores, one-click apply prep
+4. **Daily email digest** — Automatically emailed every morning at 8 AM IST via GitHub Actions, even when your computer is off
+5. **Persistent tracking** — Jobs, applications, and scrape history stored locally; survives across runs
 
 ---
 
 ## Architecture
 
 ```
-job-agent/
+job-agent-web/
 ├── server.js              # Express server + REST API
-├── main.js                # CLI entry point
-├── profile.json           # Your preferences (read by CLI/server)
+├── main.js                # CLI entry point (supports --no-ai, --open)
+├── .env                   # API keys and email config (NOT committed)
 ├── data/
-│   └── jobs.db.json       # SQLite fallback JSON (persistent)
-├── public/                # Web dashboard
+│   └── jobs.db.json       # SQLite fallback JSON database
+├── public/                # Web dashboard (HTML/CSS/JS)
 │   ├── index.html
 │   ├── app.js
 │   └── styles.css
 ├── src/
 │   ├── db.js              # Database layer (SQLite/JSON fallback)
-│   ├── scraper.js         # Source registry — fetches from job boards
-│   ├── matcher.js         # Multi-signal scoring engine
-│   ├── runner.js          # Pipeline: scrape → rank → save → report
+│   ├── scraper.js         # 25+ Greenhouse boards + LinkedIn RSS/cookies
+│   ├── matcher.js         # Multi-signal scoring engine (0–120+ pts)
+│   ├── runner.js          # Pipeline: scrape → rank → save → report → email
 │   ├── onboarding.js      # Interactive CLI wizard
-│   ├── coverLetter.js     # AI cover letter generation
-│   └── email.js           # Resend email notifications
+│   ├── coverLetter.js     # AI cover letter generation (optional)
+│   ├── email.js           # Resend API email delivery
+│   ├── reporter.js        # HTML report generator
+│   ├── normalizer.js      # Source standardization
+│   └── tracker.js         # Application state tracking
 └── .github/workflows/
-    └── daily-jobs.yml     # GitHub Actions schedule
+    └── daily-jobs.yml     # GitHub Actions: daily run at 8 AM IST
 ```
 
 ---
@@ -47,24 +49,20 @@ job-agent/
 ## Installation
 
 ```bash
-# Clone the repo
 git clone https://github.com/clinton-almeida-s/job-agent-web.git
 cd job-agent-web
-
-# Install dependencies
 npm install
 ```
 
 ### Requirements
 
 - Node.js 20+
-- `ANTHROPIC_API_KEY` — optional, for AI cover letters
-- `RESEND_API_KEY` + `EMAIL_TO` — optional, for email notifications
-- `LINKEDIN_COOKIES` — optional, for LinkedIn Mumbai results
+- `.env` file for API keys (see Setup below)
+- No paid subscriptions required — all sources are free
 
 ---
 
-## Setup
+## Setup (First-Time Users)
 
 ### 1. Run the setup wizard
 
@@ -72,49 +70,47 @@ npm install
 node main.js --setup
 ```
 
-The wizard will ask for:
+The wizard collects:
 - Name, email, phone, LinkedIn handle
-- Location preference (Mumbai / Remote)
-- Years of experience, current role, company
+- Location preference (Mumbai / Remote / specific cities)
+- Years of experience, current role
 - Key skills (comma-separated)
-- Target job titles
-- Required and bonus keywords
-- Preferred work types (remote, hybrid, on-site)
-- Salary expectations (min/max in lakhs)
-- Professional summary
+- Target job titles (e.g., "GCP Engineer", "Cloud Architect")
+- Salary expectations (min in lakhs INR)
+- Professional summary for cover letters
 
-This saves to `profile.json` and your database.
+This saves to `data/profile.json` and your database.
 
-### 2. (Optional) Set up environment variables
+### 2. Create `.env` for optional features
 
-Create a `.env` file:
+Create a `.env` file in the project root:
 
 ```bash
-# AI cover letters (optional)
-ANTHROPIC_API_KEY=your-key-here
-
-# Email notifications (optional)
-RESEND_API_KEY=your-key-here
+# Email notifications (required for daily digest)
+RESEND_API_KEY=your-resend-api-key
 EMAIL_TO=your@email.com
 EMAIL_FROM=Job Agent <onboarding@resend.dev>
 
-# LinkedIn cookies (optional, see below)
+# AI cover letters (optional — requires Anthropic API)
+ANTHROPIC_API_KEY=your-anthropic-key
+
+# LinkedIn Mumbai results (optional — cookies expire in ~3 days)
 LINKEDIN_COOKIES=your-session-cookies
 ```
 
-Or set them directly:
+**Getting a Resend API key:** Sign up free at https://resend.com → API Keys → Create API Key. Free tier gives 100 emails/day.
+
+### 3. Run your first scrape
 
 ```bash
-# Windows PowerShell
-$env:ANTHROPIC_API_KEY = "your-key"
-$env:RESEND_API_KEY = "your-key"
-$env:EMAIL_TO = "your@email.com"
-
-# Linux/Mac
-export ANTHROPIC_API_KEY=your-key
-export RESEND_API_KEY=your-key
-export EMAIL_TO=your@email.com
+node main.js --no-ai
 ```
+
+This will:
+- Scrape all 25 Greenhouse boards + LinkedIn
+- Rank jobs against your profile
+- Generate an HTML report
+- Email the digest (if RESEND_API_KEY is set)
 
 ---
 
@@ -139,64 +135,34 @@ Opens http://localhost:3000
 ### CLI Mode
 
 ```bash
-# Full run (scrape → rank → report)
-node main.js
-
-# Skip AI cover letters (faster)
+# Quick run (no AI cover letters)
 node main.js --no-ai
 
-# Open report in browser
-node main.js --open
+# With AI cover letters (slow, needs ANTHROPIC_API_KEY)
+node main.js
+
+# Open generated report in browser
+node main.js --no-ai --open
+
+# Trigger scrape via API (from another terminal)
+curl -X POST http://localhost:3000/api/scrape
 ```
 
-### Check status
+### Stop the dashboard
 
 ```bash
-node -e "const db = require('./src/db'); db.init(); console.log(JSON.stringify(db.getStats()))"
+# Find the process
+netstat -ano | findstr :3000
+
+# Kill it (replace PID)
+taskkill /PID <pid> /F
 ```
 
 ---
 
-## LinkedIn Cookie Setup
+## How It Ranks Jobs
 
-LinkedIn blocks automated access. To get Mumbai-specific results:
-
-1. Open LinkedIn in Chrome/Firefox while logged in
-2. Press F12 → Network tab → Refresh page
-3. Click any request to `linkedin.com`
-4. Go to **Headers** → **Request Headers** → find `cookie:`
-5. Copy the entire value
-6. Set as env var:
-
-```bash
-# Windows PowerShell
-$env:LINKEDIN_COOKIES = 'your-cookie-string-here'
-
-# Linux/Mac
-export LINKEDIN_COOKIES='your-cookie-string-here'
-```
-
-> Note: LinkedIn cookies expire after a few days. Update periodically.
-
----
-
-## Available Sources
-
-| Source | Status | Notes |
-|--------|--------|-------|
-| RemoteOK | ✅ Working | JSON API, no auth needed |
-| Remotive | ✅ Working | JSON API, keyword search |
-| We Work Remotely | ✅ Working | RSS feed |
-| LinkedIn RSS | ✅ Working | Soft approach, limited results |
-| LinkedIn Cookie | ⚠️ Optional | Needs browser session cookies |
-| Naukri / Indeed India | ❌ Blocked | Sites block automated access |
-| Wellfound / Instahyre | ❌ Blocked | 403 errors from API |
-
----
-
-## Scoring System
-
-Jobs are scored (0–120+) based on:
+Jobs score 0–120+ based on weighted signals:
 
 | Signal | Weight | Description |
 |--------|--------|-------------|
@@ -204,7 +170,6 @@ Jobs are scored (0–120+) based on:
 | Title similarity | 25 pts | Fuzzy match (Jaccard + Levenshtein) |
 | Required skills | 15 pts | Matches your required keywords |
 | Bonus skills | 5 pts | Matches your bonus keywords |
-| Cloud signal | 12 pts | Mentions cloud tech when no title match |
 | Remote | 20 pts | Confirmed remote role |
 | Hybrid | 10 pts | Hybrid role in preferred location |
 | Location | 15 pts | Matches your preferred locations |
@@ -212,162 +177,91 @@ Jobs are scored (0–120+) based on:
 | Salary fit | 10 pts | Meets minimum salary requirement |
 | Recency | 10 pts | Posted within last 7 days |
 
-Jobs below the minimum score threshold (20) or with deal-breakers are filtered out.
+Jobs below score 20 or matching deal-breakers are filtered out.
 
 ### Deal-Breaker Logic
 
-Hard blockers (always excluded):
-- `on-site only`, `contract`, `freelance`, `temporary`
-- `accounting`, `recruiter`, `hr`, `sales`, `marketing`
-- `customer service`, `business development`
-- `mobile developer`, `ios`, `android`, `trader`
+**Hard blockers (always excluded):**
+- `sales engineer`, `solutions architect - sales`, `pre-sales`, `technical sales`
+- `accounting`, `recruiter`, `hr`, `marketing`, `business development`
 
-Soft blockers (bypassed for technical titles):
-- Jobs with titles containing `engineer`, `architect`, `developer`, `technical`, `consultant`
-- Example: "Sales Engineer" is valid, but "Sales Manager" is not
+**Soft blockers (bypassed for technical titles):**
+- Non-technical roles get lower scores automatically
 
 ---
 
-## Application Lifecycle
+## Available Job Sources
 
-Jobs move through these statuses:
+| Source | Status | Notes |
+|--------|--------|-------|
+| **Greenhouse (25 companies)** | ✅ Working | Cloudflare, Stripe, Datadog, Databricks, MongoDB, Elastic, Okta, Block, Roku, Roblox, Pinterest, Coinbase, Robinhood, Brex, Dropbox, Asana, Intercom, Mixpanel, Amplitude, Monzo, Chime, GoCardless, Fastly, PlanetScale, Netlify |
+| **LinkedIn RSS** | ✅ Working | Soft approach, limited results |
+| **LinkedIn Cookies** | ⚠️ Optional | Needs browser session cookies, works better |
+| **Naukri / Indeed** | ❌ Blocked | Sites block automated access |
+| **RemoteOK / WWR / Remotive** | ❌ Removed | Paywalled sources removed |
 
-```
-new → saved → applied
-          ↘ skipped
-          ↘ ignored
-```
-
-- **new** — Found by scraper, not yet reviewed
-- **saved** — Saved for later review
-- **applied** — You clicked "Mark as Applied"
-- **skipped** — Not interested, hide from future reports
-- **ignored** — Permanently ignore this job
+To add more Greenhouse companies, edit `src/scraper.js` line 272 and add the company name to the `boards` array.
 
 ---
 
-## Email Notifications
+## Daily Email Automation (GitHub Actions)
 
-When `RESEND_API_KEY` and `EMAIL_TO` are set:
+The workflow runs automatically every day at **8:00 AM IST** — your computer doesn't need to be on.
 
-- **Daily digest** — Top 5 jobs matching your profile
-- **Weekly digest** — Summary stats + pending jobs
+### 1. Add GitHub secrets
 
-Emails are sent after each scrape run. Configure frequency in `src/email.js`.
+Go to your repo → Settings → Secrets and variables → Actions → New repository secret:
 
----
+| Secret | Value |
+|--------|-------|
+| `RESEND_API_KEY` | Your Resend API key |
+| `EMAIL_TO` | `your@email.com` |
 
-## GitHub Actions
+Optional secrets:
+| Secret | Value |
+|--------|-------|
+| `ANTHROPIC_API_KEY` | For AI cover letters |
+| `LINKEDIN_COOKIES` | For LinkedIn results |
 
-The workflow runs daily at 2:00 AM UTC (8:30 AM IST).
+### 2. Trigger manually (for testing)
 
-To enable:
-1. Push code to GitHub
-2. Add secrets in repo settings:
-   - `ANTHROPIC_API_KEY` — for cover letters
-   - `RESEND_API_KEY` — for email
-   - `EMAIL_TO` — recipient address
-   - `LINKEDIN_COOKIES` — optional, for LinkedIn results
+https://github.com/yourusername/job-agent-web/actions/workflows/daily-jobs.yml → "Run workflow"
 
-The workflow:
+### 3. What happens each run
+
 1. Checks out code
 2. Installs dependencies
-3. Runs `node main.js --no-ai`
-4. Uploads the HTML report as an artifact
-5. Sends email with attachment (if keys are set)
+3. Creates a default profile (if none exists)
+4. Scrapes all 25 Greenhouse boards + LinkedIn
+5. Ranks jobs and generates HTML report
+6. Emails digest with top matches
+7. Attaches full HTML report
+8. Uploads artifact (retained 7 days)
 
 ---
 
-## Cloudflare Workers Deployment (Free 24/7 Hosting)
+## Cloudflare Workers Deployment (Optional)
 
-For a free, always-on deployment that runs daily scrapes automatically:
-
-### 1. Install Wrangler CLI
+For a free, always-on cloud deployment:
 
 ```bash
 npm install -g wrangler
-```
-
-### 2. Login to Cloudflare
-
-```bash
 wrangler login
-```
 
-### 3. Create KV Namespace for Storage
-
-```bash
-# Production namespace
+# Create KV namespace
 wrangler kv namespace create JOBS_KV
 
-# Preview namespace (for local development)
-wrangler kv namespace create JOBS_KV --preview
-```
-
-### 4. Update `wrangler.toml` with your KV namespace IDs
-
-```toml
-[[kv_namespaces]]
-binding = "JOBS_KV"
-id = "YOUR_PRODUCTION_KV_ID"
-preview_id = "YOUR_PREVIEW_KV_ID"
-```
-
-### 5. Set Secrets (Environment Variables)
-
-```bash
-wrangler secret put ANTHROPIC_API_KEY
+# Set secrets
 wrangler secret put RESEND_API_KEY
 wrangler secret put EMAIL_TO
-# Optional: for browser-based scraping
-wrangler secret put LINKEDIN_COOKIES
-```
 
-### 6. Deploy
-
-```bash
+# Deploy
 wrangler deploy
 ```
 
 Your dashboard will be live at `https://job-agent-web.<your-subdomain>.workers.dev`
 
-### Cron Schedule
-
-The worker includes a daily cron trigger at `0 2 * * *` (2:00 AM UTC / 7:30 AM IST) in `wrangler.toml`:
-
-```toml
-[triggers]
-crons = ["0 2 * * *"]
-```
-
-> **Note:** Free Cloudflare Workers plan allows up to 1 cron trigger. For production, upgrade to Workers Paid for 1,000 triggers/month.
-
-### Worker API Endpoints
-
-Once deployed, the same REST API is available:
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/stats` | GET | Dashboard statistics |
-| `/api/jobs` | GET | List jobs (filter: status, source, limit) |
-| `/api/profile` | GET | Get profile |
-| `/api/profile` | PUT | Update profile |
-| `/api/apply` | POST | Mark job as applied |
-| `/api/skip` | POST | Skip job |
-| `/api/save` | POST | Save job for later |
-| `/api/ignore` | POST | Ignore job |
-| `/api/scrape` | POST | Trigger manual scrape |
-
-### Local Development
-
-```bash
-# Start local dev server with KV
-wrangler dev --test-scheduled
-```
-
 ---
-
-## File Structure
 
 ## File Structure
 
@@ -375,56 +269,64 @@ wrangler dev --test-scheduled
 |------|---------|
 | `server.js` | Express server — REST API + static file serving |
 | `main.js` | CLI entry point — routes to setup or runner |
-| `profile.json` | Your job search preferences |
+| `.env` | API keys and email config (keep secret!) |
+| `data/jobs.db.json` | Persistent database of all jobs |
+| `data/profile.json` | Your job search preferences |
 | `src/db.js` | Database layer — SQLite with JSON fallback |
 | `src/scraper.js` | Source registry — fetches from job boards |
 | `src/matcher.js` | Scoring engine — ranks jobs against profile |
-| `src/runner.js` | Pipeline orchestrator — scrape → rank → save |
+| `src/runner.js` | Pipeline orchestrator — scrape → rank → save → email |
+| `src/email.js` | Resend API email delivery |
+| `src/reporter.js` | HTML report generator |
 | `src/onboarding.js` | Interactive CLI wizard |
-| `src/coverLetter.js` | AI cover letter generation |
-| `src/email.js` | Resend email notifications |
 | `public/index.html` | Dashboard HTML |
 | `public/app.js` | Dashboard JavaScript |
-| `public/styles.css` | Dashboard styling |
-| `.github/workflows/daily-jobs.yml` | GitHub Actions schedule |
-| `worker.js` | Cloudflare Worker — API + scheduled scraping |
-| `wrangler.toml` | Cloudflare Worker configuration |
+| `.github/workflows/daily-jobs.yml` | GitHub Actions daily schedule |
 
 ---
 
 ## Troubleshooting
 
+### No jobs found
+
+```bash
+# Test scraping directly
+node -e "const { scrapeAllSources } = require('./src/scraper'); scrapeAllSources(['GCP']).then(j => console.log(j.length, 'jobs'))"
+```
+
 ### Dashboard not loading
 
 ```bash
 # Check if server is running
-curl http://localhost:3000/api/stats
+netstat -ano | findstr :3000
 
-# Kill any stale processes
-pkill -f "node server"
+# Kill stale processes
+taskkill /IM node.exe /F
 npm start
 ```
 
-### No jobs found
+### Email not sending
 
-```bash
-# Run a manual scrape to debug
-node -e "const { scrapeAllSources } = require('./src/scraper'); scrapeAllSources(['GCP']).then(j => console.log(j.length, 'jobs'))"
-```
-
-### SQLite not available (Windows)
-
-The JSON fallback is used automatically. Data persists in `data/jobs.db.json`.
+1. Verify `.env` has `RESEND_API_KEY=your-actual-key`
+2. Check Resend dashboard for sent emails
+3. Look at spam folder
 
 ### LinkedIn returns no results
 
-Check your cookies are valid:
-```bash
-node -e "
-process.env.LINKEDIN_COOKIES = 'your-cookies';
-require('./src/scraper').scrapeLinkedInCookie('GCP Engineer').then(j => console.log(j.length, 'jobs'));
-"
-```
+Your cookies have expired. Refresh them following the LinkedIn Cookie Setup section below.
+
+### LinkedIn Cookie Setup
+
+LinkedIn blocks automated access. To get results:
+
+1. Open LinkedIn while logged in
+2. Press F12 → Network tab → Refresh page
+3. Click any `linkedin.com` request
+4. Go to **Headers** → **Request Headers** → find `cookie:`
+5. Copy the entire value
+6. Add to `.env`: `LINKEDIN_COOKIES=your-cookie-string-here`
+
+> Note: LinkedIn cookies expire after a few days. Update periodically.
 
 ---
 
