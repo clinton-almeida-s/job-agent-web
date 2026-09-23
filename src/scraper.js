@@ -249,14 +249,22 @@ async function scrapeIndeedIndia() {
 // ── Free-to-apply sources (Greenhouse/Lever/Workable APIs) ────────────────────────
 
 async function scrapeGreenhouse(board, keyword) {
+  // Load config for rate limits
+  let config = {};
+  try {
+    config = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'boards.json'), 'utf-8'));
+  } catch { /* use defaults */ }
+
+  const limit = config.max_jobs_per_board || 30;
   const { status, body } = await fetchUrl(
-    `https://boards-api.greenhouse.io/v1/boards/${board}/jobs?content=true&limit=50`
+    `https://boards-api.greenhouse.io/v1/boards/${board}/jobs?content=true&limit=${limit}`
   );
   if (status !== 200) return [];
   try {
     const { jobs = [] } = JSON.parse(body);
     return jobs
       .filter(j => j.title && j.title.length > 3)
+      .slice(0, limit)
       .map(j => {
         const location = j.location?.name || 'Remote';
         const isRemote = location.toLowerCase().includes('remote');
