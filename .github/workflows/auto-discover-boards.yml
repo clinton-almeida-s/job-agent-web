@@ -1,0 +1,142 @@
+name: Auto-Discover New Job Boards
+
+on:
+  schedule:
+    # Run every 2 days at 1:00 AM UTC (6:30 AM IST)
+    - cron: '0 1 */2 * *'
+  workflow_dispatch:    # Manual trigger for testing
+
+jobs:
+  discover-and-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run board discovery
+        id: discover
+        run: |
+          echo "🔍 Running board discovery engine..."
+          node src/discover.js
+
+          # Read results
+          RESULTS=$(cat data/discovery_results.json 2>/dev/null || echo '{"newBoards":[],"totalBoards":0}')
+          NEW_COUNT=$(echo "$RESULTS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); console.log(d.newBoards.length)")
+
+          echo "new_boards_count=$NEW_COUNT" >> $GITHUB_OUTPUT
+          echo "$RESULTS" > /tmp/discovery_results.json
+
+      - name: Show discovered boards
+        if: steps.discover.outputs.new_boards_count != '0'
+        run: |
+          echo "🎉 Found new job boards!"
+          cat data/discovery_results.json | node -e "
+            const d = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8'));
+            console.log('\n📋 New boards to add:');
+            d.newBoards.forEach(b => console.log('  •', b));
+            console.log('\n📊 Summary:');
+            console.log('  Existing boards:', d.totalBoards - d.newBoards.length);
+            console.log('  New boards:', d.newBoards.length);
+            console.log('  Total after update:', d.totalBoards);
+          "
+
+      - name: Merge new boards into config
+        if: steps.discover.outputs.new_boards_count != '0'
+        run: |
+          # Get current boards
+          CURRENT=$(cat data/boards.json)
+
+          # Merge with new boards (deduplicated)
+          node -e "
+            const current = JSON.parse(process.argv[1]);
+            const results = $(cat /tmp/discovery_results.json);
+
+            // Merge and deduplicate
+            const merged = [...new Set([...current.greenhouse, ...results.newBoards])];
+
+            // Save updated config
+            const updated = {
+              greenhouse: merged,
+              lever: current.lever || [],
+              worker_limit: Math.min(20, merged.length)
+            };
+
+            console.log(JSON.stringify(updated, null, 2));
+          " "$CURRENT" > data/boards_new.json
+
+          # Replace current with updated
+          mv data/boards_new.json data/boards.json
+
+          echo "✅ Merged $(cat data/discovery_results.json | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); console.log(d.newBoards.length)") new boards into config"
+
+      - name: Commit updated boards
+        if: steps.discover.outputs.new_boards_count != '0'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          git add data/boards.json
+          git commit -m "Auto-discovered ${{ steps.discover.outputs.new_boards_count }} new job boards ($(date +'%Y-%m-%d'))" || echo "No changes to commit"
+          git push
+          echo "📤 Boards committed and pushed"
+
+      - name: Update Cloudflare Worker
+        if: steps.discover.outputs.new_boards_count != '0'
+        run: |
+          echo "🚀 Updating Cloudflare Worker configuration..."
+
+          # Read and send updated config
+          BOARDS=$(cat data/boards.json)
+          WORKER_LIMIT=$(echo "$BOARDS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); console.log(d.worker_limit || 20)")
+
+          curl -s -X POST https://job-agent-web.clinton-s-almeida.workers.dev/api/config \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"greenhouse\": $(echo "$BOARDS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); console.log(JSON.stringify(d.greenhouse))"),
+              \"lever\": $(echo "$BOARDS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); console.log(JSON.stringify(d.lever))"),
+              \"worker_limit\": $WORKER_LIMIT
+            }"
+
+          echo "✅ Worker configuration updated"
+
+      - name: Send success notification
+        if: success() && steps.discover.outputs.new_boards_count != '0'
+        run: |
+          echo "📧 Sending email notification..."
+          NEW_COUNT=${{ steps.discover.outputs.new_boards_count }}
+
+          # Use Resend API to send notification
+          curl -s -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"from\": \"Job Agent <onboarding@resend.dev>\",
+              \"to\": [\"${{ secrets.EMAIL_TO }}\"],
+              \"subject\": \"🎉 New Job Boards Discovered!\",
+              \"html\": \"
+                <h2>New Job Boards Found</h2>
+                <p>Discovered <strong>$NEW_COUNT new companies</strong> using Greenhouse:</p>
+                <ul>
+                  $(cat data/discovery_results.json | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); d.newBoards.forEach(b => console.log('<li><b>' + b + '</b></li>'))")
+                </ul>
+                <p>Dashboard: <a href=\"https://job-agent-web.clinton-s-almeida.workers.dev\">View Jobs</a></p>
+                <hr>
+                <p><small>Job Agent — Auto-Discovery System</small></p>
+              "
+            }" || echo "⚠️ Email notification failed (non-critical)"
+
+      - name: Send failure notification
+        if: failure()
+        run: |
+          echo "⚠️ Auto-discovery failed. Check logs."
+          # Optional: Send failure notification here
