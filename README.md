@@ -1,313 +1,313 @@
-# Job Agent — 自动化求职助手
+# Job Agent — Automated Cloud Engineering Job Search
 
-一个自动化的云工程师求职助手：从 50+ 家公司招聘页面抓取职位，根据你的简历智能匹配排序，每天自动发邮件通知你最新的机会。不用打开电脑也能用，手机、平板都能访问。
+An automated job search agent that scrapes 50+ engineering career pages, ranks roles against your profile using a multi-signal scoring engine, and delivers daily email digests. Runs on Cloudflare (always-on dashboard) and GitHub Actions (daily email automation) — no manual effort required.
 
-**目标岗位：** GCP / 云计算 / 平台工程 / SRE，远程优先，面向国内。
-
----
-
-## 它能做什么
-
-1. **自动抓取招聘网站** — 从 Cloudflare、Stripe、Databricks、SpaceX 等 50+ 家公司的官方招聘页面抓职位，全部免费，不需要付费订阅
-2. **智能匹配排序** — 根据你的简历、技能、期望薪资，给每个职位打分（0-120分），分数越高越匹配
-3. **在线仪表盘** — 一个网页界面，手机上也能打开，看到所有匹配的职位、你的操作记录
-4. **每天自动发邮件** — 每天早上 8 点自动运行，把最新职位发到你邮箱，电脑不用开
-5. **持续跟踪** — 你标记过的职位（已申请/已跳过/已收藏）会一直保存，不会重复出现
+**Target roles:** GCP / Cloud / Platform / SRE engineers, remote-first, India-focused.
 
 ---
 
-## 工作流程
+## What It Does
+
+1. **Scrapes 50+ free company career APIs** — Direct access to Greenhouse boards (Cloudflare, Stripe, Databricks, SpaceX, etc.) with zero paywalls
+2. **Ranks jobs intelligently** — Multi-signal scoring: title match, skills overlap, remote fit, salary, recency; deals-breakers auto-filter sales/HR roles
+3. **Always-online dashboard** — Accessible from any device at https://job-agent-web.clinton-s-almeida.workers.dev; mark jobs as applied/skipped/saved and your choices persist
+4. **Daily email digest** — Automatically emailed every morning at 8:00 AM IST via GitHub Actions, even when your computer is off
+5. **Persistent tracking** — Jobs, applications, and scrape history stored in Cloudflare KV; survives across runs and devices
+
+---
+
+## How It Works
 
 ```
-┌─────────────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
-│   Cloudflare Worker │     │   GitHub Actions    │     │    你的邮箱          │
-│   (每天 7:30 AM)     │────▶│   (每天 8:00 AM)     │────▶│                   │
-│                     │     │                     │     │ 收到每日邮件 digest │
-│ • 抓 20 家公司职位   │     │ • 抓 50 家公司职位   │     │  附带完整报告附件   │
-│ • 存入在线数据库     │     │ • 生成 HTML 报告     │     │                   │
-│ • 供仪表盘查询       │     │ • 附报告到邮件       │     │                   │
-└─────────────────────┘     └─────────────────────┘     └─────────────────────┘
-         │                                                         
-         ▼                                                         
-  https://job-agent-web....workers.dev                           
-  任何设备都能打开的在线仪表盘                                       
+┌──────────────────────┐     ┌──────────────────────┐     ┌──────────────────────┐
+│  Cloudflare Worker   │     │  GitHub Actions      │     │     Your Email       │
+│  (runs 7:30 AM IST)  │────▶│  (runs 8:00 AM IST)  │────▶│                      │
+│                      │     │                      │     │  Daily digest email  │
+│  • Scrapes 20 boards │     │  • Scrapes 50 boards │     │  + full report       │
+│  • Stores in KV      │     │  • Generates HTML    │     │  attachment          │
+│  • Serves dashboard  │     │  • Sends via Resend  │     │                      │
+└──────────────────────┘     └──────────────────────┘     └──────────────────────┘
+         │
+         ▼
+  https://job-agent-web.clinton-s-almeida.workers.dev
+  Dashboard accessible from any device, any time
 ```
 
----
-
-## 在线仪表盘
-
-**地址：** https://job-agent-web.clinton-s-almeida.workers.dev
-
-打开后你可以：
-- 查看所有匹配的职位列表，按匹配分数排序
-- 点击 **"Apply"** 标记已申请（之后不会再出现）
-- 点击 **"Skip"** 标记不感兴趣（跳过此职位）
-- 点击 **"Save"** 收藏某个职位
-- 点击 **"Scrape Now"** 手动触发一次抓取
-
-所有操作都保存在云端，换设备、换浏览器都能看到你的记录。
+**Why two systems?**
+- The Cloudflare Worker keeps the dashboard live 24/7 with fast updates (20 boards due to CPU limits)
+- GitHub Actions runs the deeper, full scrape (50 boards) and handles email delivery
+- They're independent — one failing doesn't break the other
 
 ---
 
-## 项目结构
+## Online Dashboard
+
+**URL:** https://job-agent-web.clinton-s-almeida.workers.dev
+
+Open it on any phone, tablet, or computer. Features:
+
+- **Job list** — All matched positions sorted by relevance score
+- **Apply** — Mark a job as applied; it stays marked across all future scrapes
+- **Skip** — Mark as not interested; filtered from the default view
+- **Save** — Bookmark a job for later
+- **Scrape Now** — Trigger an immediate fresh scrape from the dashboard
+- **Filters** — View by status (new / applied / skipped / saved) and by source
+
+All actions are saved in the cloud. Switch devices and your history follows you.
+
+---
+
+## Project Structure
 
 ```
 job-agent-web/
-├── worker.js              # Cloudflare Worker — 在线服务（抓取 + 仪表盘 API）
-├── server.js              # 本地 Express 服务（可选，本地开发用）
-├── main.js                # 命令行入口（直接运行 node main.js --no-ai）
-├── wrangler.toml          # Cloudflare Worker 配置（KV 存储 ID 等）
-├── .env                   # 你的 API 密钥和邮箱（不被提交到 git）
+├── worker.js              # Cloudflare Worker — serves dashboard + handles scrapes
+├── server.js              # Local Express server (optional, for local dev)
+├── main.js                # CLI entry point — run locally with node main.js --no-ai
+├── wrangler.toml          # Cloudflare Worker config (KV namespace IDs, schedule)
+├── .env                   # Your API keys (never committed to git)
 ├── src/
-│   ├── scraper.js         # 爬虫 — 从各大招聘源抓职位数据
-│   ├── matcher.js         # 匹配引擎 — 根据你的简历打分
-│   ├── runner.js          # 流程控制 — 抓数据 → 打分 → 发邮件
-│   ├── email.js           # 邮件发送（通过 Resend API）
-│   ├── reporter.js        # HTML 报告生成
-│   ├── onboarding.js      # 第一次使用的向导程序
-│   ├── db.js              # 数据存储（SQLite / JSON 文件）
-│   └── tracker.js         # 申请状态跟踪
+│   ├── scraper.js         # Fetches jobs from Greenhouse, LinkedIn RSS, etc.
+│   ├── matcher.js         # Scores each job against your profile (0–120+ pts)
+│   ├── runner.js          # Pipeline: scrape → rank → save → generate report
+│   ├── email.js           # Sends daily digest via Resend API
+│   ├── reporter.js        # Generates the HTML report attached to emails
+│   ├── onboarding.js      # Interactive setup wizard (first-time users)
+│   ├── db.js              # Local data persistence (SQLite / JSON fallback)
+│   └── tracker.js         # Tracks which jobs you've applied to or skipped
 ├── public/
-│   ├── index.html         # 仪表盘页面
-│   ├── app.js             # 页面交互逻辑
-│   └── styles.css         # 页面样式
+│   ├── index.html         # Dashboard HTML page
+│   ├── app.js             # Dashboard interactivity
+│   └── styles.css         # Dashboard styling
 ├── data/
-│   └── jobs.db.json       # 本地持久化数据库
+│   └── jobs.db.json       # Local persistent job database
 └── .github/workflows/
-    └── daily-jobs.yml     # GitHub Actions 定时任务（每天 8:00 AM IST）
+    └── daily-jobs.yml     # GitHub Actions cron — runs every day at 8:00 AM IST
 ```
 
 ---
 
-## 快速上手（新手指南）
+## Setup (First-Time Users)
 
-### 第一步：安装依赖
+### Step 1 — Install
 
 ```bash
+git clone https://github.com/clinton-almeida-s/job-agent-web.git
+cd job-agent-web
 npm install
 ```
 
-### 第二步：运行设置向导
+### Step 2 — Run the Setup Wizard
 
 ```bash
 node main.js --setup
 ```
 
-向导会问你：
-- 你的名字和联系方式
-- 你期望的工作地点（远程 / 本地城市）
-- 你的技能关键词（比如：GCP、Kubernetes、Terraform）
-- 你期望的职位类型（GCP Engineer、Cloud Architect 等）
-- 最低薪资期望
+The wizard asks for:
+- Your name, email, phone, LinkedIn handle
+- Location preference (Mumbai / Remote / other cities)
+- Years of experience and current role
+- Key skills (comma-separated, e.g. `GCP, Kubernetes, Terraform`)
+- Target job titles (e.g. `GCP Engineer, Cloud Architect, SRE`)
+- Minimum salary expectation (in lakhs INR)
+- A short professional summary (used for AI cover letters)
 
-这些信息保存到 `data/profile.json`，后面匹配职位就用它来打分。
+This saves to `data/profile.json`.
 
-### 第三步：配置邮件通知（可选但推荐）
+### Step 3 — Configure Email (Optional but Recommended)
 
-创建一个 `.env` 文件，填入你的配置：
+Create a `.env` file in the project root:
 
 ```bash
-# 邮件通知（必须）
+# Email notifications (required for daily digest)
 RESEND_API_KEY=your_resend_api_key
 EMAIL_TO=your@email.com
 
-# AI 简历优化（可选）
+# AI cover letters (optional — needs Anthropic API key)
 ANTHROPIC_API_KEY=your_anthropic_key
 
-# LinkedIn 数据（可选，需要浏览器 cookies）
+# LinkedIn results (optional — cookies expire after a few days)
 LINKEDIN_COOKIES=your_session_cookies
 ```
 
-**怎么获取 Resend API Key：**
-1. 访问 https://resend.com
-2. 注册免费账号
-3. 进入 API Keys 页面 → Create API Key
-4. 免费额度：每天 100 封邮件
+**Getting a Resend API key (free):**
+1. Sign up at https://resend.com
+2. Go to API Keys → Create API Key
+3. Free tier: 100 emails/day — plenty for daily job digests
 
-### 第四步：运行第一次
+### Step 4 — Run Your First Scrape
 
 ```bash
-# 本地运行（不需要 AI）
+# Quick run (no AI, fastest)
 node main.js --no-ai
 
-# 或者启动本地仪表盘
+# With AI cover letters (slower, needs ANTHROPIC_API_KEY)
+node main.js
+
+# Or launch the local dashboard
 npm start
-# 然后打开 http://localhost:3000
+# Then open http://localhost:3000
 ```
 
 ---
 
-## 自动定时运行（GitHub Actions）
+## Daily Automation (GitHub Actions) — Recommended
 
-**推荐方式。** 在 GitHub 上自动每天运行，你的电脑关机也没关系。
+This runs automatically every day. Your computer can be off.
 
-### 配置步骤
+### 1. Add GitHub Secrets
 
-1. 去你的 GitHub 仓库 → Settings → Secrets and variables → Actions → New repository secret
+Go to your repo → Settings → Secrets and variables → Actions → New repository secret:
 
-2. 添加以下密钥：
+| Secret | Value |
+|--------|-------|
+| `RESEND_API_KEY` | Your Resend API key |
+| `EMAIL_TO` | `your@email.com` |
 
-| 密钥名 | 值 |
-|--------|-----|
-| `RESEND_API_KEY` | 你的 Resend API Key |
-| `EMAIL_TO` | 你的收件邮箱 |
+Optional secrets:
+| Secret | Value |
+|--------|-------|
+| `ANTHROPIC_API_KEY` | For AI cover letters |
+| `LINKEDIN_COOKIES` | For LinkedIn job results |
 
-可选密钥：
-| 密钥名 | 值 |
-|--------|-----|
-| `ANTHROPIC_API_KEY` | Anthropic API Key（用于 AI 简历优化） |
-| `LINKEDIN_COOKIES` | LinkedIn 登录 cookies |
+### 2. What Happens Each Run
 
-3. 每天自动运行时间：**北京时间早上 8:00**
+1. Checks out the code
+2. Installs dependencies
+3. Scrapes all 50 Greenhouse boards + LinkedIn (full descriptions)
+4. Ranks jobs against your profile
+5. Generates an HTML report
+6. Emails you a digest with top matches + attaches the full report
+7. Uploads the report as a 7-day artifact for download
 
-### 运行效果
+### 3. Schedule
 
-每次运行你会收到两封邮件：
-1. **摘要邮件** — 包含 Top 5 推荐职位 + 仪表盘链接
-2. **附件邮件** — 完整的 HTML 报告（含所有匹配职位）
+Runs every day at **8:00 AM IST** (2:30 AM UTC).
 
-### 手动触发测试
+### 4. Test Manually
 
-在 GitHub 仓库页面 → Actions → Daily Job Agent → "Run workflow"
+Go to Actions → Daily Job Agent → "Run workflow"
 
 ---
 
-## Cloudflare Workers 部署（可选）
+## Cloudflare Workers Deployment (Already Done)
 
-如果你希望仪表盘 **永远在线**，可以在 Cloudflare 上部署。
-
-### 前提条件
-
-- 有一个 Cloudflare 账号（免费注册）
-- 安装了 Wrangler CLI
-
-### 部署步骤
+The dashboard is already deployed and live. If you ever need to redeploy:
 
 ```bash
-# 1. 安装 Wrangler
 npm install -g wrangler
-
-# 2. 登录 Cloudflare
 wrangler login
 
-# 3. 创建 KV 存储（用来保存职位数据）
+# Create KV namespace (only needed once)
 wrangler kv namespace create JOBS_KV
 
-# 4. 把得到的 ID 填入 wrangler.toml 中的 id 和 preview_id
-
-# 5. 设置密钥
+# Set secrets (one-time)
 wrangler secret put RESEND_API_KEY
 wrangler secret put EMAIL_TO
 
-# 6. 部署
+# Deploy
 wrangler deploy
 ```
 
-部署后你的仪表盘会在：`https://job-agent-web.<你的子域名>.workers.dev`
+Your dashboard URL: `https://job-agent-web.<your-subdomain>.workers.dev`
 
-### 注意事项
-
-- Cloudflare 免费版有 CPU 时间限制，所以在线抓取只用了 20 家公司（速度更快）
-- GitHub Actions 全天运行，会用全部 50 家公司（数据更全）
-- 两个系统独立工作，互不影响
+**Note:** The Worker only scrapes 20 boards (vs. 50 on GitHub Actions) because Cloudflare has CPU time limits. The GitHub Actions run still fetches all 50 boards with full descriptions — they complement each other.
 
 ---
 
-## 职位来源
+## Job Sources
 
-### 已确认可用的来源
+### Working Sources
 
-| 来源 | 数量 | 说明 |
-|------|------|------|
-| **Greenhouse API** | 50 家 | 直接使用公司招聘 API，无付费墙 |
-| **LinkedIn RSS** | 实时 | 软性抓取，结果有限 |
+| Source | Boards | Notes |
+|--------|--------|-------|
+| **Greenhouse API** | 50 companies | Direct company career APIs, no paywall |
+| **LinkedIn RSS** | Real-time | Lightweight fetch, limited results |
 
-### 已尝试但被屏蔽的来源
+### Blocked / Removed Sources
 
-| 来源 | 状态 | 原因 |
-|------|------|------|
-| Naukri / Indeed | ❌ | 阻止自动化访问 |
-| RemoteOK / WeWorkRemotely | ❌ | 需要付费订阅 |
+| Source | Status | Reason |
+|--------|--------|--------|
+| Naukri / Indeed | ❌ Blocked | Anti-bot measures |
+| RemoteOK / WeWorkRemotely | ❌ Removed | Now require paid subscriptions |
 
-### 常用的 Greenhouse 公司示例
+### Sample Greenhouse Companies
 
-**国内热门：** 百度、滴滴、Coupang（韩国）、Mercari（日本）
+**India-friendly:** Baidu, DiDi, Coupang (Korea), Mercari (Japan)
 
-**海外远程友好：** Cloudflare、Stripe、Datadog、Databricks、MongoDB、Elastic、Okta、Figma、Vercel、Airbnb、Discord、Twitch、Reddit
+**Remote-friendly:** Cloudflare, Stripe, Datadog, Databricks, MongoDB, Elastic, Okta, Figma, Vercel, Airbnb, Discord, Twitch, Reddit
 
-**航天/军工：** SpaceX、RocketLab、Relativity Space
+**Space / Defense:** SpaceX, RocketLab, Relativity Space, BlackSky
 
-> 想添加更多公司？在 `src/scraper.js` 的 `boards` 数组中添加公司名称即可。
-
----
-
-## 职位打分规则
-
-每个职位根据以下维度打分（满分 120+）：
-
-| 维度 | 权重 | 说明 |
-|------|------|------|
-| 职位标题精确匹配 | 40 分 | 完全匹配你期望的职位类型 |
-| 职位标题模糊匹配 | 25 分 | 相似但不同表述（如 "云平台工程师" vs "GCP Engineer"） |
-| 核心技能匹配 | 15 分 | 要求你在技能列表中 |
-| 加分技能匹配 | 5 分 | 额外的技术栈匹配 |
-| 远程支持 | 20 分 | 确认提供远程工作 |
-| 混合办公 | 10 分 | 混合办公且在你喜欢的城市 |
-| 地点匹配 | 15 分 | 工作地点在你的偏好范围内 |
-| 全职/永久 | 10 分 | 正式全职岗位 |
-| 薪资达标 | 10 分 | 符合你的最低薪资期望 |
-| 发布时间 | 10 分 | 7 天内发布的优先 |
-
-**自动过滤规则：**
-- 销售/市场/HR 类职位会被直接排除
-- 薪资不符合要求的职位会降低排名
-- 低于 20 分的职位不会出现在结果中
+> To add more companies, edit the `boards` array in `src/scraper.js` line 272.
 
 ---
 
-## 常见问题
+## How Jobs Are Scored
 
-### 没有搜到职位怎么办？
+Each job gets a score from 0 to 120+ based on these signals:
 
-手动测试抓取：
+| Signal | Weight | Description |
+|--------|--------|-------------|
+| Title exact match | 40 pts | Matches your target titles exactly |
+| Title similarity | 25 pts | Fuzzy match (e.g. "Cloud Engineer" ≈ "GCP Engineer") |
+| Required skills | 15 pts | Skills listed in the job match your profile |
+| Bonus skills | 5 pts | Extra technology stack matches |
+| Remote | 20 pts | Confirmed remote role |
+| Hybrid | 10 pts | Hybrid in your preferred location |
+| Location | 15 pts | Job location within your preferences |
+| Employment type | 10 pts | Full-time / permanent |
+| Salary fit | 10 pts | Meets your minimum salary requirement |
+| Recency | 10 pts | Posted within the last 7 days |
+
+**Auto-filter rules:**
+- Sales, marketing, HR, recruiter roles are blocked entirely
+- Non-technical roles get penalized automatically
+- Jobs scoring below 20 points are excluded from results
+
+---
+
+## Troubleshooting
+
+### No jobs found
+
 ```bash
 node -e "const { scrapeAllSources } = require('./src/scraper'); scrapeAllSources(['GCP']).then(j => console.log(j.length, 'jobs'))"
 ```
 
-### 仪表盘打不开？
+### Dashboard won't load locally
 
 ```bash
-# 检查是否有进程占用了 3000 端口
+# Check what's using port 3000
 netstat -ano | findstr :3000
 
-# 杀掉旧进程
+# Kill the process
 taskkill /IM node.exe /F
 
-# 重新启动
+# Restart
 npm start
 ```
 
-### 收不到邮件？
+### Not receiving emails
 
-1. 检查 `.env` 里 `RESEND_API_KEY` 是否正确
-2. 查看垃圾邮件文件夹
-3. 访问 https://resend.com 查看发送记录
+1. Verify `.env` has `RESEND_API_KEY=your_actual_key`
+2. Check your spam folder
+3. Visit https://resend.com to see delivery status
 
-### LinkedIn 返回空结果？
+### LinkedIn returns no results
 
-Cookie 过期了。需要重新获取：
-1. 登录 LinkedIn
-2. 按 F12 → Network 标签 → 刷新页面
-3. 点任意请求 → Headers → Request Headers
-4. 找到 `cookie:` 那一行，复制值
-5. 填入 `.env` 的 `LINKEDIN_COOKIES`
+Your cookies have expired. Refresh them:
+1. Open LinkedIn while logged in
+2. Press F12 → Network tab → Refresh page
+3. Click any `linkedin.com` request → Headers → Request Headers
+4. Copy the value after `cookie:`
+5. Add to `.env`: `LINKEDIN_COOKIES=your-cookie-string`
 
-> 注意：LinkedIn cookies 几天后会失效，需要定期更新。
+> LinkedIn cookies expire after a few days. Update periodically.
 
-### 在线仪表盘显示的是旧数据？
+### Dashboard shows old data
 
-点击右上角的 **"Scrape Now"** 按钮手动刷新，或者等明天早上 7:30 自动更新。
+Click the **"Scrape Now"** button on the dashboard, or wait for the next automatic run at 7:30 AM IST.
 
 ---
 
