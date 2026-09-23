@@ -3,7 +3,26 @@
  * Runs the scraper on a daily cron and serves the dashboard API
  */
 
-// ── Data layer (KV-based) ───────────────────────────────────────────────────
+// Default boards — sync with data/boards.json manually or via config API
+const DEFAULT_BOARDS = [
+  'Cloudflare', 'Stripe', 'Datadog', 'Databricks', 'MongoDB', 'Elastic', 'Okta', 'Block',
+  'Roku', 'Roblox', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox', 'Asana',
+  'Intercom', 'Mixpanel', 'Amplitude', 'Monzo', 'Chime', 'GoCardless', 'Fastly', 'Netlify',
+  'Twilio', 'Lyft', 'Airbnb', 'Discord', 'Twitch', 'Reddit', 'Instacart',
+  'Figma', 'Vercel', 'NewRelic', 'SumoLogic', 'PagerDuty',
+  'Baidu', 'DiDi', 'Coupang', 'Mercari',
+  'SpaceX', 'RocketLab', 'Relativity', 'BlackSky',
+  'Engine', 'CFM', 'Alliance', 'Space', 'General'
+];
+
+function getWorkerBoards(kv) {
+  // Read boards from KV (updated via /api/config endpoint) or fall back to defaults
+  return loadData(kv, 'boards_config').then(function(cfg) {
+    return cfg.greenhouse && cfg.greenhouse.length > 0 ? cfg.greenhouse : DEFAULT_BOARDS;
+  }).catch(function() {
+    return DEFAULT_BOARDS;
+  });
+}
 
 async function loadData(kv, key) {
   try {
@@ -193,12 +212,13 @@ async function scrapeGreenhouse(board, kv) {
 }
 
 async function scrapeGreenhouseFiltered(keyword, kv) {
-  const boards = [
+  // Worker uses a subset of boards to avoid CPU timeout (20 of 45 total)
+  const workerBoards = [
     'Cloudflare', 'Stripe', 'Datadog', 'Databricks', 'MongoDB', 'Elastic', 'Okta', 'Block',
     'Roku', 'Roblox', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox', 'Asana',
     'Intercom', 'Figma', 'Vercel', 'Coupang'
   ];
-  // Batch to avoid CPU timeout (41 boards → 5 batches of ~8)
+  const boards = workerBoards;
   const batches = [];
   for (let i = 0; i < boards.length; i += 8) {
     batches.push(boards.slice(i, i + 8));
@@ -527,6 +547,25 @@ async function handleRequest(req, env) {
   if (path === '/api/scrape' && req.method === 'POST') {
     const result = await runScrape(env);
     return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } });
+  }
+
+  // Update boards configuration
+  if (path === '/api/config' && req.method === 'POST') {
+    const body = await req.json();
+    const cfg = {
+      greenhouse: body.greenhouse || DEFAULT_BOARDS,
+      lever: body.lever || [],
+      worker_limit: body.worker_limit || Math.min(20, (body.greenhouse || DEFAULT_BOARDS).length)
+    };
+    await saveData(env.JOBS_KV, 'boards_config', cfg);
+    return new Response(JSON.stringify({ success: true, message: 'Boards config updated' }),
+      { headers: { 'Content-Type': 'application/json' } });
+  }
+
+  // Read boards configuration
+  if (path === '/api/config' && req.method === 'GET') {
+    const cfg = await loadData(env.JOBS_KV, 'boards_config');
+    return new Response(JSON.stringify(cfg), { headers: { 'Content-Type': 'application/json' } });
   }
 
   // Serve static assets

@@ -5,6 +5,17 @@
 
 const https = require('https');
 const http  = require('http');
+const fs    = require('fs');
+const path  = require('path');
+
+function loadBoards() {
+  try {
+    const raw = fs.readFileSync(path.join(__dirname, '..', 'data', 'boards.json'), 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return { greenhouse: [], lever: [] };
+  }
+}
 
 // ── fetch helper ──────────────────────────────────────────────────────────────
 
@@ -268,20 +279,8 @@ async function scrapeGreenhouse(board, keyword) {
 }
 
 async function scrapeGreenhouseFiltered(keyword) {
-  // Companies using Greenhouse with cloud/GCP/engineering roles
-  const boards = [
-    'Cloudflare', 'Stripe', 'Datadog', 'Databricks', 'MongoDB', 'Elastic', 'Okta', 'Block',
-    'Roku', 'Roblox', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox', 'Asana',
-    'Intercom', 'Mixpanel', 'Amplitude', 'Monzo', 'Chime', 'GoCardless', 'Fastly', 'Netlify',
-    // Added 2026-09-23
-    'Twilio', 'Lyft', 'Airbnb', 'Discord', 'Twitch', 'Reddit', 'Instacart',
-    'Figma', 'Vercel', 'NewRelic', 'SumoLogic', 'PagerDuty',
-    'Baidu', 'DiDi', 'Coupang', 'Mercari',
-    // Space/Defense (high volume)
-    'SpaceX', 'RocketLab', 'Relativity', 'BlackSky',
-    // Industrial/Manufacturing
-    'Engine', 'CFM', 'Alliance', 'Space', 'General'
-  ];
+  const boards = loadBoards().greenhouse;
+  if (!boards.length) return [];
   const allResults = await Promise.allSettled(
     boards.map(board => scrapeGreenhouse(board, keyword))
   );
@@ -312,7 +311,8 @@ async function scrapeLever(board, keyword) {
 }
 
 async function scrapeLeverFiltered(keyword) {
-  const boards = ['airbnb', 'uber', 'spotify', 'shopify', 'coinbase', 'discord', 'slack', 'netflix'];
+  const boards = loadBoards().lever;
+  if (!boards.length) return [];
   const allResults = await Promise.allSettled(
     boards.map(board => scrapeLever(board, keyword))
   );
