@@ -193,7 +193,7 @@ async function scrapeGreenhouse(board, kv) {
 }
 
 async function scrapeGreenhouseFiltered(keyword, kv) {
-  const boards = ['Google', 'Cloudflare', 'Stripe', 'Datadog', 'Vercel', 'GitLab', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox'];
+  const boards = ['Cloudflare', 'Stripe', 'Datadog', 'Databricks', 'MongoDB', 'Elastic', 'Okta', 'Block', 'Roku', 'Roblox', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox', 'Asana', 'Intercom', 'Mixpanel', 'Amplitude', 'Monzo', 'Chime', 'GoCardless', 'Fastly', 'PlanetScale', 'Netlify'];
   const allResults = await Promise.allSettled(
     boards.map(function(board) { return scrapeGreenhouse(board, kv); })
   );
