@@ -413,7 +413,12 @@ async function runScrape(env) {
   const newJobs = await scrapeAllSources(profile, env.JOBS_KV);
   console.log('Scraped ' + newJobs.length + ' new jobs');
 
-  const allJobs = jobList.concat(newJobs);
+  // Build set of existing IDs to avoid duplicating already-tracked jobs
+  const existingIds = new Set(jobList.map(function(j) { return j.id; }));
+  const freshJobs = newJobs.filter(function(j) { return !existingIds.has(j.id); });
+  console.log('Fresh jobs (not in KV): ' + freshJobs.length + ' / duplicates skipped: ' + (newJobs.length - freshJobs.length));
+
+  const allJobs = jobList.concat(freshJobs);
   const ranked = allJobs.map(function(j) { return scoreJob(j, profile); }).sort(function(a, b) { return b.score - a.score; });
 
   await saveData(env.JOBS_KV, 'jobs', { jobs: ranked });
