@@ -12,7 +12,9 @@ const DEFAULT_BOARDS = [
   'Figma', 'Vercel', 'NewRelic', 'SumoLogic', 'PagerDuty',
   'Baidu', 'DiDi', 'Coupang', 'Mercari',
   'SpaceX', 'RocketLab', 'Relativity', 'BlackSky',
-  'Engine', 'CFM', 'Alliance', 'Space', 'General'
+  'Engine', 'CFM', 'Alliance', 'Space', 'General',
+  'Airtable', 'Amwell', 'Zocdoc', 'Coursera', 'Udemy', 'Duolingo', 'Kayak', 'BuzzFeed', 'Gemini',
+  'Groww', 'TCS', 'IndiGo', 'Zenoti'
 ];
 
 function getWorkerBoards(kv) {

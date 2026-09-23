@@ -9,12 +9,6 @@
     "SpaceX", "RocketLab", "Relativity", "BlackSky",
     "Engine", "CFM", "Alliance", "Space", "General",
     "Airtable", "Amwell", "Zocdoc", "Coursera", "Udemy", "Duolingo", "Kayak", "BuzzFeed", "Gemini",
-    "Zomato", "Swiggy", "Flipkart", "PhonePe", "CRED", "Zerodha", "Groww", "Meesho", "Razorpay",
-    "Paytm", "BYJU's", "Unacademy", "Postman", "BrowserStack", "Freshworks", "Zoho", "MakeMyTrip",
-    "PayU", "Cognizant", "TCS", "Infosys", "Wipro", "HCL", "Accenture", "Deloitte", "EY",
-    "KPMG", "Bain", "BCG", "McKinsey", "Goldman Sachs", "JPMorgan", "Morgan Stanley", "Citadel",
-    "Jane Street", "Two Sigma", "DE Shaw", "HRT", "Optiver", "IMC", "Flow Traders",
-    // Verified Indian Greenhouse Companies
     "Groww", "TCS", "IndiGo", "Zenoti"
   ],
   "lever": ["airbnb", "uber", "spotify", "shopify", "coinbase", "discord", "slack", "netflix"],
