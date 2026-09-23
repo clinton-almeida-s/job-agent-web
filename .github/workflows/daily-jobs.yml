@@ -2,8 +2,8 @@ name: Daily Job Agent
 
 on:
   schedule:
-    # Run at 2:00 AM UTC daily (8:30 AM IST) — adjusted for cleaner scheduling
-    - cron: '0 2 * * *'
+    # Run at 2:30 AM UTC daily (8:00 AM IST)
+    - cron: '30 2 * * *'
   workflow_dispatch:
     # Allow manual trigger
 
@@ -27,14 +27,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # NOTE: Do NOT clear job tracker here — doing so would lose persistence of applied/jobs across runs.
-      # The local data/applied.json is preserved between workflow runs; if you need to reset,
-      # delete the file manually or commit an empty state to the repo.
-
       - name: Run job agent
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           LINKEDIN_COOKIES: ${{ secrets.LINKEDIN_COOKIES }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
         run: node main.js --no-ai
 
       - name: Rename report to consistent name
@@ -48,20 +46,6 @@ jobs:
           name: job-report
           path: output/report-latest.html
           retention-days: 7
-
-      - name: Check secrets
-        run: |
-          echo "Checking secrets configuration..."
-          if [ -z "${{ secrets.RESEND_API_KEY }}" ]; then
-            echo "WARNING: RESEND_API_KEY is not set"
-          else
-            echo "RESEND_API_KEY is configured (hidden)"
-          fi
-          if [ -z "${{ secrets.EMAIL_TO }}" ]; then
-            echo "WARNING: EMAIL_TO is not set"
-          else
-            echo "EMAIL_TO is configured (hidden)"
-          fi
 
       - name: Send email with Resend API
         run: |
