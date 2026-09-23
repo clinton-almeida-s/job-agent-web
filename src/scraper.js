@@ -269,7 +269,14 @@ async function scrapeGreenhouse(board, keyword) {
 
 async function scrapeGreenhouseFiltered(keyword) {
   // Companies using Greenhouse with cloud/GCP/engineering roles
-  const boards = ['Cloudflare', 'Stripe', 'Datadog', 'Databricks', 'MongoDB', 'Elastic', 'Okta', 'Block', 'Roku', 'Roblox', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox', 'Asana', 'Intercom', 'Mixpanel', 'Amplitude', 'Monzo', 'Chime', 'GoCardless', 'Fastly', 'PlanetScale', 'Netlify'];
+  const boards = [
+    'Cloudflare', 'Stripe', 'Datadog', 'Databricks', 'MongoDB', 'Elastic', 'Okta', 'Block',
+    'Roku', 'Roblox', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox', 'Asana',
+    'Intercom', 'Mixpanel', 'Amplitude', 'Monzo', 'Chime', 'GoCardless', 'Fastly', 'Netlify',
+    // Added 2026-09-23
+    'Twilio', 'Lyft', 'Airbnb', 'Discord', 'Twitch', 'Reddit', 'Instacart',
+    'Figma', 'Vercel', 'NewRelic', 'SumoLogic', 'PagerDuty'
+  ];
   const allResults = await Promise.allSettled(
     boards.map(board => scrapeGreenhouse(board, keyword))
   );
