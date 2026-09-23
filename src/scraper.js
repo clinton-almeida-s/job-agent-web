@@ -275,7 +275,8 @@ async function scrapeGreenhouseFiltered(keyword) {
     'Intercom', 'Mixpanel', 'Amplitude', 'Monzo', 'Chime', 'GoCardless', 'Fastly', 'Netlify',
     // Added 2026-09-23
     'Twilio', 'Lyft', 'Airbnb', 'Discord', 'Twitch', 'Reddit', 'Instacart',
-    'Figma', 'Vercel', 'NewRelic', 'SumoLogic', 'PagerDuty'
+    'Figma', 'Vercel', 'NewRelic', 'SumoLogic', 'PagerDuty',
+    'Baidu', 'DiDi', 'Coupang', 'Mercari'
   ];
   const allResults = await Promise.allSettled(
     boards.map(board => scrapeGreenhouse(board, keyword))

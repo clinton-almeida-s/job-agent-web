@@ -198,7 +198,8 @@ async function scrapeGreenhouseFiltered(keyword, kv) {
     'Roku', 'Roblox', 'Pinterest', 'Coinbase', 'Robinhood', 'Brex', 'Dropbox', 'Asana',
     'Intercom', 'Mixpanel', 'Amplitude', 'Monzo', 'Chime', 'GoCardless', 'Fastly', 'Netlify',
     'Twilio', 'Lyft', 'Airbnb', 'Discord', 'Twitch', 'Reddit', 'Instacart',
-    'Figma', 'Vercel', 'NewRelic', 'SumoLogic', 'PagerDuty'
+    'Figma', 'Vercel', 'NewRelic', 'SumoLogic', 'PagerDuty',
+    'Baidu', 'DiDi', 'Coupang', 'Mercari'
   ];
   const allResults = await Promise.allSettled(
     boards.map(function(board) { return scrapeGreenhouse(board, kv); })
