@@ -255,7 +255,7 @@ async function scrapeGreenhouse(board, keyword) {
     config = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'boards.json'), 'utf-8'));
   } catch { /* use defaults */ }
 
-  const limit = config.max_jobs_per_board || 30;
+  const limit = config.max_jobs_per_board || 15;
   const { status, body } = await fetchUrl(
     `https://boards-api.greenhouse.io/v1/boards/${board}/jobs?content=true&limit=${limit}`
   );

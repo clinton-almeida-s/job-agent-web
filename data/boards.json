@@ -69,5 +69,7 @@
     "slack",
     "netflix"
   ],
-  "worker_limit": 20
+  "worker_limit": 20,
+  "max_jobs_per_board": 15,
+  "max_total_jobs": 3000
 }

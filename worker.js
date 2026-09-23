@@ -182,7 +182,7 @@ async function scrapeLinkedInRSS(keyword, kv) {
 async function scrapeGreenhouse(board, kv) {
   // Use content=false for speed — no description needed in Worker
   // Limit jobs per board to prevent exponential growth
-  const url = 'https://boards-api.greenhouse.io/v1/boards/' + board + '/jobs?content=false&limit=30';
+  const url = 'https://boards-api.greenhouse.io/v1/boards/' + board + '/jobs?content=false&limit=15';
   const { status, body } = await fetchUrl(url);
   if (status !== 200) return [];
   try {
