@@ -71,22 +71,35 @@ function parseSalaryMin(salaryStr) {
   return 0;
 }
 
-const REGION_KEYWORDS = {
-  india: ['india', 'mumbai', 'delhi', 'bangalore', 'hyderabad', 'chennai', 'pune', 'kolkata', 'ahmedabad', 'kochi', 'bangalore', 'bengaluru', 'blr', 'in ', '₹', 'inr', 'groww', 'tcs', 'wipro', 'infosys', 'tech mahindra', 'zomato', 'swiggy', 'flipkart', 'phonepe', 'cred', 'zerodha', 'meesho', 'razorpay', 'paytm', 'byju', 'unacademy', 'postman', 'browserstack', 'freshworks', 'zoho', 'make my trip', 'payu'],
-  usa: ['usa', 'us ', 'united states', 'new york', 'san francisco', 'austin', 'seattle', 'boston', 'chicago', 'denver', 'atlanta', 'dallas', 'miami', 'los angeles', 'usd', 'us$'],
-  europe: ['europe', 'uk ', 'london', 'berlin', 'paris', 'amsterdam', 'dublin', 'stockholm', 'oslo', 'helsinki', 'zurich', 'zurich', 'geneva', 'milan', 'madrid', 'barcelona', 'lisbon', 'eur', '€', 'eu'],
-  'asia-pacific': ['china', 'shanghai', 'beijing', 'shenzhen', 'hong kong', 'taiwan', 'singapore', 'sydney', 'melbourne', 'tokyo', 'osaka', 'seoul', 'manila', 'jakarta', 'kuala lumpur', 'thailand', 'vietnam', 'philippines', 'cny', '¥', 'sgd', 'aud', 'jpy']
-};
+function isRegionMatch(text, keyword) {
+  if (keyword.includes(' ')) {
+    // Multi-word keywords: exact phrase match
+    return text.includes(keyword.toLowerCase());
+  }
+  // Single-word keywords: use word boundaries to avoid false matches
+  // e.g. "in " should not match "chicago"
+  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp('(?:^|\\s|;|,|\\\\|\\(|\\)|-)' + escaped + '(?:$|\\s|;|,|\\\\|\\)|-)', 'i').test(text);
+}
 
 function classifyRegion(job) {
   const text = (job.location + ' ' + job.title + ' ' + job.description + ' ' + job.company).toLowerCase();
-  for (const [region, keywords] of Object.entries(REGION_KEYWORDS)) {
+  const priority = ['india', 'usa', 'europe', 'asia-pacific'];
+  for (const region of priority) {
+    const keywords = REGION_KEYWORDS[region];
     for (const kw of keywords) {
-      if (text.includes(kw)) return region;
+      if (isRegionMatch(text, kw)) return region;
     }
   }
   return '';
 }
+
+const REGION_KEYWORDS = {
+  india: ['india', 'mumbai', 'delhi', 'bangalore', 'hyderabad', 'chennai', 'pune', 'kolkata', 'ahmedabad', 'kochi', 'bengaluru', 'blr', 'inr', '₹', 'groww', 'tcs', 'wipro', 'infosys', 'tech mahindra', 'zomato', 'swiggy', 'flipkart', 'phonepe', 'cred', 'zerodha', 'meesho', 'razorpay', 'paytm', 'byju', 'unacademy', 'postman', 'browserstack', 'freshworks', 'zoho', 'make my trip', 'payu'],
+  usa: ['usa', 'us ', 'united states', 'new york', 'san francisco', 'austin', 'seattle', 'boston', 'chicago', 'denver', 'atlanta', 'dallas', 'miami', 'los angeles', 'usd'],
+  europe: ['europe', 'uk ', 'london', 'berlin', 'paris', 'amsterdam', 'dublin', 'stockholm', 'oslo', 'helsinki', 'zurich', 'geneva', 'milan', 'madrid', 'barcelona', 'lisbon', 'eur', 'eu'],
+  'asia-pacific': ['china', 'shanghai', 'beijing', 'shenzhen', 'hong kong', 'taiwan', 'singapore', 'sydney', 'melbourne', 'tokyo', 'osaka', 'seoul', 'manila', 'jakarta', 'kuala lumpur', 'thailand', 'vietnam', 'philippines', 'cny', 'sgd', 'aud', 'jpy']
+};
 
 function parseRssXml(xml) {
   const items = [];
