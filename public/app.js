@@ -246,16 +246,14 @@ function bindEvents() {
     loadJobs();
   };
 
+  function onFilterChange() { loadJobs(); updateClearButton(); }
   document.getElementById('statusFilter').onchange = loadJobs;
-  document.getElementById('companyFilter').onchange = loadJobs;
-  document.getElementById('regionFilter').onchange = loadJobs;
-  document.getElementById('jobTypeFilter').onchange = loadJobs;
+  document.getElementById('companyFilter').onchange = onFilterChange;
+  document.getElementById('regionFilter').onchange = onFilterChange;
+  document.getElementById('jobTypeFilter').onchange = onFilterChange;
   document.getElementById('sourceFilter').onchange = loadJobs;
   document.getElementById('sortFilter').onchange = loadJobs;
   document.getElementById('searchInput').oninput = () => { clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => { loadJobs(); updateClearButton(); }, 300); };
-  document.getElementById('companyFilter').onchange = updateClearButton;
-  document.getElementById('regionFilter').onchange = updateClearButton;
-  document.getElementById('jobTypeFilter').onchange = updateClearButton;
   document.getElementById('bulkSave').onclick = bulkSave;
   document.getElementById('bulkSkip').onclick = bulkSkipLow;
   document.getElementById('closeProfileBtn').onclick = () => document.getElementById('profileModal').style.display = 'none';
