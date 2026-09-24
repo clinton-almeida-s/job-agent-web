@@ -578,28 +578,8 @@ async function handleRequest(req, env) {
       skipped_jobs: skipped, saved_jobs: saved, ignored_jobs: ignored,
       last_run: runs.lastRun || null, profile_name: profile.name || 'Not set'
     }), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
-  
-
-  // Re-score all jobs with updated profile
-  if (path === '/api/rescore' && req.method === 'POST') {
-    const profile = await loadData(env.JOBS_KV, 'profile');
-    if (!profile.name) return new Response(JSON.stringify({ error: 'No profile found' }), { status: 400 });
-    const savedJobs = await loadData(env.JOBS_KV, 'jobs');
-    const jobList = savedJobs.jobs || [];
-    const rescored = jobList.map(function(j) {
-      const scored = scoreJob(j, profile);
-      if (j.status && j.status !== 'new') scored.status = j.status;
-      return scored;
-    });
-    await saveData(env.JOBS_KV, 'jobs', { jobs: rescored });
-    const matched = rescored.filter(function(j) { return j.score >= 35; }).length;
-    const runStats = await loadData(env.JOBS_KV, 'scrape_runs');
-    runStats.lastRun = { fetched: rescored.length, total: rescored.length, matched: matched, at: new Date().toISOString() };
-    await saveData(env.JOBS_KV, 'scrape_runs', runStats);
-    return new Response(JSON.stringify({ success: true, total: rescored.length, matched: matched }),
-      { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
   }
-}
+
 
   if (path === '/api/jobs' && req.method === 'GET') {
     const jobs = await loadData(env.JOBS_KV, 'jobs');
