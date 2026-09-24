@@ -191,9 +191,11 @@ function jobCard(job, index) {
 
 // ── Actions ───────────────────────────────────────────────────────────────────
 async function markAction(jobId, action) {
-  console.log('[Job Agent] markAction:', jobId, action);
+  // Map action names to API endpoints
+  const endpoint = action === 'applied' ? 'apply' : action;
+  console.log('[Job Agent] markAction:', jobId, action, '-> endpoint:', endpoint);
   try {
-    const resp = await fetch(`${API}/${action}`, { 
+    const resp = await fetch(`${API}/${endpoint}`, { 
       method: 'POST', 
       headers: { 'Content-Type': 'application/json' }, 
       body: JSON.stringify({ jobId }) 
