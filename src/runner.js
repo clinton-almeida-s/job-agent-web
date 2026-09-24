@@ -13,7 +13,7 @@ const {
   startScrapeRun, finishScrapeRun, getStats
 } = require('./db');
 const { generateCoverLetter } = require('./coverLetter');
-const { sendDailyDigest } = require('./email');
+const { sendDashboardDigest } = require('./email');
 
 async function run(options = {}) {
   const { headless = true, noAI = false, openReport = false, topN = 40, detailEnrich = 15 } = options;
@@ -110,7 +110,7 @@ async function run(options = {}) {
   if (profile?.email && process.env.RESEND_API_KEY) {
     console.log('\n📧 Sending daily email digest...');
     try {
-      const emailResult = await sendDailyDigest(topJobs, profile.email);
+      const emailResult = await sendDailyDigest(topJobs, getStats(), profile.email);
       console.log(`   Email ${emailResult.success ? 'sent successfully' : 'failed: ' + emailResult.reason}`);
     } catch (e) {
       console.log('   Email error:', e.message);

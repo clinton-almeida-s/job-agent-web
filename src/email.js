@@ -48,47 +48,73 @@ function sendEmail(to, subject, html) {
   });
 }
 
-async function sendDailyDigest(jobs, recipient) {
+async function sendDailyDigest(topJobs, stats, recipient) {
   if (!recipient) return { success: false, reason: 'No recipient' };
 
-  const topJobs = jobs.slice(0, 5).map(j => `
-    <li style="margin-bottom:1rem">
-      <a href="${j.url}" style="color:#2563eb;text-decoration:none;font-weight:600">${j.title}</a>
-      <span style="color:#64748b;margin-left:.5rem">${j.company}</span>
-      <div style="font-size:.85rem;color:#94a3b8;margin-top:.25rem">
-        ${j.match_reasons.slice(0, 2).join(' · ')}
-      </div>
-      <a href="${j.url}" style="display:inline-block;margin-top:.5rem;padding:.4rem .8rem;background:#2563eb;color:white;border-radius:6px;font-size:.8rem;text-decoration:none">View Job</a>
-    </li>
+  const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const lastRun = stats?.last_run?.started_at ? new Date(stats.last_run.started_at).toLocaleString('en-GB') : 'never';
+
+  const jobRows = topJobs.slice(0, 10).map((j, i) => `
+    <tr style="border-bottom:1px solid #1e293b">
+      <td style="padding:.5rem .75rem;color:#60a5fa;font-weight:600;white-space:nowrap">${i + 1}</td>
+      <td style="padding:.5rem .75rem">
+        <a href="${j.url}" style="color:#e2e8f0;text-decoration:none;font-weight:600">${j.title}</a>
+        <div style="color:#94a3b8;font-size:.8rem;margin-top:.15rem">${j.company}</div>
+      </td>
+      <td style="padding:.5rem .75rem;color:#94a3b8;font-size:.85rem;max-width:22rem">
+        ${(j.match_reasons || []).slice(0, 2).join(' · ')}
+      </td>
+    </tr>
   `).join('');
 
   const html = `
 <!DOCTYPE html>
 <html>
-<head><style>
+<head><meta charset="UTF-8"/>
+<style>
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; padding: 2rem; }
-  .container { max-width: 600px; margin: 0 auto; }
-  h1 { color: #60a5fa; }
-  ul { list-style: none; padding: 0; }
+  .container { max-width: 640px; margin: 0 auto; }
+  h1 { color: #60a5fa; font-size: 1.4rem; }
+  .grid { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1.5rem 0; }
+  .stat { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: .75rem 1rem; flex: 1; min-width: 100px; }
+  .stat b { color: #60a5fa; font-size: 1.3rem; display: block; }
+  .stat span { font-size: .78rem; color: #94a3b8; }
+  table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  th { text-align: left; color: #64748b; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; padding: .4rem .75rem; border-bottom: 1px solid #334155; }
+  td { font-size: .875rem; }
   .footer { color: #64748b; font-size: .8rem; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #334155; }
+  .cta { display: inline-block; margin-top: 1.5rem; padding:.75rem 1.5rem; background:#2563eb; color:white; border-radius:8px; text-decoration:none; font-weight:600; }
 </style></head>
 <body>
   <div class="container">
-    <h1>🔎 Daily Job Report</h1>
-    <p>Found <strong>${jobs.length} new jobs</strong> matching your profile today:</p>
-    <ul>${topJobs}</ul>
+    <h1>📊 Job Agent Dashboard</h1>
+    <p style="color:#94a3b8;margin-top:.25rem">${today} &nbsp;|&nbsp; Last run: ${lastRun}</p>
+
+    <div class="grid">
+      <div class="stat"><b>${stats?.total_jobs || 0}</b><span>Total jobs</span></div>
+      <div class="stat"><b>${stats?.new_jobs || 0}</b><span>New today</span></div>
+      <div class="stat"><b>${stats?.applied_jobs || 0}</b><span>Applied</span></div>
+      <div class="stat"><b>${stats?.skipped_jobs || 0}</b><span>Skipped</span></div>
+      <div class="stat"><b>${stats?.saved_jobs || 0}</b><span>Saved</span></div>
+    </div>
+
+    <h2 style="color:#60a5fa;font-size:1.05rem">🏆 Top ${topJobs.length} Matches</h2>
+    <table>
+      <thead><tr><th>#</th><th>Job</th><th>Why it matched</th></tr></thead>
+      <tbody>${jobRows || '<tr><td colspan="3" style="color:#64748b;padding:1rem">No new matching jobs found today.</td></tr>'}</tbody>
+    </table>
+
     <p style="margin-top:1.5rem">
-      <a href="https://job-agent-web.clinton-s-almeida.workers.dev" style="padding:.75rem 1.5rem;background:#2563eb;color:white;border-radius:8px;text-decoration:none;font-weight:600">View All Jobs in Dashboard</a>
+      <a href="https://job-agent-web.clinton-s-almeida.workers.dev" class="cta">Open Dashboard</a>
     </p>
     <div class="footer">
-      <p>You're receiving this because you have a job search agent running.</p>
-      <p>To stop these emails, update your profile settings.</p>
+      <p>Job Agent — daily digest. Review all applications before submitting.</p>
     </div>
   </div>
 </body>
 </html>`;
 
-  return sendEmail(recipient, `Daily GCP Jobs Report - ${new Date().toLocaleDateString()}`, html);
+  return sendEmail(recipient, `Job Agent Dashboard — ${today}`, html);
 }
 
 async function sendWeeklyDigest(jobs, stats, recipient) {

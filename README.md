@@ -83,8 +83,8 @@ job-agent-web/
 │   ├── matcher.js         # Scores each job against your profile (0–120+ pts)
 │   ├── runner.js          # Pipeline: scrape → rank → save → email
 │   ├── discover.js        # Auto-discovers new Greenhouse companies
-│   ├── email.js           # Sends daily digest via Resend API
-│   ├── reporter.js        # Generates the HTML report attached to emails
+│   ├── email.js           # Sends daily dashboard digest via Resend API
+│   ├── reporter.js        # Generates the local HTML report (optional)
 │   ├── onboarding.js      # Interactive setup wizard (first-time users)
 │   ├── db.js              # Local data persistence (SQLite / JSON fallback)
 │   └── tracker.js         # Tracks which jobs you've applied to or skipped
@@ -195,9 +195,7 @@ Optional secrets:
 2. Installs dependencies
 3. Scrapes all 50 Greenhouse boards + LinkedIn
 4. Ranks jobs against your profile
-5. Generates an HTML report
-6. Emails you a digest with top matches + attaches the full report
-7. Uploads the report as a 7-day artifact for download
+5. Emails you a single digest with dashboard details (job counts + top matches)
 
 ### 3. Schedule
 
