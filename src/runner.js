@@ -13,7 +13,7 @@ const {
   startScrapeRun, finishScrapeRun, getStats
 } = require('./db');
 const { generateCoverLetter } = require('./coverLetter');
-const { sendDashboardDigest } = require('./email');
+const { sendDailyDigest } = require('./email');
 
 async function run(options = {}) {
   const { headless = true, noAI = false, openReport = false, topN = 40, detailEnrich = 15 } = options;
