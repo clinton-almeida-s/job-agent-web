@@ -631,6 +631,14 @@ async function handleRequest(req, env) {
     return new Response(getAppJs(), { headers: { 'Content-Type': 'application/javascript', 'Cache-Control': 'no-store' } });
   }
 
+  // API endpoint not found - return 404 JSON
+  if (path.startsWith('/api/')) {
+    return new Response(JSON.stringify({ error: 'Not found', path: path }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
+    });
+  }
+  
   // Serve dashboard HTML for SPA fallback
   return new Response(getDashboardHtml(Date.now()), {
     headers: { 'Content-Type': 'text/html', 'Cache-Control': 'no-store' }
@@ -678,8 +686,15 @@ function getDashboardHtmlRaw() {
 
 export default {
   async fetch(req, env, ctx) {
-    return handleRequest(req, env);
+    // Add CORS headers to allow browser access
+    const origin = req.headers.get('Origin');
+    const response = await handleRequest(req, env);
+    response.headers.set('Access-Control-Allow-Origin', origin || '*');
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    return response;
   },
+
 
   async schedule(event) {
     console.log('Running daily job scrape...');
