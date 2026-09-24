@@ -56,6 +56,7 @@ async function loadStats() {
 
 // ── Jobs ──────────────────────────────────────────────────────────────────────
 async function loadJobs() {
+  console.log('[Job Agent] loadJobs called');
   const status = document.getElementById('statusFilter').value;
   const company = document.getElementById('companyFilter').value;
   const region = document.getElementById('regionFilter').value;
@@ -201,11 +202,14 @@ async function markAction(jobId, action) {
       body: JSON.stringify({ jobId }) 
     });
     console.log('[Job Agent] Response status:', resp.status);
+    console.log('[Job Agent] Response contentType:', resp.headers.get('content-type'));
+    const text = await resp.text();
+    console.log('[Job Agent] Response body:', text);
     if (!resp.ok) {
-      throw new Error('HTTP ' + resp.status + ': ' + await resp.text());
+      throw new Error('HTTP ' + resp.status + ': ' + text);
     }
-    const result = await resp.json();
-    console.log('[Job Agent] Response:', result);
+    const result = JSON.parse(text);
+    console.log('[Job Agent] Parsed response:', result);
     toast(`${action.charAt(0).toUpperCase() + action.slice(1)}d job`);
     await loadJobs();
   } catch (err) {
