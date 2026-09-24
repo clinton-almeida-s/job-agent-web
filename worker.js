@@ -393,6 +393,11 @@ function scoreJob(job, profile) {
   } else {
     const simScore = titleSimilarity(job.title, target_titles);
     if (simScore > 0.3) {
+      // Reject fuzzy matches that lack any engineering/cloud signal in title
+      const hasTechSignal = /engineer|architect|developer|infra|devops|sre|gcp|google\s*cloud|aws|azure|kubernetes|terraform|cloud/i.test(normalize(job.title));
+      if (!hasTechSignal) {
+        return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['No engineering signal in title'] });
+      }
       score += Math.round(25 * simScore);
       reasons.push('Title similarity: ' + Math.round(simScore * 100) + '%');
       hasTitleSignal = true;
