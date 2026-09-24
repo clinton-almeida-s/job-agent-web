@@ -193,7 +193,7 @@ function jobCard(job, index) {
 async function markAction(jobId, action) {
   await fetch(`${API}/${action}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jobId }) });
   toast(`${action.charAt(0).toUpperCase() + action.slice(1)}d job`);
-  loadJobs();
+  await loadJobs();
 }
 
 async function bulkSave() {
