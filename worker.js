@@ -551,22 +551,27 @@ async function handleRequest(req, env) {
     const savedJobs = await loadData(env.JOBS_KV, 'jobs');
     const jobList = savedJobs.jobs || [];
     
-    // Fast pre-filter: only rescore jobs with potential (title contains keywords or has recent date)
+    // Fast pre-filter: only rescore jobs with strong potential to avoid CPU timeout
     const preFilterKeywords = profile.required_keywords || [];
     const preFilterTitles = profile.target_titles || [];
     const now = Date.now();
-    
+
+    // Only process jobs with exact title keyword matches OR very recent posts OR existing positive scores
     const promisingJobs = jobList.filter(function(j) {
       const title = (j.title || '').toLowerCase();
-      const hasKeyword = preFilterKeywords.some(function(kw) { 
-        return title.includes(kw.toLowerCase()); 
+      // Check for strong title matches (exact keyword presence)
+      const hasStrongTitleMatch = preFilterTitles.some(function(t) {
+        return title.includes(t.toLowerCase());
       });
-      const hasTitleMatch = preFilterTitles.some(function(t) { 
-        return title.includes(t.toLowerCase()); 
+      // Check for keyword matches in title
+      const hasKeywordInTitle = preFilterKeywords.some(function(kw) {
+        return title.includes(kw.toLowerCase());
       });
-      const isRecent = j.posted_at && (now - new Date(j.posted_at).getTime()) < 30 * 24 * 60 * 60 * 1000;
-      const hasExistingScore = j.score > 0;
-      return hasKeyword || hasTitleMatch || isRecent || hasExistingScore;
+      // Very recent jobs (within 7 days)
+      const isVeryRecent = j.posted_at && (now - new Date(j.posted_at).getTime()) < 7 * 24 * 60 * 60 * 1000;
+      // Already has positive score
+      const hasExistingScore = (j.score || 0) > 0;
+      return hasStrongTitleMatch || hasKeywordInTitle || isVeryRecent || hasExistingScore;
     });
     
     const rescored = promisingJobs.map(function(j) {
