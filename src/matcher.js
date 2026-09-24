@@ -105,6 +105,27 @@ function checkSkipKeywords(job) {
   return null;
 }
 
+function checkDealBreakers(job) {
+  const text = [job.title, job.company].join(' ');
+  const breakers = containsAny(text, (profile.deal_breakers || []), true);
+  if (breakers.length === 0) return null;
+
+  const hardBlockers = breakers.filter(b => !SOFT_BREAKERS.includes(b));
+  if (hardBlockers.length > 0) {
+    return { blocked: true, reason: `Deal-breaker: ${hardBlockers.join(', ')}` };
+  }
+  if (!isTechnicalTitle(job.title)) {
+    return { blocked: true, reason: `Deal-breaker: ${breakers.join(', ')}` };
+  }
+  // Additional hard blockers for sales engineer roles that slip through
+  const titleLower = normalize(job.title);
+  const salesEngineerBlocks = containsAny(titleLower, HARD_BREAKERS, true);
+  if (salesEngineerBlocks.length > 0) {
+    return { blocked: true, reason: `Deal-breaker: ${salesEngineerBlocks.join(', ')}` };
+  }
+  return { blocked: false, softBreakers: breakers };
+}
+
 /**
  * Score a single job against the user profile.
  * Returns job with score, match_reasons, and warnings.
