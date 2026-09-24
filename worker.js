@@ -442,7 +442,17 @@ async function runScrape(env) {
   console.log('Fresh jobs (not in KV): ' + freshJobs.length + ' / duplicates skipped: ' + (newJobs.length - freshJobs.length));
 
   const allJobs = jobList.concat(freshJobs);
-  const ranked = allJobs.map(function(j) { return scoreJob(j, profile); }).sort(function(a, b) { return b.score - a.score; });
+  const ranked = allJobs.map(function(j) {
+    const scored = scoreJob(j, profile);
+    // Preserve user-applied status across re-scrapes; only genuinely new
+    // jobs get marked 'new'. Otherwise every scrape would wipe out
+    // saved/applied/skipped/ignored state.
+    const existing = jobList.find(function(e) { return e.id === j.id; });
+    if (existing && existing.status && existing.status !== 'new') {
+      scored.status = existing.status;
+    }
+    return scored;
+  }).sort(function(a, b) { return b.score - a.score; });
 
   await saveData(env.JOBS_KV, 'jobs', { jobs: ranked });
 
