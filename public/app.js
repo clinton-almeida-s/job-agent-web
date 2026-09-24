@@ -82,7 +82,7 @@ async function loadJobs() {
   }
 
   renderJobs(allJobs);
-  loadStats();
+  await loadStats();
   updateClearButton();
 }
 
@@ -106,8 +106,8 @@ function renderJobs(jobs) {
 function jobCard(job, index) {
   const reasons = (job.match_reasons || []).map(r => `<li>✅ ${r}</li>`).join('');
   const warnings = (job.warnings || []).filter(w => w).map(w => `<li class="warn">⚠️ ${w}</li>`).join('');
-  const salaryBadge = job.salary ? `<span class="badge salary">💰 ${job.salary}</span>` : '';
-  const remoteBadge = job.remote || job.source === 'RemoteOK' || job.source === 'Remotive' || job.source === 'WeWorkRemotely' ? `<span class="badge remote">🌐 Remote</span>` : '';
+  const salaryBadge = job.salary ? `<span class="badge salary">${job.salary}</span>` : '';
+  const remoteBadge = job.remote || job.source === 'RemoteOK' || job.source === 'Remotive' || job.source === 'WeWorkRemotely' ? `<span class="badge remote">Remote</span>` : '';
   const clHtml = job.cover_letter
     ? `<div class="cl-box">${escapeHtml(job.cover_letter.slice(0, 400))}${job.cover_letter.length > 400 ? '...' : ''}<button onclick="copyText('cl-${index}')">Copy</button></div>`
     : '';
@@ -115,10 +115,49 @@ function jobCard(job, index) {
   const pct = Math.min(100, Math.round((job.score || 0) / 120 * 100));
   const scoreColor = pct >= 70 ? '#4ade80' : pct >= 40 ? '#fbbf24' : '#f87171';
 
+  // Status-specific action buttons
+  let actionsHtml = '';
+  const status = job.status || 'new';
+
+  if (status === 'new') {
+    actionsHtml = `
+        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">View Job</a>
+        <button onclick="openApply('${job.id}')" class="btn-secondary">Apply</button>
+        <button onclick="markAction('${job.id}','saved')" class="btn-ghost">Save</button>
+        <button onclick="markAction('${job.id}','skipped')" class="btn-ghost">Skip</button>
+        <button onclick="markAction('${job.id}','ignored')" class="btn-ghost">Ignore</button>
+      `;
+  } else if (status === 'applied') {
+    actionsHtml = `
+        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">View Job</a>
+        <span class="status-badge status-applied">Applied</span>
+        <button onclick="markAction('${job.id}','skipped')" class="btn-ghost">Revoke & Skip</button>
+      `;
+  } else if (status === 'saved') {
+    actionsHtml = `
+        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">View Job</a>
+        <button onclick="openApply('${job.id}')" class="btn-secondary">Apply</button>
+        <button onclick="markAction('${job.id}','skipped')" class="btn-ghost">Skip</button>
+        <button onclick="markAction('${job.id}','ignored')" class="btn-ghost">Ignore</button>
+      `;
+  } else if (status === 'skipped') {
+    actionsHtml = `
+        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">View Job</a>
+        <span class="status-badge status-skipped">Skipped</span>
+        <button onclick="markAction('${job.id}','new')" class="btn-ghost">Reopen</button>
+      `;
+  } else if (status === 'ignored') {
+    actionsHtml = `
+        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">View Job</a>
+        <span class="status-badge status-ignored">Ignored</span>
+        <button onclick="markAction('${job.id}','new')" class="btn-ghost">Reopen</button>
+      `;
+  }
+
   return `
   <div class="job-card" id="job-${job.id}">
     <div class="job-header">
-      <div class="job-rank">#${index + 1} <span class="status-badge ${statusClass}">${(job.status || 'new').toUpperCase()}</span></div>
+      <div class="job-rank">#${index + 1} <span class="status-badge ${statusClass}">${status.toUpperCase()}</span></div>
       <div class="job-title-block">
         <h2>${escapeHtml(job.title)}</h2>
         <div class="job-meta">${escapeHtml(job.company)} · ${escapeHtml(job.source)}</div>
@@ -144,11 +183,7 @@ function jobCard(job, index) {
       </div>
       ${clHtml}
       <div class="actions">
-        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">🔗 View Job</a>
-        <button onclick="openApply('${job.id}')">🚀 Prepare Application</button>
-        <button onclick="markAction('${job.id}','saved')">💾 Save</button>
-        <button onclick="markAction('${job.id}','skipped')">⏭ Skip</button>
-        <button onclick="markAction('${job.id}','ignored')">🗑 Ignore</button>
+        ${actionsHtml}
       </div>
     </div>
   </div>`;
@@ -234,9 +269,9 @@ document.getElementById('profileForm').onsubmit = async (e) => {
 function bindEvents() {
   document.getElementById('scrapeBtn').onclick = async () => {
     document.getElementById('scrapeBtn').disabled = true;
-    document.getElementById('scrapeBtn').textContent = '⏳ Scraping...';
+    document.getElementById('scrapeBtn').textContent = 'Scraping...';
     await fetch(`${API}/scrape`, { method: 'POST' });
-    setTimeout(() => { loadJobs(); document.getElementById('scrapeBtn').disabled = false; document.getElementById('scrapeBtn').textContent = '🔄 Scrape Now'; }, 2000);
+    setTimeout(() => { loadJobs(); document.getElementById('scrapeBtn').disabled = false; document.getElementById('scrapeBtn').textContent = 'Scrape Now'; }, 2000);
   };
   document.getElementById('clearFilters').onclick = () => {
     document.getElementById('companyFilter').value = '';
