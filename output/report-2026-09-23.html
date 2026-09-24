@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Job Report — Wednesday, 23 September 2026</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%); padding: 2rem; border-bottom: 1px solid #334155; }
+    header h1 { font-size: 1.6rem; color: #60a5fa; }
+    header .meta { color: #94a3b8; margin-top: .5rem; font-size: .9rem; }
+    .stats { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+    .stat { background: #1e293b; border-radius: 8px; padding: .5rem 1rem; font-size: .85rem; border: 1px solid #334155; }
+    .stat b { color: #60a5fa; }
+    main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .job-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; }
+    .job-header { display: flex; align-items: flex-start; gap: 1rem; padding: 1.25rem; background: #162032; border-bottom: 1px solid #334155; }
+    .job-rank { font-size: 1.5rem; font-weight: 700; color: #60a5fa; min-width: 2.5rem; padding-top: 2px; }
+    .job-title-block { flex: 1; }
+    .job-title-block h2 { font-size: 1.1rem; color: #f1f5f9; }
+    .company { color: #94a3b8; font-size: .9rem; margin-top: 2px; }
+    .badges { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .5rem; }
+    .badge { font-size: .75rem; padding: 2px 8px; border-radius: 12px; font-weight: 500; }
+    .badge.source { background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb44; }
+    .badge.remote { background: #14532d; color: #4ade80; border: 1px solid #16a34a44; }
+    .badge.salary { background: #422006; color: #fb923c; border: 1px solid #ea580c44; }
+    .score-bar-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 110px; }
+    .score-bar-wrap span { font-size: .75rem; color: #94a3b8; }
+    .score-bar { height: 8px; border-radius: 4px; min-width: 4px; }
+    .job-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+    .match-info h4, .description h4 { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: #64748b; margin-bottom: .5rem; }
+    .match-info ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .match-info li { font-size: .875rem; color: #cbd5e1; }
+    .warnings li { color: #fbbf24; }
+    .description p { font-size: .875rem; color: #94a3b8; line-height: 1.6; }
+    .cover-letter { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 1rem; }
+    .cover-letter h4 { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: #64748b; margin-bottom: .75rem; }
+    .cover-letter pre { font-family: inherit; font-size: .875rem; color: #cbd5e1; white-space: pre-wrap; line-height: 1.7; }
+    .cover-letter button { margin-top: .75rem; background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb44; padding: .4rem .9rem; border-radius: 6px; cursor: pointer; font-size: .8rem; }
+    .no-cl { font-size: .8rem; color: #475569; font-style: italic; }
+    .actions { display: flex; gap: .75rem; flex-wrap: wrap; padding-top: .5rem; border-top: 1px solid #334155; }
+    .btn-apply { background: #2563eb; color: white; padding: .5rem 1.25rem; border-radius: 8px; font-size: .875rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-apply:hover { background: #1d4ed8; }
+    button { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: .5rem 1rem; border-radius: 8px; cursor: pointer; font-size: .8rem; }
+    button:hover { background: #334155; color: #e2e8f0; }
+    #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #22c55e; color: white; padding: .75rem 1.25rem; border-radius: 8px; font-size: .875rem; display: none; z-index: 100; }
+    footer { text-align: center; color: #334155; font-size: .75rem; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔎 Daily Job Report — Clinton Almeida</h1>
+    <div class="meta">Generated: Wednesday, 23 September 2026 &nbsp;|&nbsp; 40 top matches found</div>
+    <div class="stats">
+      <div class="stat">Total seen (all time): <b>undefined</b></div>
+      <div class="stat">Total applied: <b>undefined</b></div>
+      <div class="stat">Last applied: <b>Invalid Date</b></div>
+    </div>
+  </header>
+  <main>
+    
+  <div class="job-card" id="job-0">
+    <div class="job-header">
+      <div class="job-rank">#1</div>
+      <div class="job-title-block">
+        <h2>Site Reliability Engineer (Mid-Level, Senior or Staff), Infrastructure Security</h2>
+        <div class="company">MongoDB</div>
+        <div class="badges"><span class="badge source">Greenhouse:MongoDB</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:92%;background:#22c55e"></div><span>110 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Site Reliability Engineer"</li><li>✅ Required skills: GCP, Google Cloud, Cloud, Engineer...</li><li>✅ Bonus skills: SRE, Infrastructure</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Not remote and not in Mumbai — verify location</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h3&gt;&lt;strong&gt;Who We Are&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;At MongoDB, we are building the future of data platforms with MongoDB Atlas; our fully managed, multi-cloud database service. The Infrastructure Security (InfraSec) team sits within Site Reliability Engineering (SRE) in the CTO organization. We are an engineering team dedicated to building the security infrastructure, primitives, and reusable controls that protect MongoDB Atlas across AWS, Azure, and Google Cloud (GCP).&lt;/p&</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.mongodb.com/careers/job/?gh_jid=7758610" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-MongoDB-7758610', 'Site Reliability Engineer (Mid-Level, Senior or Staff), Infrastructure Security', 'MongoDB')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-MongoDB-7758610')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-1">
+    <div class="job-header">
+      <div class="job-rank">#2</div>
+      <div class="job-title-block">
+        <h2>Site Reliability Engineer (Senior or Staff), Atlas</h2>
+        <div class="company">MongoDB</div>
+        <div class="badges"><span class="badge source">Greenhouse:MongoDB</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:84%;background:#22c55e"></div><span>101 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Site Reliability Engineer"</li><li>✅ Required skills: Engineer, SRE</li><li>✅ Bonus skills: SRE</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h3&gt;The Team&lt;/h3&gt; &lt;p&gt;This role can sit in our NYC HQ on a hybrid basis, or it can be fully remote while working from a location based in either Eastern or Central time zones. We are looking for an experienced Senior Engineer for our SRE, Atlas team to support, maintain and grow the Atlas platform. As a senior SRE, you will be expected to be able to design &amp;amp; build complex systems, operate with autonomy and act as owner for everything you do.&amp;nbsp;&lt;/p&gt; &lt;p&gt;</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.mongodb.com/careers/job/?gh_jid=7727964" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-MongoDB-7727964', 'Site Reliability Engineer (Senior or Staff), Atlas', 'MongoDB')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-MongoDB-7727964')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-2">
+    <div class="job-header">
+      <div class="job-rank">#3</div>
+      <div class="job-title-block">
+        <h2>Senior Product Manager - Network Path</h2>
+        <div class="company">Datadog</div>
+        <div class="badges"><span class="badge source">Greenhouse:Datadog</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:78%;background:#22c55e"></div><span>94 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Required skills: Cloud, DevOps, SRE</li><li>✅ Bonus skills: SRE, Infrastructure</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p data-renderer-start-pos=&quot;76&quot; data-local-id=&quot;3b3762adfa62&quot;&gt;As the Senior Product Manager&amp;nbsp; for Network Path, you’ll own the vision, roadmap, and execution for how our customers visualize, monitor, and troubleshoot network traffic across complex hybrid and cloud environments. You’ll work closely with a diverse set of Network, DevOps, and SRE teams to understand how they manage their infrastructure, what challenges they face regarding network visibility and rout</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://careers.datadoghq.com/detail/7763117/?gh_jid=7763117" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Datadog-7763117', 'Senior Product Manager - Network Path', 'Datadog')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Datadog-7763117')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-3">
+    <div class="job-header">
+      <div class="job-rank">#4</div>
+      <div class="job-title-block">
+        <h2>Senior Site Reliability Engineer, Fabric</h2>
+        <div class="company">MongoDB</div>
+        <div class="badges"><span class="badge source">Greenhouse:MongoDB</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:78%;background:#22c55e"></div><span>94 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Site Reliability Engineer"</li><li>✅ Required skills: Cloud, Engineer, SRE</li><li>✅ Bonus skills: SRE, Infrastructure</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Not remote and not in Mumbai — verify location</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h3&gt;The Team&lt;/h3&gt; &lt;p&gt;Platform Engineering sits within SRE and builds the core infrastructure powering MongoDB’s broader engineering organization. Our teams own everything from our multi-cloud Kubernetes foundation to automated deployment pipelines and global observability platforms.&lt;/p&gt; &lt;p&gt;Within Platform Engineering, the Fabric team manages the global network substrate that enables secure communication between internal microservices and incoming public internet tra</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.mongodb.com/careers/job/?gh_jid=7727920" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-MongoDB-7727920', 'Senior Site Reliability Engineer, Fabric', 'MongoDB')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-MongoDB-7727920')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-4">
+    <div class="job-header">
+      <div class="job-rank">#5</div>
+      <div class="job-title-block">
+        <h2>Senior Site Reliability Engineer,  Fleet Management</h2>
+        <div class="company">MongoDB</div>
+        <div class="badges"><span class="badge source">Greenhouse:MongoDB</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:78%;background:#22c55e"></div><span>94 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Site Reliability Engineer"</li><li>✅ Required skills: Cloud, Engineer, SRE</li><li>✅ Bonus skills: SRE, Infrastructure</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Not remote and not in Mumbai — verify location</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;Platform Engineering is the department within SRE that is responsible for a range of critical infrastructure and operational functions that support the broader engineering organization. Among these are our multi-cloud-provider Kubernetes infrastructure, networking, load balancing (including our public-facing edge and internal service mesh), and observability and alerting systems.&lt;/p&gt; &lt;p&gt;The Fleet Management team provides the core runtime environment that empowers our develop</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.mongodb.com/careers/job/?gh_jid=7727873" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-MongoDB-7727873', 'Senior Site Reliability Engineer,  Fleet Management', 'MongoDB')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-MongoDB-7727873')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-5">
+    <div class="job-header">
+      <div class="job-rank">#6</div>
+      <div class="job-title-block">
+        <h2>Site Reliability Engineer (Senior or Staff), Deployments</h2>
+        <div class="company">MongoDB</div>
+        <div class="badges"><span class="badge source">Greenhouse:MongoDB</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:78%;background:#22c55e"></div><span>94 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Site Reliability Engineer"</li><li>✅ Required skills: Cloud, Engineer, SRE</li><li>✅ Bonus skills: SRE, Infrastructure</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Not remote and not in Mumbai — verify location</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;Platform Engineering is the department within SRE that is responsible for a range of critical infrastructure and operational functions that support the broader engineering organization. Among these are our multi-cloud-provider Kubernetes infrastructure, networking, load balancing (including our public-facing edge and internal service mesh), and observability and alerting systems.&lt;/p&gt; &lt;p&gt;The Deployments team designs and maintains our continuous delivery infrastructure, ensuri</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.mongodb.com/careers/job/?gh_jid=7727910" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-MongoDB-7727910', 'Site Reliability Engineer (Senior or Staff), Deployments', 'MongoDB')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-MongoDB-7727910')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-6">
+    <div class="job-header">
+      <div class="job-rank">#7</div>
+      <div class="job-title-block">
+        <h2>Site Reliability Engineer (Senior or Staff), Deployments</h2>
+        <div class="company">MongoDB</div>
+        <div class="badges"><span class="badge source">Greenhouse:MongoDB</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:78%;background:#22c55e"></div><span>94 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Site Reliability Engineer"</li><li>✅ Required skills: Cloud, Engineer, SRE</li><li>✅ Bonus skills: SRE, Infrastructure</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Not remote and not in Mumbai — verify location</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;Platform Engineering is the department within SRE that is responsible for a range of critical infrastructure and operational functions that support the broader engineering organization. Among these are our multi-cloud-provider Kubernetes infrastructure, networking, load balancing (including our public-facing edge and internal service mesh), and observability and alerting systems.&lt;/p&gt; &lt;p&gt;The Deployments team designs and maintains our continuous delivery infrastructure, ensuri</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.mongodb.com/careers/job/?gh_jid=7727913" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-MongoDB-7727913', 'Site Reliability Engineer (Senior or Staff), Deployments', 'MongoDB')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-MongoDB-7727913')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-7">
+    <div class="job-header">
+      <div class="job-rank">#8</div>
+      <div class="job-title-block">
+        <h2>Group Product Manager - Code Security</h2>
+        <div class="company">Datadog</div>
+        <div class="badges"><span class="badge source">Greenhouse:Datadog</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:74%;background:#22c55e"></div><span>89 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Required skills: Cloud, DevOps, SRE</li><li>✅ Bonus skills: SRE</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Not remote and not in Mumbai — verify location</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;We&#39;re on a mission to build the best platform in the world to defend the enterprise from code-to-cloud-to-runtime. Used by thousands of companies globally, Datadog security products uniquely leverage Datadog’s unified security and observability platform so Security, DevOps and SRE can collaborate rapidly and seamlessly to deliver better detection, prioritization and remediation. Our product and engineering culture values pragmatism, honesty, and simplicity to solve hard problems the</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://careers.datadoghq.com/detail/8023763/?gh_jid=8023763" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Datadog-8023763', 'Group Product Manager - Code Security', 'Datadog')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Datadog-8023763')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-8">
+    <div class="job-header">
+      <div class="job-rank">#9</div>
+      <div class="job-title-block">
+        <h2>Principal GSI Partner Manager - Accenture (EMEA)</h2>
+        <div class="company">Datadog</div>
+        <div class="badges"><span class="badge source">Greenhouse:Datadog</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:73%;background:#22c55e"></div><span>88 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Required skills: Cloud</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;We are looking for an experienced Partner Sales Manager to ignite partnerships by identifying and recruiting new partners for long-term success and nurture ongoing relationships with key strategic Global Systems Integrator partners. Our ultimate goal is building channels and alliances that drive new customer adoption and revenue. This is a great opportunity for you to join a high-growth cloud software company and help blaze the path for our company&#39;s expansion.&lt;/p&gt; &lt;p&gt;&l</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://careers.datadoghq.com/detail/8203733/?gh_jid=8203733" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Datadog-8203733', 'Principal GSI Partner Manager - Accenture (EMEA)', 'Datadog')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Datadog-8203733')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-9">
+    <div class="job-header">
+      <div class="job-rank">#10</div>
+      <div class="job-title-block">
+        <h2>Principal Partner Manager - Channels (GSI)</h2>
+        <div class="company">Datadog</div>
+        <div class="badges"><span class="badge source">Greenhouse:Datadog</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:73%;background:#22c55e"></div><span>88 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Required skills: Cloud</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;We are looking for an experienced Partner Sales Manager to ignite partnerships by identifying and recruiting new partners for long-term success and nurture ongoing relationships with key strategic Global Systems Integrator partners. &amp;nbsp;Our ultimate goal is building channels and alliances that drive new customer adoption and revenue. This is a great opportunity for you to join a high-growth cloud software company and help blaze the path for our company&#39;s expansion.&lt;br&gt;&l</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://careers.datadoghq.com/detail/7584250/?gh_jid=7584250" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Datadog-7584250', 'Principal Partner Manager - Channels (GSI)', 'Datadog')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Datadog-7584250')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-10">
+    <div class="job-header">
+      <div class="job-rank">#11</div>
+      <div class="job-title-block">
+        <h2>Manager, Forward Deployed Engineering - CMEG</h2>
+        <div class="company">Databricks</div>
+        <div class="badges"><span class="badge source">Greenhouse:Databricks</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:73%;background:#22c55e"></div><span>88 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Required skills: Cloud</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;CSQ227R53&lt;/p&gt; &lt;p&gt;Databricks is redefining what organisations can achieve with data and AI. As the unified platform powering the world&#39;s most ambitious data-driven enterprises, we sit at the intersection of cloud migrations, AI transformation, and real-time intelligence and our customers challenge us every day to go further.&lt;/p&gt; &lt;p&gt;As &lt;strong&gt;Manager, Forward Deployed Engineering&lt;/strong&gt;, you will lead a high-performing team of Forward Deployed En</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://databricks.com/company/careers/open-positions/job?gh_jid=8585019002" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Databricks-8585019002', 'Manager, Forward Deployed Engineering - CMEG', 'Databricks')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Databricks-8585019002')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-11">
+    <div class="job-header">
+      <div class="job-rank">#12</div>
+      <div class="job-title-block">
+        <h2>Senior Manager, Forward Deployed Engineering</h2>
+        <div class="company">Databricks</div>
+        <div class="badges"><span class="badge source">Greenhouse:Databricks</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:73%;background:#22c55e"></div><span>88 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Required skills: Cloud</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;&lt;strong&gt;Req ID: CSQ327R55&lt;/strong&gt;&lt;/p&gt; &lt;p&gt;&lt;strong&gt;Location: Remote - France&lt;/strong&gt;&lt;/p&gt; &lt;p&gt;Databricks is redefining what organisations can achieve with data and AI. As the unified platform powering the world&#39;s most ambitious data-driven enterprises, we sit at the intersection of cloud migrations, AI transformation, and real-time intelligence and our customers challenge us every day to go further. As&amp;nbsp;&lt;strong&gt;Manager, For</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://databricks.com/company/careers/open-positions/job?gh_jid=8439078002" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Databricks-8439078002', 'Senior Manager, Forward Deployed Engineering', 'Databricks')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Databricks-8439078002')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-12">
+    <div class="job-header">
+      <div class="job-rank">#13</div>
+      <div class="job-title-block">
+        <h2>Manager II, Technical Support Engineer</h2>
+        <div class="company">Pinterest</div>
+        <div class="badges"><span class="badge source">Greenhouse:Pinterest</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:73%;background:#22c55e"></div><span>88 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Required skills: Engineer</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;div class=&quot;content-intro&quot;&gt;&lt;p&gt;&lt;strong&gt;About Pinterest:&lt;/strong&gt;&lt;/p&gt; &lt;p&gt;Millions of people around the world come to our platform to find creative ideas, dream about new possibilities and plan for memories that will last a lifetime. At Pinterest, we’re on a mission to bring everyone the inspiration to create a life they love, and that starts with the people behind the product.&lt;/p&gt; &lt;p&gt;Discover a career where you ignite innovation for million</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.pinterestcareers.com/jobs/?gh_jid=8016634" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Pinterest-8016634', 'Manager II, Technical Support Engineer', 'Pinterest')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Pinterest-8016634')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-13">
+    <div class="job-header">
+      <div class="job-rank">#14</div>
+      <div class="job-title-block">
+        <h2>Site Reliability Engineer II, tvScientific</h2>
+        <div class="company">Pinterest</div>
+        <div class="badges"><span class="badge source">Greenhouse:Pinterest</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:73%;background:#22c55e"></div><span>88 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Site Reliability Engineer"</li><li>✅ Required skills: Engineer</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;div class=&quot;content-intro&quot;&gt;&lt;p&gt;&lt;strong&gt;About Pinterest:&lt;/strong&gt;&lt;/p&gt; &lt;p&gt;Millions of people around the world come to our platform to find creative ideas, dream about new possibilities and plan for memories that will last a lifetime. At Pinterest, we’re on a mission to bring everyone the inspiration to create a life they love, and that starts with the people behind the product.&lt;/p&gt; &lt;p&gt;Discover a career where you ignite innovation for million</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.pinterestcareers.com/jobs/?gh_jid=7782538" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Pinterest-7782538', 'Site Reliability Engineer II, tvScientific', 'Pinterest')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Pinterest-7782538')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-14">
+    <div class="job-header">
+      <div class="job-rank">#15</div>
+      <div class="job-title-block">
+        <h2>Sr. Site Reliability Engineer, tvScientific</h2>
+        <div class="company">Pinterest</div>
+        <div class="badges"><span class="badge source">Greenhouse:Pinterest</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:73%;background:#22c55e"></div><span>88 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Site Reliability Engineer"</li><li>✅ Required skills: Engineer</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;div class=&quot;content-intro&quot;&gt;&lt;p&gt;&lt;strong&gt;About Pinterest:&lt;/strong&gt;&lt;/p&gt; &lt;p&gt;Millions of people around the world come to our platform to find creative ideas, dream about new possibilities and plan for memories that will last a lifetime. At Pinterest, we’re on a mission to bring everyone the inspiration to create a life they love, and that starts with the people behind the product.&lt;/p&gt; &lt;p&gt;Discover a career where you ignite innovation for million</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.pinterestcareers.com/jobs/?gh_jid=7782550" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Pinterest-7782550', 'Sr. Site Reliability Engineer, tvScientific', 'Pinterest')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Pinterest-7782550')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-15">
+    <div class="job-header">
+      <div class="job-rank">#16</div>
+      <div class="job-title-block">
+        <h2>Senior Machine Learning Platform Engineer</h2>
+        <div class="company">Coinbase</div>
+        <div class="badges"><span class="badge source">Greenhouse:Coinbase</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:73%;background:#22c55e"></div><span>88 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Platform Engineer"</li><li>✅ Required skills: Engineer</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;div class=&quot;content-intro&quot;&gt;&lt;p&gt;Ready to do the most impactful work of your career? At&amp;nbsp;&lt;a href=&quot;https://www.coinbase.com/?utm_campaign=mt_o_m_w_m_m__coi_0_jd-onchain&amp;amp;utm_source=coinbase&quot;&gt;Coinbase&lt;/a&gt;, we are uncompromising on our mission to increase economic freedom. The bar is high, the environment is intense, and we like it that way. This isn&#39;t a place for complacency, it’s a place to be pushed past your perceived limits. If you&#3</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.coinbase.com/careers/positions/8211490?gh_jid=8211490" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Coinbase-8211490', 'Senior Machine Learning Platform Engineer', 'Coinbase')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Coinbase-8211490')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-16">
+    <div class="job-header">
+      <div class="job-rank">#17</div>
+      <div class="job-title-block">
+        <h2>Site Reliability Engineer 3</h2>
+        <div class="company">MongoDB</div>
+        <div class="badges"><span class="badge source">Greenhouse:MongoDB</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:72%;background:#22c55e"></div><span>86 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Site Reliability Engineer"</li><li>✅ Required skills: Engineer, SRE</li><li>✅ Bonus skills: SRE, Infrastructure</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Not remote and not in Mumbai — verify location</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;The Site Reliability Engineering team designs and builds the global infrastructure on which we deploy our services, focusing on the above mentioned flagship MongoDB Atlas platform. As our customers grow and globalize, our services must satisfy demands for low-latency requests around the globe, and comply with various data sovereignty requirements. The SRE Team’s mission is to build this increasingly complex infrastructure, while continually lowering the operational burden associated wit</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.mongodb.com/careers/job/?gh_jid=7821316" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-MongoDB-7821316', 'Site Reliability Engineer 3', 'MongoDB')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-MongoDB-7821316')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-17">
+    <div class="job-header">
+      <div class="job-rank">#18</div>
+      <div class="job-title-block">
+        <h2>Engineering Manager, Abuse Control Engineering</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2&gt;Who we are&lt;/h2&gt; &lt;h3&gt;About Stripe&lt;/h3&gt; &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies—from the world’s largest enterprises to the most ambitious startups—use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an unprecede</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8172489" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8172489', 'Engineering Manager, Abuse Control Engineering', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8172489')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-18">
+    <div class="job-header">
+      <div class="job-rank">#19</div>
+      <div class="job-title-block">
+        <h2>Partner Development Manager, AMER Bank Partnerships</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2 id=&quot;who-we-are&quot;&gt;Who we are&lt;/h2&gt; &lt;h3 id=&quot;about-stripe&quot;&gt;About Stripe&lt;/h3&gt; &lt;p&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies, from the world’s largest enterprises to the most ambitious startups, use Stripe to accept payments, grow revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an unprece</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8187566" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8187566', 'Partner Development Manager, AMER Bank Partnerships', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8187566')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-19">
+    <div class="job-header">
+      <div class="job-rank">#20</div>
+      <div class="job-title-block">
+        <h2>Partner Development Manager, Ecosystem Partnerships</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2&gt;&lt;strong&gt;Who we are &lt;/strong&gt;&lt;/h2&gt; &lt;h3&gt;&lt;strong&gt;About Stripe&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies - from the world’s largest enterprises to the most ambitious startups - use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a st</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8180254" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8180254', 'Partner Development Manager, Ecosystem Partnerships', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8180254')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-20">
+    <div class="job-header">
+      <div class="job-rank">#21</div>
+      <div class="job-title-block">
+        <h2>Partner Development Manager, Financial Partnership Capabilities</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2&gt;Who we are&lt;/h2&gt; &lt;h3&gt;About Stripe&lt;/h3&gt; &lt;p&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies, from the world’s largest enterprises to the most ambitious startups, use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet. We have a significant amount of work ahead, which gives you the opportunity to do some of the most important work of your car</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8208523" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8208523', 'Partner Development Manager, Financial Partnership Capabilities', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8208523')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-21">
+    <div class="job-header">
+      <div class="job-rank">#22</div>
+      <div class="job-title-block">
+        <h2>Partner Development Manager, Strategic Partnerships</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2&gt;&lt;strong&gt;Who we are &lt;/strong&gt;&lt;/h2&gt; &lt;h3&gt;&lt;strong&gt;About Stripe&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies—from the world&#39;s largest enterprises to the most ambitious startups—use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you ha</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8094869" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8094869', 'Partner Development Manager, Strategic Partnerships', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8094869')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-22">
+    <div class="job-header">
+      <div class="job-rank">#23</div>
+      <div class="job-title-block">
+        <h2>Product Marketing Manager, Payments</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Contains soft-breaker keywords: marketing</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2&gt;&lt;strong&gt;Who we are&lt;/strong&gt;&lt;/h2&gt; &lt;h3&gt;&lt;strong&gt;About Stripe&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies—from the world’s largest enterprises to the most ambitious startups—use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8142770" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8142770', 'Product Marketing Manager, Payments', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8142770')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-23">
+    <div class="job-header">
+      <div class="job-rank">#24</div>
+      <div class="job-title-block">
+        <h2>Program Manager, Customer Advocacy & Programs</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2&gt;&lt;strong&gt;Who we are &lt;/strong&gt;&lt;/h2&gt; &lt;h3&gt;&lt;strong&gt;About Stripe&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies - from the world’s largest enterprises to the most ambitious startups - use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a st</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8181030" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8181030', 'Program Manager, Customer Advocacy & Programs', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8181030')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-24">
+    <div class="job-header">
+      <div class="job-rank">#25</div>
+      <div class="job-title-block">
+        <h2>Risk Partnerships Manager, Banks & Treasury</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2&gt;&lt;strong&gt;Who we are &lt;/strong&gt;&lt;/h2&gt; &lt;h3&gt;&lt;strong&gt;About Stripe&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies - from the world’s largest enterprises to the most ambitious startups - use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a st</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8178563" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8178563', 'Risk Partnerships Manager, Banks & Treasury', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8178563')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-25">
+    <div class="job-header">
+      <div class="job-rank">#26</div>
+      <div class="job-title-block">
+        <h2>Sales Manager, Product- Fraud & Risk</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Contains soft-breaker keywords: sales</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2 id=&quot;who-we-are&quot;&gt;Who we are&lt;/h2&gt; &lt;h3 id=&quot;about-stripe&quot;&gt;About Stripe&lt;/h3&gt; &lt;p&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies - from the world’s largest enterprises to the most ambitious startups - use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8181036" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8181036', 'Sales Manager, Product- Fraud & Risk', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8181036')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-26">
+    <div class="job-header">
+      <div class="job-rank">#27</div>
+      <div class="job-title-block">
+        <h2>Senior Product Manager, Enterprise</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2&gt;Who we are&lt;/h2&gt; &lt;h3&gt;About Stripe&lt;/h3&gt; &lt;p&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies—from the world&#39;s largest enterprises to the most ambitious startups—use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an unprecedented opportunity to put the global economy w</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=7812856" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-7812856', 'Senior Product Manager, Enterprise', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-7812856')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-27">
+    <div class="job-header">
+      <div class="job-rank">#28</div>
+      <div class="job-title-block">
+        <h2>Staff Product Manager, Payments Intelligence</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2&gt;&lt;strong&gt;Who we are&lt;/strong&gt;&lt;/h2&gt; &lt;h3&gt;&lt;strong&gt;About Stripe&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies—from the world’s largest enterprises to the most ambitious startups—use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8209996" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8209996', 'Staff Product Manager, Payments Intelligence', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8209996')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-28">
+    <div class="job-header">
+      <div class="job-rank">#29</div>
+      <div class="job-title-block">
+        <h2>Staff Product Manager, Sail Core</h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h2&gt;Who we are&lt;/h2&gt; &lt;h3&gt;About Stripe&lt;/h3&gt; &lt;p&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies—from the world&#39;s largest enterprises to the most ambitious startups—use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an unprecedented opportunity to put the global economy w</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=7913698" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-7913698', 'Staff Product Manager, Sail Core', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-7913698')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-29">
+    <div class="job-header">
+      <div class="job-rank">#30</div>
+      <div class="job-title-block">
+        <h2>Technical Program Manager,  Extensibility </h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h1&gt;&lt;strong&gt;Who we are&lt;/strong&gt;&lt;/h1&gt; &lt;h3&gt;&lt;strong&gt;About Stripe&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies—from the world’s largest enterprises to the most ambitious startups—use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=7778643" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-7778643', 'Technical Program Manager,  Extensibility ', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-7778643')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-30">
+    <div class="job-header">
+      <div class="job-rank">#31</div>
+      <div class="job-title-block">
+        <h2>Technical Program Manager, Extensibility </h2>
+        <div class="company">Stripe</div>
+        <div class="badges"><span class="badge source">Greenhouse:Stripe</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h1&gt;&lt;strong&gt;Who we are&lt;/strong&gt;&lt;/h1&gt; &lt;h3&gt;&lt;strong&gt;About Stripe&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;Stripe is a financial infrastructure platform for businesses. Millions of companies—from the world’s largest enterprises to the most ambitious startups—use Stripe to accept payments, grow their revenue, and accelerate new business opportunities. Our mission is to increase the GDP of the internet, and we have a staggering amount of work ahead. That means you have an</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://stripe.com/jobs/search?gh_jid=8114397" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Stripe-8114397', 'Technical Program Manager, Extensibility ', 'Stripe')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Stripe-8114397')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-31">
+    <div class="job-header">
+      <div class="job-rank">#32</div>
+      <div class="job-title-block">
+        <h2>Finance Manager I, Technology Infrastructure</h2>
+        <div class="company">Pinterest</div>
+        <div class="badges"><span class="badge source">Greenhouse:Pinterest</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;div class=&quot;content-intro&quot;&gt;&lt;p&gt;&lt;strong&gt;About Pinterest:&lt;/strong&gt;&lt;/p&gt; &lt;p&gt;Millions of people around the world come to our platform to find creative ideas, dream about new possibilities and plan for memories that will last a lifetime. At Pinterest, we’re on a mission to bring everyone the inspiration to create a life they love, and that starts with the people behind the product.&lt;/p&gt; &lt;p&gt;Discover a career where you ignite innovation for million</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.pinterestcareers.com/jobs/?gh_jid=7685103" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Pinterest-7685103', 'Finance Manager I, Technology Infrastructure', 'Pinterest')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Pinterest-7685103')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-32">
+    <div class="job-header">
+      <div class="job-rank">#33</div>
+      <div class="job-title-block">
+        <h2>Group Product Manager, Core Infrastructure & Reliability</h2>
+        <div class="company">Coinbase</div>
+        <div class="badges"><span class="badge source">Greenhouse:Coinbase</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;div class=&quot;content-intro&quot;&gt;&lt;p&gt;Ready to do the most impactful work of your career? At&amp;nbsp;&lt;a href=&quot;https://www.coinbase.com/?utm_campaign=mt_o_m_w_m_m__coi_0_jd-onchain&amp;amp;utm_source=coinbase&quot;&gt;Coinbase&lt;/a&gt;, we are uncompromising on our mission to increase economic freedom. The bar is high, the environment is intense, and we like it that way. This isn&#39;t a place for complacency, it’s a place to be pushed past your perceived limits. If you&#3</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.coinbase.com/careers/positions/7997785?gh_jid=7997785" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Coinbase-7997785', 'Group Product Manager, Core Infrastructure & Reliability', 'Coinbase')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Coinbase-7997785')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-33">
+    <div class="job-header">
+      <div class="job-rank">#34</div>
+      <div class="job-title-block">
+        <h2>Group Product Manager, Developer Infrastructure</h2>
+        <div class="company">Coinbase</div>
+        <div class="badges"><span class="badge source">Greenhouse:Coinbase</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;div class=&quot;content-intro&quot;&gt;&lt;p&gt;Ready to do the most impactful work of your career? At&amp;nbsp;&lt;a href=&quot;https://www.coinbase.com/?utm_campaign=mt_o_m_w_m_m__coi_0_jd-onchain&amp;amp;utm_source=coinbase&quot;&gt;Coinbase&lt;/a&gt;, we are uncompromising on our mission to increase economic freedom. The bar is high, the environment is intense, and we like it that way. This isn&#39;t a place for complacency, it’s a place to be pushed past your perceived limits. If you&#3</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.coinbase.com/careers/positions/8017607?gh_jid=8017607" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Coinbase-8017607', 'Group Product Manager, Developer Infrastructure', 'Coinbase')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Coinbase-8017607')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-34">
+    <div class="job-header">
+      <div class="job-rank">#35</div>
+      <div class="job-title-block">
+        <h2>Senior Marketing Operations Manager</h2>
+        <div class="company">Netlify</div>
+        <div class="badges"><span class="badge source">Greenhouse:Netlify</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:71%;background:#22c55e"></div><span>85 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Contains soft-breaker keywords: marketing</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;&lt;strong&gt;About the Team&lt;/strong&gt;&lt;/p&gt; &lt;p&gt;Netlify is a product-led growth company, and Revenue Operations owns the systems, data, and infrastructure that turn that growth into revenue.&amp;nbsp; With a large volume of people discovering and signing up for Netlify every day, Marketing Operations is critical to understanding those users, connecting activity across our systems, and creating scalable ways to engage them throughout their journey.&lt;/p&gt; &lt;p&gt;As Se</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://job-boards.greenhouse.io/netlify/jobs/8823312002" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Netlify-8823312002', 'Senior Marketing Operations Manager', 'Netlify')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Netlify-8823312002')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-35">
+    <div class="job-header">
+      <div class="job-rank">#36</div>
+      <div class="job-title-block">
+        <h2>Senior Partner Manager - Channels</h2>
+        <div class="company">Datadog</div>
+        <div class="badges"><span class="badge source">Greenhouse:Datadog</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:69%;background:#f59e0b"></div><span>83 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Required skills: Cloud</li><li>✅ Location match: Mumbai</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;Our Channels &amp;amp; Alliances Team’s charter builds and activates a strategic, differentiated and high-impact partner ecosystem for our best-of-breed multi-cloud monitoring product, one partner at a time. As a Senior Partner Manager, you will recruit and develop channel partners that drive new customer adoption and revenue, including Regional and Global Systems Integrators, Managed Service Providers, and Value Added Resellers.&lt;/p&gt; &lt;p&gt;&lt;em&gt;At Datadog, we place value i</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://careers.datadoghq.com/detail/7976683/?gh_jid=7976683" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Datadog-7976683', 'Senior Partner Manager - Channels', 'Datadog')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Datadog-7976683')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-36">
+    <div class="job-header">
+      <div class="job-rank">#37</div>
+      <div class="job-title-block">
+        <h2>Senior SRE - Networks</h2>
+        <div class="company">Fastly</div>
+        <div class="badges"><span class="badge source">Greenhouse:Fastly</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:69%;background:#f59e0b"></div><span>83 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title similarity: 52%</li><li>✅ Required skills: Cloud, SRE</li><li>✅ Bonus skills: Agile, SRE</li><li>✅ Remote</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;div class=&quot;content-intro&quot;&gt;&lt;p&gt;Fastly helps people stay better connected with the things they love. Fastly’s edge cloud platform enables customers to create great digital experiences quickly, securely, and reliably by processing, serving, and securing our customers’ applications as close to their end-users as possible — at the edge of the Internet. The platform is designed to take advantage of the modern internet, to be programmable, and to support agile software development</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.fastly.com/about/jobs/apply?gh_jid=8045052" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Fastly-8045052', 'Senior SRE - Networks', 'Fastly')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Fastly-8045052')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-37">
+    <div class="job-header">
+      <div class="job-rank">#38</div>
+      <div class="job-title-block">
+        <h2>Software Engineer (Mid-Level, Senior or Staff), Infrastructure Security</h2>
+        <div class="company">MongoDB</div>
+        <div class="badges"><span class="badge source">Greenhouse:MongoDB</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:68%;background:#f59e0b"></div><span>82 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Required skills: GCP, Google Cloud, Cloud, Engineer...</li><li>✅ Bonus skills: SRE, Infrastructure</li><li>✅ Cloud signal: cloud, gcp, google cloud</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Not remote and not in Mumbai — verify location</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;h3&gt;&lt;strong&gt;Who We Are&lt;/strong&gt;&lt;/h3&gt; &lt;p&gt;At MongoDB, we are building the future of data platforms with MongoDB Atlas; our fully managed, multi-cloud database service. The Infrastructure Security (InfraSec) team sits within Site Reliability Engineering (SRE) in the CTO organization. We are an engineering team dedicated to building the security infrastructure, primitives, and reusable controls that protect MongoDB Atlas across AWS, Azure, and Google Cloud (GCP).&lt;/p&</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.mongodb.com/careers/job/?gh_jid=7727896" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-MongoDB-7727896', 'Software Engineer (Mid-Level, Senior or Staff), Infrastructure Security', 'MongoDB')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-MongoDB-7727896')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-38">
+    <div class="job-header">
+      <div class="job-rank">#39</div>
+      <div class="job-title-block">
+        <h2>Staff Technical Program Manager, Site Reliability Engineering</h2>
+        <div class="company">MongoDB</div>
+        <div class="badges"><span class="badge source">Greenhouse:MongoDB</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:68%;background:#f59e0b"></div><span>81 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Manager"</li><li>✅ Required skills: Cloud, SRE</li><li>✅ Bonus skills: SRE</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Not remote and not in Mumbai — verify location</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;p&gt;As a TPM for SRE, you will partner with SRE leaders and engineers to scale the platform that underpins all of MongoDB’s cloud products. You will drive program execution, strengthen production reliability practices, and coordinate cross-functional efforts across US and EMEA teams. Success in this role means smoother launches, clearer roadmaps, stronger reliability metrics and an SRE organization that&#39;s better-equipped to deliver predictability at scale.&amp;nbsp;&lt;/p&gt; &lt;p&gt;T</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.mongodb.com/careers/job/?gh_jid=7831454" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-MongoDB-7831454', 'Staff Technical Program Manager, Site Reliability Engineering', 'MongoDB')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-MongoDB-7831454')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="job-card" id="job-39">
+    <div class="job-header">
+      <div class="job-rank">#40</div>
+      <div class="job-title-block">
+        <h2>Senior Site Reliability Engineer (CI-CD/CTAP/Delivery team)</h2>
+        <div class="company">Okta</div>
+        <div class="badges"><span class="badge source">Greenhouse:Okta</span> <span class="badge remote">🌐 Remote</span> </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:68%;background:#f59e0b"></div><span>81 pts</span></div>
+    </div>
+    <div class="job-body">
+      <div class="match-info">
+        <h4>Why this matched your profile:</h4>
+        <ul><li>✅ Title match: "Site Reliability Engineer"</li><li>✅ Required skills: CI/CD, Engineer</li><li>✅ Bonus skills: Infrastructure</li><li>✅ Employment type: full-time</li><li>✅ Recency</li></ul>
+        <ul class="warnings"><li>⚠️ Not remote and not in Mumbai — verify location</li></ul>
+      </div>
+      <div class="description">
+        <h4>Job Description (excerpt)</h4>
+        <p>&lt;div class=&quot;content-intro&quot;&gt;&lt;p&gt;&lt;strong&gt;Secure Every Identity, from AI to Human&lt;br&gt;&lt;br&gt;&lt;/strong&gt;Identity is the key to unlocking the potential of AI. Okta secures AI by building the trusted, neutral infrastructure that enables organizations to safely embrace this new era. This work requires a relentless drive to solve complex challenges with real-world stakes. We are looking for builders and owners who operate with speed and urgency and execute with ex</p>
+      </div>
+      <p class="no-cl">Cover letter generation requires ANTHROPIC_API_KEY</p>
+      <div class="actions">
+        <a href="https://www.okta.com/company/careers/opportunity/8078730?gh_jid=8078730" target="_blank" class="btn-apply">🚀 Apply Now</a>
+        
+        <button onclick="markApplied('greenhouse-Okta-8078730', 'Senior Site Reliability Engineer (CI-CD/CTAP/Delivery team)', 'Okta')">✅ Mark as Applied</button>
+        <button onclick="skipJob('greenhouse-Okta-8078730')">⏭ Skip (hide tomorrow)</button>
+      </div>
+    </div>
+  </div>
+  </main>
+  <footer>Semi-automated job search agent — review all applications before submitting.</footer>
+  <div id="toast"></div>
+  <script>
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 3000);
+    }
+    function copyText(id) {
+      const el = document.getElementById(id);
+      navigator.clipboard.writeText(el.value).then(() => toast('Cover letter copied!'));
+    }
+    function markApplied(id, title, company) {
+      // In future: call tracker API or write to local file
+      toast('Marked as applied: ' + title + ' @ ' + company);
+      document.querySelector('#job-' + [...document.querySelectorAll('[id^=job-]')].findIndex(el => el.querySelector('.btn-apply')?.href?.includes(id))).style.opacity = '0.4';
+    }
+    function skipJob(id) {
+      toast('Job hidden from future reports');
+    }
+  </script>
+</body>
+</html>

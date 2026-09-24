@@ -56,7 +56,6 @@ async function loadStats() {
 
 // ── Jobs ──────────────────────────────────────────────────────────────────────
 async function loadJobs() {
-  console.log('[Job Agent] loadJobs called');
   const status = document.getElementById('statusFilter').value;
   const company = document.getElementById('companyFilter').value;
   const region = document.getElementById('regionFilter').value;
@@ -193,27 +192,22 @@ function jobCard(job, index) {
 // ── Actions ───────────────────────────────────────────────────────────────────
 async function markAction(jobId, action) {
   // Map action names to API endpoints
-  const endpoint = action === 'applied' ? 'apply' : action;
-  console.log('[Job Agent] markAction:', jobId, action, '-> endpoint:', endpoint);
+  const endpointMap = { applied: 'apply', skipped: 'skip', saved: 'save', ignored: 'ignore', new: 'new' };
+  const endpoint = endpointMap[action] || action;
   try {
-    const resp = await fetch(`${API}/${endpoint}`, { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ jobId }) 
+    const resp = await fetch(`${API}/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jobId })
     });
-    console.log('[Job Agent] Response status:', resp.status);
-    console.log('[Job Agent] Response contentType:', resp.headers.get('content-type'));
     const text = await resp.text();
-    console.log('[Job Agent] Response body:', text);
     if (!resp.ok) {
       throw new Error('HTTP ' + resp.status + ': ' + text);
     }
-    const result = JSON.parse(text);
-    console.log('[Job Agent] Parsed response:', result);
+    JSON.parse(text);
     toast(`${action.charAt(0).toUpperCase() + action.slice(1)}d job`);
     await loadJobs();
   } catch (err) {
-    console.error('[Job Agent] markAction failed:', err);
     toast('Error: ' + err.message);
   }
 }

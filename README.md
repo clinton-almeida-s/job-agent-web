@@ -90,8 +90,10 @@ job-agent-web/
 │   └── tracker.js         # Tracks which jobs you've applied to or skipped
 ├── public/
 │   ├── index.html         # Dashboard HTML page
-│   ├── app.js             # Dashboard interactivity
+│   ├── app.js             # Dashboard interactivity (edit this, then sync)
 │   └── styles.css         # Dashboard styling
+├── scripts/
+│   └── sync-appjs.js      # Syncs app.js into worker.js base64 embed
 ├── data/
 │   ├── boards.json        # Job board list + rate limits (auto-updated)
 │   ├── board_sources.json # Configuration for board discovery sources
@@ -271,6 +273,25 @@ Your dashboard URL: `https://job-agent-web.<your-subdomain>.workers.dev`
 
 **Note:** The Worker only scrapes 20 boards (vs. 50 on GitHub Actions) because Cloudflare has CPU time limits. The GitHub Actions run still fetches all 50 boards with full descriptions — they complement each other.
 
+### Updating the Dashboard JavaScript
+
+The dashboard JavaScript (`public/app.js`) is **embedded as base64** inside `worker.js` so it can be served from the same file. This means any changes to `app.js` must also be synced into the embedded copy in `worker.js` before deploying.
+
+**To sync after editing `public/app.js`:**
+
+```bash
+# Step 1: Sync the JS into worker.js
+node scripts/sync-appjs.js
+
+# Step 2: Verify syntax (optional)
+node -e "const fs=require('fs'); new Function(fs.readFileSync('worker.js','utf8').slice(0, fs.readFileSync('worker.js','utf8').indexOf('export default')));"
+
+# Step 3: Deploy
+npx wrangler deploy
+```
+
+If you skip the sync, the dashboard will show an error or have missing features because it will load the old JavaScript from the worker.
+
 ---
 
 ## Job Sources
@@ -336,10 +357,11 @@ The Cloudflare Worker exposes these REST endpoints:
 | `/api/profile` | GET | Get current profile |
 | `/api/profile` | POST | Update profile |
 | `/api/scrape` | POST | Trigger manual scrape |
-| `/api/applied` | POST | Mark job as applied |
+| `/api/apply` | POST | Mark job as applied |
 | `/api/skip` | POST | Mark job as skipped |
 | `/api/save` | POST | Save/bookmark a job |
 | `/api/ignore` | POST | Ignore a job |
+| `/api/new` | POST | Reopen a skipped/ignored job |
 | `/api/config` | GET | Get boards configuration |
 | `/api/config` | POST | Update boards configuration |
 
@@ -384,7 +406,19 @@ Your cookies have expired. Refresh them:
 
 > LinkedIn cookies expire after a few days. Update periodically.
 
-### Dashboard shows old data
+### Dashboard shows old data / actions don't update the UI
+
+This was caused by three separate issues, all fixed:
+
+1. **Stale cached JavaScript** — The HTML template embedded in `worker.js` had hardcoded cache-busting values (`?t=01922046`, `?v=48c3ef37`) that never changed, so the browser served the old JS from the first deployment forever. Fixed by replacing hardcoded values with `__TIMESTAMP__` / `__STYLES_VERSION__` placeholders that get replaced with `Date.now()` on every page request.
+
+2. **Missing CORS preflight handler** — Browsers send an `OPTIONS` request before any POST to a cross-origin endpoint. The worker didn't handle `OPTIONS`, so it returned 404, which blocked the actual POST. Fixed by adding an `OPTIONS` handler at the top of `handleRequest()` that returns 204 with proper CORS headers.
+
+3. **Wrong API endpoint names** — `app.js` called `/api/skipped` but the worker only had `/api/skip`. Fixed by adding a full endpoint mapping table (`applied→apply`, `skipped→skip`, `saved→save`, `ignored→ignore`, `new→new`).
+
+**If you still see old behavior:** hard refresh with **Ctrl+Shift+R** to clear the cached JS.
+
+### Dashboard shows old data (scrape results)
 
 Click the **"Scrape Now"** button on the dashboard, or wait for the next automatic run at 7:30 AM IST.
 
