@@ -120,23 +120,25 @@ jobs:
           # Build HTML list of new boards
           BOARD_LIST=$(cat data/discovery_results.json | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); d.newBoards.forEach(b => console.log('<li><b>' + b + '</b></li>'))")
 
-          # Build JSON payload safely
-          PAYLOAD=$(node -e "
+          # Build JSON payload via a script file (avoids shell-quoting issues)
+          cat > /tmp/build_payload.js << 'NODESCRIPT'
             const list = process.argv[1];
             const count = process.argv[2];
             const payload = {
               from: 'Job Agent <onboarding@resend.dev>',
               to: [process.env.EMAIL_TO],
               subject: 'New Job Boards Discovered!',
-              html: '<h2>New Job Boards Found</h2><p>Discovered <strong>' + count + ' new companies</strong> using Greenhouse:</p><ul>' + list + '</ul><p>Dashboard: <a href=\"https://job-agent-web.clinton-s-almeida.workers.dev\">View Jobs</a></p><hr><p><small>Job Agent — Auto-Discovery System</small></p>'
+              html: '<h2>New Job Boards Found</h2><p>Discovered <strong>' + count + ' new companies</strong> using Greenhouse:</p><ul>' + list + '</ul><p>Dashboard: <a href="https://job-agent-web.clinton-s-almeida.workers.dev">View Jobs</a></p><hr><p><small>Job Agent — Auto-Discovery System</small></p>'
             };
             console.log(JSON.stringify(payload));
-          " "$BOARD_LIST" "$NEW_COUNT")
+          NODESCRIPT
+
+          node /tmp/build_payload.js "$BOARD_LIST" "$NEW_COUNT" > /tmp/email_payload.json
 
           curl -s -X POST https://api.resend.com/emails \
             -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "$PAYLOAD" || echo "⚠️ Email notification failed (non-critical)"
+            -d @/tmp/email_payload.json || echo "⚠️ Email notification failed (non-critical)"
 
       - name: Send failure notification
         if: failure()
