@@ -369,7 +369,9 @@ function scoreJob(job, profile) {
   // Check title, company, AND the first 500 chars of description — many
   // irrelevant roles mention their product is "cloud-based" in the blurb.
   const textForDealBreakers = [job.title, job.company, (job.description || '').slice(0, 500)].join(' ');
-  const breakers = containsAny(textForDealBreakers, deal_breakers, true);
+  // Filter out very short deal-breaker keywords to avoid false positives in descriptions
+  const meaningfulDealBreakers = deal_breakers.filter(function(kw) { return kw.length >= 3; });
+  const breakers = containsAny(textForDealBreakers, meaningfulDealBreakers, true);
   const softBreakers = ['sales', 'marketing', 'business development', 'customer service', 'customer success'];
   const hardBlockers = breakers.filter(function(b) { return softBreakers.indexOf(b) === -1; });
   if (hardBlockers.length > 0) return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['Deal-breaker: ' + hardBlockers.join(', ')] });
@@ -408,7 +410,7 @@ function scoreJob(job, profile) {
   // Jobs whose titles contain keywords from previously skipped jobs get blocked
   const skipKw = profile.skip_keywords || [];
   if (skipKw.length > 0) {
-    const skipMatch = containsAny(job.title, skipKw, true);
+    const skipMatch = containsAny(job.title, skipKw, false);
     if (skipMatch.length > 0) {
       return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['Skipped keyword: ' + skipMatch[0]] });
     }
@@ -548,17 +550,42 @@ async function handleRequest(req, env) {
     if (!profile.name) return new Response(JSON.stringify({ error: 'No profile found' }), { status: 400 });
     const savedJobs = await loadData(env.JOBS_KV, 'jobs');
     const jobList = savedJobs.jobs || [];
-    const rescored = jobList.map(function(j) {
+    
+    // Fast pre-filter: only rescore jobs with potential (title contains keywords or has recent date)
+    const preFilterKeywords = profile.required_keywords || [];
+    const preFilterTitles = profile.target_titles || [];
+    const now = Date.now();
+    
+    const promisingJobs = jobList.filter(function(j) {
+      const title = (j.title || '').toLowerCase();
+      const hasKeyword = preFilterKeywords.some(function(kw) { 
+        return title.includes(kw.toLowerCase()); 
+      });
+      const hasTitleMatch = preFilterTitles.some(function(t) { 
+        return title.includes(t.toLowerCase()); 
+      });
+      const isRecent = j.posted_at && (now - new Date(j.posted_at).getTime()) < 30 * 24 * 60 * 60 * 1000;
+      const hasExistingScore = j.score > 0;
+      return hasKeyword || hasTitleMatch || isRecent || hasExistingScore;
+    });
+    
+    const rescored = promisingJobs.map(function(j) {
       const scored = scoreJob(j, profile);
       if (j.status && j.status !== 'new') scored.status = j.status;
       return scored;
     });
-    await saveData(env.JOBS_KV, 'jobs', { jobs: rescored });
-    const matched = rescored.filter(function(j) { return j.score >= 35; }).length;
+    
+    // Merge back into full job list
+    const rescoredIds = new Set(rescored.map(function(j) { return j.id; }));
+    const unchangedJobs = jobList.filter(function(j) { return !rescoredIds.has(j.id); });
+    const allJobs = unchangedJobs.concat(rescored);
+    
+    await saveData(env.JOBS_KV, 'jobs', { jobs: allJobs });
+    const matched = allJobs.filter(function(j) { return j.score >= 35; }).length;
     const runStats = await loadData(env.JOBS_KV, 'scrape_runs');
-    runStats.lastRun = { fetched: rescored.length, total: rescored.length, matched: matched, at: new Date().toISOString() };
+    runStats.lastRun = { fetched: rescored.length, total: allJobs.length, matched: matched, at: new Date().toISOString() };
     await saveData(env.JOBS_KV, 'scrape_runs', runStats);
-    return new Response(JSON.stringify({ success: true, total: rescored.length, matched: matched }),
+    return new Response(JSON.stringify({ success: true, rescored: rescored.length, total: allJobs.length, matched: matched }),
       { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
   }
 
