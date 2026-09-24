@@ -272,13 +272,18 @@ async function scrapeLeverFiltered(keyword, kv) {
 }
 
 async function scrapeAllSources(profile, kv) {
+  // Use high-priority keywords for scraping, prioritizing GCP and cloud terms
   const keywords = profile.required_keywords || ['GCP', 'Cloud'];
-  const keyword = keywords[0];
+  const searchKeywords = ['GCP', 'Google Cloud', 'DevOps', 'Platform Engineer', 'SRE', 'Kubernetes', 'Terraform'];
+  const selectedKeywords = searchKeywords.filter(function(kw) {
+    return keywords.some(function(k) { return k.toLowerCase().includes(kw.toLowerCase()); });
+  });
+  const primaryKeywords = selectedKeywords.length > 0 ? selectedKeywords : ['GCP', 'DevOps'];
 
   const results = await Promise.allSettled([
-    scrapeLinkedInRSS(keyword, kv),
+    scrapeLinkedInRSS(primaryKeywords[0], kv),
     // Free-to-apply sources (direct company APIs - no paywall)
-    scrapeGreenhouseFiltered(keyword, kv),
+    scrapeGreenhouseFiltered(primaryKeywords[0], kv),
   ]);
 
   const all = results
