@@ -3,82 +3,96 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Job Agent Dashboard</title>
-  <link rel="stylesheet" href="/styles.css"/>
+  <title>Job Agent</title>
+  <link rel="stylesheet" href="/styles.css?t=__STYLES_VERSION__"/>
 </head>
 <body>
+  <!-- Top Bar -->
   <header class="topbar">
-    <div class="brand">
-      <h1>🔎 Job Agent</h1>
-      <span class="sub" id="profileName">Loading...</span>
+    <div class="topbar-brand">
+      <h1>Job Agent</h1>
+      <div class="topbar-meta">
+        <span class="live-dot"></span>
+        <span id="topbarMatched">— matched</span>
+        <span class="dot"></span>
+        <span id="topbarTotal">— total</span>
+        <span class="dot"></span>
+        <span id="utcTime">--:-- UTC</span>
+      </div>
     </div>
-    <div class="actions">
-      <button id="scrapeBtn" class="btn-primary">🔄 Scrape Now</button>
-      <button id="profileBtn" class="btn-ghost">👤 Profile</button>
+    <div class="topbar-actions">
+      <button id="scrapeBtn" class="btn btn-primary">Scrape Now</button>
+      <button id="profileBtn" class="btn btn-ghost">Profile</button>
     </div>
   </header>
 
-  <main>
-    <section class="stats" id="statsBar">
-      <div class="stat"><b>—</b><span>Total Jobs</span></div>
-      <div class="stat"><b>—</b><span>New</span></div>
-      <div class="stat"><b>—</b><span>Saved</span></div>
-      <div class="stat"><b>—</b><span>Applied</span></div>
-      <div class="stat"><b>—</b><span>Skipped</span></div>
-    </section>
+  <!-- Stat Strip -->
+  <div class="stat-strip">
+    <div class="stat-cell"><span class="num">—</span><span class="label">Total</span></div>
+    <div class="stat-cell"><span class="num accent">—</span><span class="label">New</span></div>
+    <div class="stat-cell"><span class="num amber">—</span><span class="label">Saved</span></div>
+    <div class="stat-cell"><span class="num green">—</span><span class="label">Applied</span></div>
+    <div class="stat-cell"><span class="num red">—</span><span class="label">Skipped</span></div>
+    <div class="stat-cell"><span class="num" style="color:var(--muted)">—</span><span class="label">Ignored</span></div>
+  </div>
 
-    <section class="toolbar">
-      <div class="filters">
-        <select id="statusFilter" title="Filter by status">
-          <option value="new">New Jobs</option>
-          <option value="saved">Saved</option>
-          <option value="applied">Applied</option>
-          <option value="skipped">Skipped</option>
-          <option value="ignored">Ignored</option>
-        </select>
-        <select id="companyFilter" title="Filter by company">
-          <option value="">All Companies</option>
-        </select>
-        <select id="regionFilter" title="Filter by region">
-          <option value="">All Regions</option>
-          <option value="india">🇮🇳 India</option>
-          <option value="remote">🌐 Remote</option>
-          <option value="usa">🇺🇸 USA</option>
-          <option value="europe">🇪🇺 Europe</option>
-          <option value="asia-pacific">🌏 Asia-Pacific</option>
-        </select>
-        <select id="jobTypeFilter" title="Filter by job type">
-          <option value="">All Types</option>
-          <option value="remote">Remote Only</option>
-          <option value="onsite">On-site Only</option>
-        </select>
-        <select id="sourceFilter" title="Filter by source">
-          <option value="">All Sources</option>
-        </select>
-        <select id="sortFilter" title="Sort by">
-          <option value="score">Sort: Score (desc)</option>
-          <option value="posted">Sort: Newest</option>
-        </select>
-        <input id="searchInput" type="text" placeholder="🔍 Search title, keywords..."/>
-        <button id="clearFilters" class="btn-ghost" style="display:none">✕ Clear</button>
-      </div>
-      <div class="bulk-actions">
-        <button id="bulkSave" class="btn-ghost">Save All Visible</button>
-        <button id="bulkSkip" class="btn-ghost">Skip All Below 30</button>
-      </div>
-    </section>
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <select id="statusFilter" title="Filter by status">
+      <option value="new">New Jobs</option>
+      <option value="saved">Saved</option>
+      <option value="applied">Applied</option>
+      <option value="skipped">Skipped</option>
+      <option value="ignored">Ignored</option>
+    </select>
+    <select id="companyFilter" title="Filter by company">
+      <option value="">All Companies</option>
+    </select>
+    <select id="regionFilter" title="Filter by region">
+      <option value="">All Regions</option>
+      <option value="india">India</option>
+      <option value="remote">Remote</option>
+      <option value="usa">USA</option>
+      <option value="europe">Europe</option>
+      <option value="asia-pacific">Asia-Pacific</option>
+    </select>
+    <select id="jobTypeFilter" title="Filter by job type">
+      <option value="">All Types</option>
+      <option value="remote">Remote Only</option>
+      <option value="onsite">On-site Only</option>
+    </select>
+    <select id="sourceFilter" title="Filter by source">
+      <option value="">All Sources</option>
+    </select>
+    <select id="sortFilter" title="Sort by">
+      <option value="score">Score (desc)</option>
+      <option value="posted">Newest</option>
+    </select>
+    <div class="spacer"></div>
+    <input id="searchInput" type="text" placeholder="Search title, company..."/>
+    <button id="clearFilters" class="btn btn-ghost" style="display:none">Clear</button>
+  </div>
 
-    <section class="queue" id="jobQueue">
-      <div class="empty-state">Loading jobs...</div>
-    </section>
-  </main>
+  <!-- Job List Header -->
+  <div class="list-header">
+    <span>#</span>
+    <span>Job</span>
+    <span>Details</span>
+    <span>Score</span>
+    <span>Actions</span>
+  </div>
+
+  <!-- Job List -->
+  <div class="job-list" id="jobQueue">
+    <div class="empty-state"><p>Loading jobs...</p></div>
+  </div>
 
   <!-- Profile Modal -->
   <div id="profileModal" class="modal" style="display:none">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>👤 Edit Profile</h2>
-        <button id="closeProfileBtn" class="close">✕</button>
+        <h2>Edit Profile</h2>
+        <button id="closeProfileBtn" class="close">&times;</button>
       </div>
       <form id="profileForm">
         <div class="form-grid">
@@ -96,7 +110,7 @@
           <label>Required Keywords<input id="p_req_kw" name="required_keywords"/></label>
           <label>Bonus Keywords<input id="p_bonus_kw" name="bonus_keywords"/></label>
           <label>Min Salary (Lakhs INR)<input id="p_min_salary" name="salary_min_lakhs" type="number"/></label>
-          <label>Salary Currency
+          <label>Currency
             <select id="p_currency" name="salary_currency">
               <option>INR</option><option>USD</option><option>EUR</option><option>GBP</option>
             </select>
@@ -112,8 +126,8 @@
           <label>Summary<textarea id="p_summary" name="summary" rows="3"></textarea></label>
         </div>
         <div class="modal-actions">
-          <button type="submit" class="btn-primary">Save Profile</button>
-          <button type="button" id="cancelProfileBtn" class="btn-ghost">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Profile</button>
+          <button type="button" id="cancelProfileBtn" class="btn btn-ghost">Cancel</button>
         </div>
       </form>
     </div>
@@ -123,18 +137,18 @@
   <div id="applyModal" class="modal" style="display:none">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>🚀 Prepare Application</h2>
-        <button id="closeApplyBtn" class="close">✕</button>
+        <h2>Prepare Application</h2>
+        <button id="closeApplyBtn" class="close">&times;</button>
       </div>
       <div id="applyContent"></div>
       <div class="modal-actions">
-        <a id="applyUrlBtn" href="#" target="_blank" class="btn-primary">Open Job Page</a>
-        <button id="markAppliedBtn" class="btn-success">✅ Mark as Applied</button>
+        <a id="applyUrlBtn" href="#" target="_blank" class="btn btn-ghost">Open Job Page</a>
+        <button id="markAppliedBtn" class="btn btn-primary" style="background:var(--green)">Mark as Applied</button>
       </div>
     </div>
   </div>
 
   <div id="toast" class="toast"></div>
-  <script src="/app.js"></script>
+  <script src="/app.js?t=__TIMESTAMP__"></script>
 </body>
 </html>

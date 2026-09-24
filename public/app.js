@@ -12,13 +12,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadSources();
   await loadJobs();
   bindEvents();
+  startUtcClock();
 });
+
+// ── UTC Clock ─────────────────────────────────────────────────────────────────
+function startUtcClock() {
+  function tick() {
+    const d = new Date();
+    const h = String(d.getUTCHours()).padStart(2, '0');
+    const m = String(d.getUTCMinutes()).padStart(2, '0');
+    const s = String(d.getUTCSeconds()).padStart(2, '0');
+    const el = document.getElementById('utcTime');
+    if (el) el.textContent = h + ':' + m + ':' + s + ' UTC';
+  }
+  tick();
+  setInterval(tick, 1000);
+}
 
 // ── Profile ───────────────────────────────────────────────────────────────────
 async function loadProfile() {
   const r = await fetch(`${API}/profile`);
   const p = await r.json();
-  document.getElementById('profileName').textContent = p.name || 'Job Agent';
   window._profile = p;
 }
 
@@ -33,7 +47,6 @@ async function loadSources() {
     sel.appendChild(opt);
   });
 
-  // Populate company filter
   const companies = [...new Set(jobs.map(j => j.company))].sort();
   const companySel = document.getElementById('companyFilter');
   companies.forEach(c => {
@@ -46,12 +59,17 @@ async function loadSources() {
 // ── Stats ─────────────────────────────────────────────────────────────────────
 async function loadStats() {
   const s = await (await fetch(`${API}/stats`)).json();
-  const els = document.querySelectorAll('.stat b');
-  els[0].textContent = s.total_jobs;
-  els[1].textContent = s.new_jobs;
-  els[2].textContent = s.saved_jobs;
-  els[3].textContent = s.applied_jobs;
-  els[4].textContent = s.skipped_jobs;
+  const cells = document.querySelectorAll('.stat-strip .stat-cell');
+  if (cells[0]) cells[0].querySelector('.num').textContent = s.total_jobs;
+  if (cells[1]) cells[1].querySelector('.num').textContent = s.new_jobs;
+  if (cells[2]) cells[2].querySelector('.num').textContent = s.saved_jobs;
+  if (cells[3]) cells[3].querySelector('.num').textContent = s.applied_jobs;
+  if (cells[4]) cells[4].querySelector('.num').textContent = s.skipped_jobs;
+  if (cells[5]) cells[5].querySelector('.num').textContent = s.ignored_jobs || 0;
+  const tm = document.getElementById('topbarMatched');
+  const tt = document.getElementById('topbarTotal');
+  if (tm) tm.textContent = (s.matched_jobs || s.new_jobs) + ' matched';
+  if (tt) tt.textContent = s.total_jobs + ' total';
 }
 
 // ── Jobs ──────────────────────────────────────────────────────────────────────
@@ -72,7 +90,6 @@ async function loadJobs() {
   const r = await fetch(`${API}/jobs?${params}`);
   allJobs = await r.json();
 
-  // Client-side search filter
   if (search) {
     allJobs = allJobs.filter(j =>
       (j.title || '').toLowerCase().includes(search) ||
@@ -97,106 +114,88 @@ function updateClearButton() {
 function renderJobs(jobs) {
   const q = document.getElementById('jobQueue');
   if (jobs.length === 0) {
-    q.innerHTML = '<div class="empty-state">No jobs found. Click "Scrape Now" to fetch fresh listings.</div>';
+    q.innerHTML = '<div class="empty-state"><div class="icon">⎓</div><p>No jobs found. Click "Scrape Now" to fetch fresh listings.</p></div>';
     return;
   }
-  q.innerHTML = jobs.map((j, i) => jobCard(j, i)).join('');
+  q.innerHTML = jobs.map((j, i) => jobRow(j, i)).join('');
 }
 
-function jobCard(job, index) {
-  const reasons = (job.match_reasons || []).map(r => `<li>✅ ${r}</li>`).join('');
-  const warnings = (job.warnings || []).filter(w => w).map(w => `<li class="warn">⚠️ ${w}</li>`).join('');
-  const salaryBadge = job.salary ? `<span class="badge salary">${job.salary}</span>` : '';
-  const remoteBadge = job.remote || job.source === 'RemoteOK' || job.source === 'Remotive' || job.source === 'WeWorkRemotely' ? `<span class="badge remote">Remote</span>` : '';
-  const clHtml = job.cover_letter
-    ? `<div class="cl-box">${escapeHtml(job.cover_letter.slice(0, 400))}${job.cover_letter.length > 400 ? '...' : ''}<button onclick="copyText('cl-${index}')">Copy</button></div>`
-    : '';
-  const statusClass = `status-${job.status || 'new'}`;
-  const pct = Math.min(100, Math.round((job.score || 0) / 120 * 100));
-  const scoreColor = pct >= 70 ? '#4ade80' : pct >= 40 ? '#fbbf24' : '#f87171';
-
-  // Status-specific action buttons
-  let actionsHtml = '';
+function jobRow(job, index) {
+  const salaryBadge = job.salary ? `<span class="job-tag salary">${escapeHtml(job.salary)}</span>` : '';
+  const remoteBadge = job.remote || job.source === 'RemoteOK' || job.source === 'Remotive' || job.source === 'WeWorkRemotely'
+    ? `<span class="job-tag remote">Remote</span>` : '';
   const status = job.status || 'new';
+  const statusClass = `status-${status}`; // statusClass for status-badge class
+  const rowClass = status === 'applied' ? 'applied' : status === 'saved' ? 'saved'
+    : status === 'skipped' ? 'skipped' : status === 'ignored' ? 'ignored' : '';
+  const pct = Math.min(100, Math.round((job.score || 0) / 120 * 100));
+  const scoreClass = pct >= 70 ? 'high' : pct >= 40 ? 'mid' : 'low';
+  const location = job.location || job.region || '—';
+  const sourceLabel = job.source || '';
 
+  let actionsHtml = '';
   if (status === 'new') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">View Job</a>
-        <button onclick="openApply('${job.id}')" class="btn-secondary">Apply</button>
-        <button onclick="markAction('${job.id}','saved')" class="btn-ghost">Save</button>
-        <button onclick="markAction('${job.id}','skipped')" class="btn-ghost">Skip</button>
-        <button onclick="markAction('${job.id}','ignored')" class="btn-ghost">Ignore</button>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view">View ▸</a>
+        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply">Apply</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','saved')" class="action-link save">Save</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip">Skip</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','ignored')" class="action-link skip">Ignore</a>
       `;
   } else if (status === 'applied') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">View Job</a>
-        <span class="status-badge status-applied">Applied</span>
-        <button onclick="markAction('${job.id}','skipped')" class="btn-ghost">Revoke & Skip</button>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view">View ▸</a>
+        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply">Apply</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip">Revoke & Skip</a>
       `;
   } else if (status === 'saved') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">View Job</a>
-        <button onclick="openApply('${job.id}')" class="btn-secondary">Apply</button>
-        <button onclick="markAction('${job.id}','skipped')" class="btn-ghost">Skip</button>
-        <button onclick="markAction('${job.id}','ignored')" class="btn-ghost">Ignore</button>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view">View ▸</a>
+        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply">Apply</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip">Skip</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','ignored')" class="action-link skip">Ignore</a>
       `;
   } else if (status === 'skipped') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">View Job</a>
-        <span class="status-badge status-skipped">Skipped</span>
-        <button onclick="markAction('${job.id}','new')" class="btn-ghost">Reopen</button>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view">View ▸</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-link save">Reopen</a>
       `;
   } else if (status === 'ignored') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="btn-apply">View Job</a>
-        <span class="status-badge status-ignored">Ignored</span>
-        <button onclick="markAction('${job.id}','new')" class="btn-ghost">Reopen</button>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view">View ▸</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-link save">Reopen</a>
       `;
   }
 
   return `
-  <div class="job-card" id="job-${job.id}">
-    <div class="job-header">
-      <div class="job-rank">#${index + 1} <span class="status-badge ${statusClass}">${status.toUpperCase()}</span></div>
-      <div class="job-title-block">
-        <h2>${escapeHtml(job.title)}</h2>
-        <div class="job-meta">${escapeHtml(job.company)} · ${escapeHtml(job.source)}</div>
-        <div class="badges">
-          <span class="badge source">${escapeHtml(job.source)}</span>
-          ${remoteBadge}
-          ${salaryBadge}
-        </div>
+  <div class="job-row ${rowClass}" id="job-${job.id}">
+    <div class="job-rank"><span class="rank-num">${index + 1}</span></div>
+    <div class="job-info">
+      <div class="job-title">
+        ${escapeHtml(job.title)}
+        <span class="status-tag ${statusClass}">${status}</span>
       </div>
-      <div class="score-bar-wrap">
-        <div class="score-bar"><div class="score-fill" style="width:${pct}%;background:${scoreColor}"></div></div>
-        <span>${job.score} pts</span>
-      </div>
+      <div class="job-company">${escapeHtml(job.company || '')} &middot; ${escapeHtml(sourceLabel)}</div>
+      <div class="job-tags">${remoteBadge}${salaryBadge}</div>
     </div>
-    <div class="job-body">
-      <div class="reasons">
-        <h4>Why this matched</h4>
-        <ul>${reasons}${warnings}</ul>
-      </div>
-      <div class="desc">
-        <h4>Description</h4>
-        <p>${escapeHtml((job.description || '').slice(0, 300))}${(job.description || '').length > 300 ? '... (link for full text)' : ''}</p>
-      </div>
-      ${clHtml}
-      <div class="actions">
-        ${actionsHtml}
-      </div>
+    <div class="job-details">
+      <div class="location">${escapeHtml(location)}</div>
+      <div class="source">${escapeHtml(sourceLabel)}</div>
     </div>
+    <div class="job-score">
+      <div class="score-bar-track"><div class="score-bar-fill ${scoreClass}" style="width:${pct}%"></div></div>
+      <span class="score-val">${job.score} pts</span>
+    </div>
+    <div class="job-actions">${actionsHtml}</div>
   </div>`;
 }
 
 // ── Actions ───────────────────────────────────────────────────────────────────
 async function markAction(jobId, action) {
-  // Map action names to API endpoints
   const endpointMap = { applied: 'apply', skipped: 'skip', saved: 'save', ignored: 'ignore', new: 'new' };
   const endpoint = endpointMap[action] || action;
-  // When skipping, also pass the job title so the worker can extract skip keywords
   let payload = { jobId };
-  if (action === 'skipped') {
+  if (action === 'skipped' || action === 'ignored') {
     const job = allJobs.find(j => j.id === jobId);
     if (job && job.title) payload.title = job.title;
   }
@@ -207,27 +206,13 @@ async function markAction(jobId, action) {
       body: JSON.stringify(payload)
     });
     const text = await resp.text();
-    if (!resp.ok) {
-      throw new Error('HTTP ' + resp.status + ': ' + text);
-    }
+    if (!resp.ok) throw new Error('HTTP ' + resp.status + ': ' + text);
     JSON.parse(text);
     toast(`${action.charAt(0).toUpperCase() + action.slice(1)}d job`);
     await loadJobs();
   } catch (err) {
     toast('Error: ' + err.message);
   }
-}
-
-async function bulkSave() {
-  const visible = document.querySelectorAll('.job-card');
-  visible.forEach(el => {
-    const jobId = el.id.replace('job-', '');
-    markAction(jobId, 'saved');
-  });
-}
-
-async function bulkSkipLow() {
-  allJobs.filter(j => j.score < 30 && (j.status === 'new')).forEach(j => markAction(j.id, 'skipped'));
 }
 
 // ── Apply Modal ───────────────────────────────────────────────────────────────
@@ -237,17 +222,19 @@ function openApply(jobId) {
   if (!job) return;
   const p = window._profile || {};
   document.getElementById('applyContent').innerHTML = `
-    <h3>${escapeHtml(job.title)} @ ${escapeHtml(job.company)}</h3>
-    <p style="color:var(--muted);margin:.5rem 0">${escapeHtml(job.description?.slice(0, 200)) || 'No description available.'}</p>
-    <p style="margin:.5rem 0"><a href="${escapeHtml(job.url)}" target="_blank" style="color:var(--accent)">View full job listing →</a></p>
-    <h4>Application Checklist:</h4>
-    <ul class="apply-checklist">
-      <li><input type="checkbox" checked disabled> Name: <span class="val">${escapeHtml(p.name || '—')}</span></li>
-      <li><input type="checkbox" checked disabled> Email: <span class="val">${escapeHtml(p.email || '—')}</span></li>
-      <li><input type="checkbox" checked disabled> Phone: <span class="val">${escapeHtml(p.phone || '—')}</span></li>
-      <li><input type="checkbox" checked disabled> Resume: <span class="val">${escapeHtml(p.resume_path || 'not set')}</span></li>
-      <li><input type="checkbox" checked disabled> Cover letter: <span class="val">${job.cover_letter ? '✓ Generated' : 'Run with ANTHROPIC_API_KEY'}</span></li>
-    </ul>
+    <div style="padding:1.5rem">
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:.25rem">${escapeHtml(job.title)} @ ${escapeHtml(job.company)}</h3>
+      <p style="color:var(--muted);margin:.5rem 0;font-size:13px">${escapeHtml(job.description?.slice(0, 200)) || 'No description available.'}</p>
+      <p style="margin:.5rem 0;font-size:13px"><a href="${escapeHtml(job.url)}" target="_blank" style="color:var(--accent)">View full job listing →</a></p>
+      <h4 style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:1rem 0 .5rem">Application Checklist:</h4>
+      <ul class="apply-checklist">
+        <li><input type="checkbox" checked disabled> Name: <span class="val">${escapeHtml(p.name || '—')}</span></li>
+        <li><input type="checkbox" checked disabled> Email: <span class="val">${escapeHtml(p.email || '—')}</span></li>
+        <li><input type="checkbox" checked disabled> Phone: <span class="val">${escapeHtml(p.phone || '—')}</span></li>
+        <li><input type="checkbox" checked disabled> Resume: <span class="val">${escapeHtml(p.resume_path || 'not set')}</span></li>
+        <li><input type="checkbox" checked disabled> Cover letter: <span class="val">${job.cover_letter ? '✓ Generated' : 'Run with ANTHROPIC_API_KEY'}</span></li>
+      </ul>
+    </div>
   `;
   document.getElementById('applyUrlBtn').href = job.url;
   document.getElementById('markAppliedBtn').onclick = async () => {
@@ -274,7 +261,6 @@ document.getElementById('profileForm').onsubmit = async (e) => {
   const fd = new FormData(e.target);
   const p = {};
   fd.forEach((v, k) => { p[k] = v; });
-  // Parse comma-separated fields
   for (const key of ['skills', 'target_titles', 'required_keywords', 'bonus_keywords', 'deal_breakers', 'preferred_work_type', 'preferred_locations', 'preferred_employment']) {
     p[key] = (p[key] || '').split(',').map(s => s.trim()).filter(Boolean);
   }
@@ -293,7 +279,11 @@ function bindEvents() {
     document.getElementById('scrapeBtn').disabled = true;
     document.getElementById('scrapeBtn').textContent = 'Scraping...';
     await fetch(`${API}/scrape`, { method: 'POST' });
-    setTimeout(() => { loadJobs(); document.getElementById('scrapeBtn').disabled = false; document.getElementById('scrapeBtn').textContent = 'Scrape Now'; }, 2000);
+    setTimeout(() => {
+      loadJobs();
+      document.getElementById('scrapeBtn').disabled = false;
+      document.getElementById('scrapeBtn').textContent = 'Scrape Now';
+    }, 2000);
   };
   document.getElementById('clearFilters').onclick = () => {
     document.getElementById('companyFilter').value = '';
@@ -310,9 +300,10 @@ function bindEvents() {
   document.getElementById('jobTypeFilter').onchange = onFilterChange;
   document.getElementById('sourceFilter').onchange = loadJobs;
   document.getElementById('sortFilter').onchange = loadJobs;
-  document.getElementById('searchInput').oninput = () => { clearTimeout(window._searchTimer); window._searchTimer = setTimeout(() => { loadJobs(); updateClearButton(); }, 300); };
-  document.getElementById('bulkSave').onclick = bulkSave;
-  document.getElementById('bulkSkip').onclick = bulkSkipLow;
+  document.getElementById('searchInput').oninput = () => {
+    clearTimeout(window._searchTimer);
+    window._searchTimer = setTimeout(() => { loadJobs(); updateClearButton(); }, 300);
+  };
   document.getElementById('closeProfileBtn').onclick = () => document.getElementById('profileModal').style.display = 'none';
   document.getElementById('cancelProfileBtn').onclick = () => document.getElementById('profileModal').style.display = 'none';
   document.getElementById('closeApplyBtn').onclick = () => document.getElementById('applyModal').style.display = 'none';
@@ -330,11 +321,5 @@ function escapeHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-window.copyText = function(id) {
-  const el = document.getElementById(id);
-  navigator.clipboard.writeText(el.textContent).then(() => toast('Cover letter copied!'));
-};
 window.markAction = markAction;
 window.openApply = openApply;
-window.bulkSave = bulkSave;
-window.bulkSkipLow = bulkSkipLow;
