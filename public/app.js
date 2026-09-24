@@ -1,6 +1,9 @@
 /**
  * app.js — Dashboard client-side logic
  */
+// DEBUG: This version loads at <RUNTIME>
+console.log('[Job Agent] app.js loaded at', new Date().toISOString(), '- timestamp:', '<RUNTIME>');
+
 const API = '/api';
 let allJobs = [];
 let currentJobId = null;
@@ -56,6 +59,7 @@ async function loadStats() {
 
 // ── Jobs ──────────────────────────────────────────────────────────────────────
 async function loadJobs() {
+  console.log('[Job Agent] loadJobs called');
   const status = document.getElementById('statusFilter').value;
   const company = document.getElementById('companyFilter').value;
   const region = document.getElementById('regionFilter').value;
@@ -191,9 +195,18 @@ function jobCard(job, index) {
 
 // ── Actions ───────────────────────────────────────────────────────────────────
 async function markAction(jobId, action) {
-  await fetch(`${API}/${action}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jobId }) });
-  toast(`${action.charAt(0).toUpperCase() + action.slice(1)}d job`);
-  await loadJobs();
+  console.log('[Job Agent] markAction called:', jobId, action);
+  try {
+    const resp = await fetch(`${API}/${action}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jobId }) });
+    console.log('[Job Agent] Response status:', resp.status);
+    const result = await resp.json();
+    console.log('[Job Agent] Response body:', result);
+    toast(`${action.charAt(0).toUpperCase() + action.slice(1)}d job`);
+    await loadJobs();
+  } catch (err) {
+    console.error('[Job Agent] markAction failed:', err);
+    toast(`Error: ${err.message}`);
+  }
 }
 
 async function bulkSave() {
