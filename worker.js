@@ -472,10 +472,18 @@ function scoreJob(job, profile) {
   if (bonusMatches.length > 0) reasons.push('Bonus skills: ' + bonusMatches.slice(0, 3).join(', '));
 
   // ── Relevance gate ─────────────────────────────────────────────────────────
-  // A job must have at least a partial title match OR mention 2+ required
-  // keywords. Otherwise it's almost certainly irrelevant.
+  // Lower threshold for GCP/cloud roles — they should still match with just 1 keyword
   if (!hasTitleSignal && reqMatches.length < 2) {
-    return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['No title or keyword signal — likely irrelevant'] });
+    // GCP/cloud/infra roles get a pass if they mention cloud/infra in title or body
+    const hasCloudSignal = /\bgcp\b|google\s*cloud|aws|azure|platform|devops|sre|kubernetes|terraform|cloud|infrastructure/i.test(normalize(job.title + ' ' + (job.description || '')));
+    if (!hasCloudSignal) {
+      return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['No title or keyword signal — likely irrelevant'] });
+    }
+    // Add a small bonus for cloud signal in description
+    if (/\bgcp\b|google\s*cloud|infrastructure/i.test(normalize(job.title))) {
+      score += 5;
+      reasons.push('Cloud/Infra title signal');
+    }
   }
 
   // ── Remote/hybrid/location ─────────────────────────────────────────────────
