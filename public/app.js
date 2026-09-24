@@ -1,9 +1,6 @@
 /**
  * app.js — Dashboard client-side logic
  */
-// DEBUG: This version loads at <RUNTIME>
-console.log('[Job Agent] app.js loaded at', new Date().toISOString(), '- timestamp:', '<RUNTIME>');
-
 const API = '/api';
 let allJobs = [];
 let currentJobId = null;
@@ -19,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ── Profile ───────────────────────────────────────────────────────────────────
 async function loadProfile() {
-  const r = console.log('[FETCH]', 'Calling API'); await fetch(`\${API}/\${action}`);
+  const r = await fetch(`${API}/profile`);
   const p = await r.json();
   document.getElementById('profileName').textContent = p.name || 'Job Agent';
   window._profile = p;
@@ -48,7 +45,7 @@ async function loadSources() {
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
 async function loadStats() {
-  const s = await (console.log('[FETCH]', 'Calling API'); await fetch(`\${API}/\${action}`)).json();
+  const s = await (await fetch(`${API}/stats`)).json();
   const els = document.querySelectorAll('.stat b');
   els[0].textContent = s.total_jobs;
   els[1].textContent = s.new_jobs;
@@ -59,7 +56,6 @@ async function loadStats() {
 
 // ── Jobs ──────────────────────────────────────────────────────────────────────
 async function loadJobs() {
-  console.log('[Job Agent] loadJobs called');
   const status = document.getElementById('statusFilter').value;
   const company = document.getElementById('companyFilter').value;
   const region = document.getElementById('regionFilter').value;
@@ -195,17 +191,24 @@ function jobCard(job, index) {
 
 // ── Actions ───────────────────────────────────────────────────────────────────
 async function markAction(jobId, action) {
-  console.log('[Job Agent] markAction called:', jobId, action);
+  console.log('[Job Agent] markAction:', jobId, action);
   try {
-    const resp = await fetch(`${API}/${action}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jobId }) });
+    const resp = await fetch(`${API}/${action}`, { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ jobId }) 
+    });
     console.log('[Job Agent] Response status:', resp.status);
+    if (!resp.ok) {
+      throw new Error('HTTP ' + resp.status + ': ' + await resp.text());
+    }
     const result = await resp.json();
-    console.log('[Job Agent] Response body:', result);
+    console.log('[Job Agent] Response:', result);
     toast(`${action.charAt(0).toUpperCase() + action.slice(1)}d job`);
     await loadJobs();
   } catch (err) {
     console.error('[Job Agent] markAction failed:', err);
-    toast(`Error: ${err.message}`);
+    toast('Error: ' + err.message);
   }
 }
 
@@ -251,7 +254,7 @@ function openApply(jobId) {
 
 // ── Profile Modal ─────────────────────────────────────────────────────────────
 document.getElementById('profileBtn').onclick = async () => {
-  const p = await (console.log('[FETCH]', 'Calling API'); await fetch(`\${API}/\${action}`)).json();
+  const p = await (await fetch(`${API}/profile`)).json();
   window._profile = p;
   Object.keys(p).forEach(k => {
     const el = document.getElementById('p_' + k);
@@ -272,7 +275,7 @@ document.getElementById('profileForm').onsubmit = async (e) => {
   p.experience_years = parseInt(p.experience_years) || 0;
   p.salary_min_lakhs = parseFloat(p.salary_min_lakhs) || 35;
   p.target_salary = { currency: p.salary_currency || 'INR', min_lakhs: p.salary_min_lakhs };
-  console.log('[FETCH]', 'Calling API'); await fetch(`\${API}/\${action}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p) });
+  await fetch(`${API}/profile`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p) });
   document.getElementById('profileModal').style.display = 'none';
   toast('Profile saved!');
   loadProfile();
@@ -283,7 +286,7 @@ function bindEvents() {
   document.getElementById('scrapeBtn').onclick = async () => {
     document.getElementById('scrapeBtn').disabled = true;
     document.getElementById('scrapeBtn').textContent = 'Scraping...';
-    console.log('[FETCH]', 'Calling API'); await fetch(`\${API}/\${action}`, { method: 'POST' });
+    await fetch(`${API}/scrape`, { method: 'POST' });
     setTimeout(() => { loadJobs(); document.getElementById('scrapeBtn').disabled = false; document.getElementById('scrapeBtn').textContent = 'Scrape Now'; }, 2000);
   };
   document.getElementById('clearFilters').onclick = () => {
