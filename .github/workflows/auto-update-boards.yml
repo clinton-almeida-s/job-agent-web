@@ -98,7 +98,11 @@ jobs:
           NEW_COUNT=$(echo "$UPDATED_BOARDS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); console.log(d.greenhouse.length)")
 
           echo "Board count changed from $OLD_COUNT to $NEW_COUNT"
-          echo "changed=$((NEW_COUNT != OLD_COUNT ? \"true\" : \"false\"))" >> $GITHUB_OUTPUT
+          if [ "$NEW_COUNT" != "$OLD_COUNT" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Validate boards.json
         run: |
