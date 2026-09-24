@@ -117,25 +117,26 @@ jobs:
           echo "📧 Sending email notification..."
           NEW_COUNT=${{ steps.discover.outputs.new_boards_count }}
 
-          # Use Resend API to send notification
+          # Build HTML list of new boards
+          BOARD_LIST=$(cat data/discovery_results.json | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); d.newBoards.forEach(b => console.log('<li><b>' + b + '</b></li>'))")
+
+          # Build JSON payload safely
+          PAYLOAD=$(node -e "
+            const list = process.argv[1];
+            const count = process.argv[2];
+            const payload = {
+              from: 'Job Agent <onboarding@resend.dev>',
+              to: [process.env.EMAIL_TO],
+              subject: 'New Job Boards Discovered!',
+              html: '<h2>New Job Boards Found</h2><p>Discovered <strong>' + count + ' new companies</strong> using Greenhouse:</p><ul>' + list + '</ul><p>Dashboard: <a href=\"https://job-agent-web.clinton-s-almeida.workers.dev\">View Jobs</a></p><hr><p><small>Job Agent — Auto-Discovery System</small></p>'
+            };
+            console.log(JSON.stringify(payload));
+          " "$BOARD_LIST" "$NEW_COUNT")
+
           curl -s -X POST https://api.resend.com/emails \
             -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "{
-              \"from\": \"Job Agent <onboarding@resend.dev>\",
-              \"to\": [\"${{ secrets.EMAIL_TO }}\"],
-              \"subject\": \"🎉 New Job Boards Discovered!\",
-              \"html\": \"
-                <h2>New Job Boards Found</h2>
-                <p>Discovered <strong>$NEW_COUNT new companies</strong> using Greenhouse:</p>
-                <ul>
-                  $(cat data/discovery_results.json | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf-8')); d.newBoards.forEach(b => console.log('<li><b>' + b + '</b></li>'))")
-                </ul>
-                <p>Dashboard: <a href=\"https://job-agent-web.clinton-s-almeida.workers.dev\">View Jobs</a></p>
-                <hr>
-                <p><small>Job Agent — Auto-Discovery System</small></p>
-              "
-            }" || echo "⚠️ Email notification failed (non-critical)"
+            -d "$PAYLOAD" || echo "⚠️ Email notification failed (non-critical)"
 
       - name: Send failure notification
         if: failure()
