@@ -174,6 +174,11 @@ function scoreJob(job) {
   if (titleMatch.length === 0) {
     const simScore = titleSimilarity(job.title, profile.target_titles);
     if (simScore > 0.3) {
+      // Reject fuzzy matches that lack any engineering/cloud signal
+      const hasTechSignal = /engineer|architect|developer|infra|devops|sre|gcp|google\s*cloud|aws|azure|kubernetes|terraform|cloud/i.test(titleLower);
+      if (!hasTechSignal) {
+        return { ...job, score: DEAL_BREAKER_PENALTY, match_reasons: [], warnings: ['No engineering signal in title'] };
+      }
       const bonus = Math.round(SIGNALS.titleSimilar.weight * simScore);
       score += bonus;
       reasons.push(`${SIGNALS.titleSimilar.label}: ${Math.round(simScore * 100)}%`);
