@@ -86,25 +86,23 @@ function isTechnicalTitle(title) {
   return containsAny(title, TECH_TITLE_KEYWORDS, true).length > 0;
 }
 
-function checkDealBreakers(job) {
-  const text = [job.title, job.company].join(' ');
-  const breakers = containsAny(text, (profile.deal_breakers || []), true);
-  if (breakers.length === 0) return null;
+const SKIP_KEYWORD_MIN_LEN = 4;
+const STOP_WORDS = new Set(['the', 'and', 'for', 'with', 'this', 'that', 'from', 'your', 'what', 'when', 'where', 'which', 'their', 'there', 'about', 'these', 'those', 'after', 'before', 'other', 'between', 'through', 'during', 'below', 'above', 'under', 'over', 'just', 'been', 'been', 'will', 'each', 'such', 'than', 'into', 'has', 'had', 'have', 'does', 'done', 'may', 'can', 'shall', 'not']);
 
-  const hardBlockers = breakers.filter(b => !SOFT_BREAKERS.includes(b));
-  if (hardBlockers.length > 0) {
-    return { blocked: true, reason: `Deal-breaker: ${hardBlockers.join(', ')}` };
+function extractTitleKeywords(title) {
+  return normalize(title)
+    .split(/\s+/)
+    .filter(w => w.length >= SKIP_KEYWORD_MIN_LEN && !STOP_WORDS.has(w));
+}
+
+function checkSkipKeywords(job) {
+  const skipKw = profile.skip_keywords || [];
+  if (skipKw.length === 0) return null;
+  const matched = containsAny(job.title, skipKw, true);
+  if (matched.length > 0) {
+    return { blocked: true, reason: `Skipped keyword: "${matched[0]}"` };
   }
-  if (!isTechnicalTitle(job.title)) {
-    return { blocked: true, reason: `Deal-breaker: ${breakers.join(', ')}` };
-  }
-  // Additional hard blockers for sales engineer roles that slip through
-  const titleLower = normalize(job.title);
-  const salesEngineerBlocks = containsAny(titleLower, HARD_BREAKERS, true);
-  if (salesEngineerBlocks.length > 0) {
-    return { blocked: true, reason: `Deal-breaker: ${salesEngineerBlocks.join(', ')}` };
-  }
-  return { blocked: false, softBreakers: breakers };
+  return null;
 }
 
 /**
@@ -116,6 +114,12 @@ function scoreJob(job) {
   let score = 0;
   const reasons = [];
   const warnings = [];
+
+  // Skip-keyword check (title only)
+  const skipResult = checkSkipKeywords(job);
+  if (skipResult?.blocked) {
+    return { ...job, score: DEAL_BREAKER_PENALTY, match_reasons: [], warnings: [skipResult.reason] };
+  }
 
   // Deal-breaker check (title + company only)
   const breakerResult = checkDealBreakers(job);
@@ -231,4 +235,4 @@ function rankJobs(jobs, topN = 40) {
     .slice(0, topN);
 }
 
-module.exports = { scoreJob, rankJobs, MIN_SCORE, DEAL_BREAKER_PENALTY };
+module.exports = { scoreJob, rankJobs, MIN_SCORE, DEAL_BREAKER_PENALTY, extractTitleKeywords };

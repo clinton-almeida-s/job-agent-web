@@ -194,11 +194,17 @@ async function markAction(jobId, action) {
   // Map action names to API endpoints
   const endpointMap = { applied: 'apply', skipped: 'skip', saved: 'save', ignored: 'ignore', new: 'new' };
   const endpoint = endpointMap[action] || action;
+  // When skipping, also pass the job title so the worker can extract skip keywords
+  let payload = { jobId };
+  if (action === 'skipped') {
+    const job = allJobs.find(j => j.id === jobId);
+    if (job && job.title) payload.title = job.title;
+  }
   try {
     const resp = await fetch(`${API}/${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jobId })
+      body: JSON.stringify(payload)
     });
     const text = await resp.text();
     if (!resp.ok) {
