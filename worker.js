@@ -384,6 +384,11 @@ function scoreJob(job, profile) {
     return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['Deal-breaker: ' + salesEngineerBlocks.join(', ')] });
   }
 
+  // ── GCP Priority Boost ──────────────────────────────────────────────────────
+  // GCP is the user's strongest skill — boost matching significantly
+  const isGCP = /\bgcp\b|google\s*cloud/i.test(normalize(job.title + ' ' + fullText));
+  const hasGCPCert = /Google Professional Cloud Architect|GCP Associate Cloud Engineer/i.test(profile.certifications || []);
+
   // ── Title match ────────────────────────────────────────────────────────────
   const titleMatch = containsAny(job.title, target_titles, false);
   let hasTitleSignal = false;
@@ -392,6 +397,11 @@ function scoreJob(job, profile) {
     score += 40;
     reasons.push('Title match: "' + titleMatch[0] + '"');
     hasTitleSignal = true;
+    // Extra boost for GCP roles
+    if (isGCP) {
+      score += 15;
+      reasons.push('GCP platform match');
+    }
   } else {
     const simScore = titleSimilarity(job.title, target_titles);
     if (simScore > 0.3) {
@@ -403,6 +413,11 @@ function scoreJob(job, profile) {
       score += Math.round(25 * simScore);
       reasons.push('Title similarity: ' + Math.round(simScore * 100) + '%');
       hasTitleSignal = true;
+      // Extra boost for GCP roles
+      if (isGCP) {
+        score += 12;
+        reasons.push('GCP platform match');
+      }
     }
   }
 
@@ -435,6 +450,15 @@ function scoreJob(job, profile) {
   const reqScore = Math.min(reqMatches.length, 3) * 8;
   score += reqScore;
   if (reqMatches.length > 0) reasons.push('Required skills: ' + reqMatches.slice(0, 4).join(', '));
+
+  // ── GCP Keyword Bonus ──────────────────────────────────────────────────────
+  const gcpKeywords = ['GCP', 'Google Cloud', 'BigQuery', 'Cloud Composer', 'Pub/Sub', 'Cloud Run', 'Cloud Build'];
+  const gcpMatches = gcpKeywords.filter(function(kw) { return fullText.toLowerCase().includes(kw.toLowerCase()); });
+  if (gcpMatches.length > 0) {
+    const gcpBonus = gcpMatches.length * 5;
+    score += gcpBonus;
+    reasons.push('GCP stack: ' + gcpMatches.join(', '));
+  }
 
   // ── Bonus skills ───────────────────────────────────────────────────────────
   const bonusMatches = containsAny(fullText, profile.bonus_keywords || [], false);
