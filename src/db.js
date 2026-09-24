@@ -210,7 +210,8 @@ function upsertJob(job) {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', datetime('now'))
       ON CONFLICT(id) DO UPDATE SET
         score = excluded.score, match_reasons = excluded.match_reasons,
-        warnings = excluded.warnings, status = excluded.status,
+        warnings = excluded.warnings,
+        status = CASE WHEN jobs.status IN ('saved','applied','skipped','ignored') THEN jobs.status ELSE 'new' END,
         posted_at = excluded.posted_at
     `).run(
       job.id, job.source, job.title, job.company, job.location,
@@ -224,9 +225,14 @@ function upsertJob(job) {
   } else {
     const existing = fallbackData.jobs.find(j => j.id === job.id);
     if (existing) {
-      Object.assign(existing, job, { status: job.status || 'new' });
+      const prevStatus = existing.status;
+      Object.assign(existing, job);
+      // Preserve user-applied status across re-scrapes; only genuinely new
+      // jobs get marked 'new'. Otherwise every scrape would wipe out
+      // saved/applied/skipped/ignored state.
+      existing.status = (prevStatus && prevStatus !== 'new') ? prevStatus : (job.status || 'new');
     } else {
-      fallbackData.jobs.push({ ...job, status: job.status || 'new' });
+      fallbackData.jobs.push({ ...job, status: 'new' });
     }
     saveFallback();
   }
