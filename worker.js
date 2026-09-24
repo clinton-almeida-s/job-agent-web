@@ -458,7 +458,17 @@ async function runScrape(env) {
   console.log('Fresh jobs (not in KV): ' + freshJobs.length + ' / duplicates skipped: ' + (newJobs.length - freshJobs.length));
 
   const allJobs = jobList.concat(freshJobs);
-  const ranked = allJobs.map(function(j) {
+  // Deduplicate by title+company (normalized) to reduce noise from same job on multiple sources
+  const seenKeys = new Set();
+  const uniqueJobs = allJobs.filter(function(j) {
+    const key = ((j.title || '').toLowerCase().trim() + '|' + (j.company || '').toLowerCase().trim());
+    if (seenKeys.has(key)) return false;
+    seenKeys.add(key);
+    return true;
+  });
+  console.log('Dedup: ' + allJobs.length + ' -> ' + uniqueJobs.length + ' (removed ' + (allJobs.length - uniqueJobs.length) + ')');
+
+  const ranked = uniqueJobs.map(function(j) {
     const scored = scoreJob(j, profile);
     // Preserve user-applied status across re-scrapes; only genuinely new
     // jobs get marked 'new'. Otherwise every scrape would wipe out

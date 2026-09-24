@@ -158,6 +158,18 @@ function scoreJob(job) {
     reasons.push(`${SIGNALS.titleExact.label}: "${titleMatch[0]}"`);
   }
 
+  // 1b. Reject management/leadership roles that lack an explicit IC engineering title
+  // E.g., "Business Manager" → blocked; "Engineering Manager" → blocked; "SRE" → passes
+  const titleLower = normalize(job.title);
+  // Strip the management suffix and check what's left
+  const mangled = titleLower.replace(/\b(?:business\s+)?manager\s*(?:,|\s|$)/gi, ' ').trim();
+  const mangledShort = mangled.replace(/,\s*.*$/, '').trim();
+  const hasTechRole = /\b(?:engineer|architect|developer|analyst|scientist|programmer)\b/i.test(mangledShort);
+  const hasCloudSignal = /gcp|google\s*cloud|aws|azure|kubernetes|terraform|infra|devops|sre|cloud/i.test(mangledShort);
+  if (/\bmanager\b/i.test(titleLower) && !hasTechRole && !hasCloudSignal) {
+    return { ...job, score: DEAL_BREAKER_PENALTY, match_reasons: [], warnings: ['Management role without IC engineering title'] };
+  }
+
   // 2. Title similarity (fuzzy)
   if (titleMatch.length === 0) {
     const simScore = titleSimilarity(job.title, profile.target_titles);
@@ -249,9 +261,16 @@ function scoreJob(job) {
  * Rank all jobs, filter deal-breakers, return top N
  */
 function rankJobs(jobs, topN = 40) {
+  const seen = new Set();
   return jobs
     .map(scoreJob)
-    .filter(j => j.score >= MIN_SCORE)
+    .filter(j => {
+      if (j.score < MIN_SCORE) return false;
+      const key = (j.title || '').toLowerCase().trim() + '|' + (j.company || '').toLowerCase().trim();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
     .sort((a, b) => b.score - a.score)
     .slice(0, topN);
 }
