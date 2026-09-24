@@ -399,6 +399,29 @@ function scoreJob(job, profile) {
     }
   }
 
+  // ── Skip keywords ──────────────────────────────────────────────────────────
+  // Jobs whose titles contain keywords from previously skipped jobs get blocked
+  const skipKw = profile.skip_keywords || [];
+  if (skipKw.length > 0) {
+    const skipMatch = containsAny(job.title, skipKw, true);
+    if (skipMatch.length > 0) {
+      return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['Skipped keyword: ' + skipMatch[0]] });
+    }
+  }
+
+  // ── Reject generic management roles without IC engineering context ─────────
+  // E.g., "Business Development Manager" → blocked; "Engineering Manager" → blocked;
+  // "Site Reliability Engineer" → passes
+  const titleLower = normalize(job.title);
+  if (/\bmanager\b/i.test(titleLower)) {
+    const mangled = titleLower.replace(/,\s*.*$/, '').trim();
+    const hasTechRole = /\b(?:engineer|architect|developer|analyst|scientist|programmer)\b/i.test(mangled);
+    const hasCloudSignal = /gcp|google\s*cloud|aws|azure|kubernetes|terraform|infra|devops|sre|cloud/i.test(mangled);
+    if (!hasTechRole && !hasCloudSignal) {
+      return Object.assign({}, job, { score: -999, match_reasons: [], warnings: ['Management role without IC engineering title'] });
+    }
+  }
+
   // ── Required skills ────────────────────────────────────────────────────────
   const reqMatches = containsAny(fullText, required_keywords, false);
   // Cap at 3 keywords — beyond that, marginal mentions shouldn't dominate the score
