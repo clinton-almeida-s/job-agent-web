@@ -518,6 +518,12 @@ async function handleRequest(req, env) {
     if (jobType && jobType === 'remote') {
       filtered = filtered.filter(function(j) { return j.remote || j.source === 'RemoteOK' || j.source === 'Remotive' || j.source === 'WeWorkRemotely'; });
     }
+    const sortBy = url.searchParams.get('sort') || 'score';
+    if (sortBy === 'score') {
+      filtered.sort(function(a, b) { return (b.score || 0) - (a.score || 0); });
+    } else if (sortBy === 'posted') {
+      filtered.sort(function(a, b) { return new Date(b.posted_at || 0) - new Date(a.posted_at || 0); });
+    }
     filtered = filtered.slice(0, limit);
     return new Response(JSON.stringify(filtered), { headers: { 'Content-Type': 'application/json' } });
   }
