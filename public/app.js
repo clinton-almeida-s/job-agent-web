@@ -12,20 +12,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadSources();
   await loadJobs();
   bindEvents();
-  startIstClock();
+  startUtcClock();
 });
 
-// ── IST Clock ─────────────────────────────────────────────────────────────────
-function startIstClock() {
+// ── UTC Clock ─────────────────────────────────────────────────────────────────
+function startUtcClock() {
   function tick() {
-    // IST = UTC+5:30
-    const istMs = Date.now() + (5.5 * 60 * 60 * 1000);
-    const d = new Date(istMs);
+    const d = new Date();
     const h = String(d.getUTCHours()).padStart(2, '0');
     const m = String(d.getUTCMinutes()).padStart(2, '0');
     const s = String(d.getUTCSeconds()).padStart(2, '0');
     const el = document.getElementById('utcTime');
-    if (el) el.textContent = h + ':' + m + ':' + s + ' IST';
+    if (el) el.textContent = h + ':' + m + ':' + s + ' UTC';
   }
   tick();
   setInterval(tick, 1000);
@@ -61,7 +59,7 @@ async function loadSources() {
 // ── Stats ─────────────────────────────────────────────────────────────────────
 async function loadStats() {
   const s = await (await fetch(`${API}/stats`)).json();
-  const cells = document.querySelectorAll('.hero-stats .stat-cell');
+  const cells = document.querySelectorAll('.stat-strip .stat-cell');
   if (cells[0]) cells[0].querySelector('.num').textContent = s.total_jobs;
   if (cells[1]) cells[1].querySelector('.num').textContent = s.new_jobs;
   if (cells[2]) cells[2].querySelector('.num').textContent = s.saved_jobs;
@@ -116,14 +114,10 @@ function updateClearButton() {
 function renderJobs(jobs) {
   const q = document.getElementById('jobQueue');
   if (jobs.length === 0) {
-    const resultCount = document.getElementById('resultCount');
-  if (resultCount) resultCount.textContent = jobs.length;
-  q.innerHTML = '<div class="empty-state"><div class="icon">⎓</div><h3>No jobs found</h3><p>Click "Scrape Now" to fetch fresh listings from remote-first boards.</p></div>';
+    q.innerHTML = '<div class="empty-state"><div class="icon">⎓</div><p>No jobs found. Click "Scrape Now" to fetch fresh listings.</p></div>';
     return;
   }
   q.innerHTML = jobs.map((j, i) => jobRow(j, i)).join('');
-  const rc = document.getElementById('resultCount');
-  if (rc) rc.textContent = jobs.length;
 }
 
 function jobRow(job, index) {
@@ -142,38 +136,38 @@ function jobRow(job, index) {
   let actionsHtml = '';
   if (status === 'new') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-btn view" aria-label="View job details">View</a>
-        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-btn apply" aria-label="Apply to this job">Apply</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','saved')" class="action-btn save" aria-label="Save this job">Save</a>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply" aria-label="Apply to this job">Apply</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','saved')" class="action-link save" aria-label="Save this job">Save</a>
       `;
   } else if (status === 'applied') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-btn view" aria-label="View job details">View</a>
-        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-btn apply" aria-label="Re-apply to this job">Apply</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-btn skip" aria-label="Revoke application and skip">Revoke</a>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply" aria-label="Re-apply to this job">Apply</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip" aria-label="Revoke application and skip">Revoke</a>
       `;
   } else if (status === 'saved') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-btn view" aria-label="View job details">View</a>
-        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-btn apply" aria-label="Apply to this job">Apply</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-btn skip" aria-label="Move to skipped">Skip</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','ignored')" class="action-btn skip" aria-label="Move to ignored">Ignore</a>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply" aria-label="Apply to this job">Apply</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip" aria-label="Move to skipped">Skip</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','ignored')" class="action-link skip" aria-label="Move to ignored">Ignore</a>
       `;
   } else if (status === 'skipped') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-btn view" aria-label="View job details">View</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-btn save" aria-label="Reopen this job">Reopen</a>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-link save" aria-label="Reopen this job">Reopen</a>
       `;
   } else if (status === 'ignored') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-btn view" aria-label="View job details">View</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-btn save" aria-label="Reopen this job">Reopen</a>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-link save" aria-label="Reopen this job">Reopen</a>
       `;
   }
 
   return `
-  <div class="job-card ${rowClass}" id="job-${job.id}">
-    <div class="card-info">
+  <div class="job-row ${rowClass}" id="job-${job.id}">
+    <div class="job-info">
       <div class="job-title">
         ${escapeHtml(job.title)}
         <span class="status-tag ${statusClass}">${status}</span>
@@ -181,15 +175,15 @@ function jobRow(job, index) {
       <div class="job-company">${escapeHtml(job.company || '')} &middot; ${escapeHtml(sourceLabel)}</div>
       <div class="job-tags">${remoteBadge}${salaryBadge}</div>
     </div>
-    <div class="card-details">
+    <div class="job-details">
       <div class="location">${escapeHtml(location)}</div>
       <div class="source">${escapeHtml(sourceLabel)}</div>
     </div>
-    <div class="card-score">
-      <div class="score-track"><div class="score-fill ${scoreClass}" style="width:${pct}%"></div></div>
-      <span class="score-val"><strong>${job.score}</strong> pts</span>
+    <div class="job-score">
+      <div class="score-bar-track"><div class="score-bar-fill ${scoreClass}" style="width:${pct}%"></div></div>
+      <span class="score-val">${job.score} pts</span>
     </div>
-    <div class="card-actions">${actionsHtml}</div>
+    <div class="job-actions">${actionsHtml}</div>
   </div>`;
 }
 

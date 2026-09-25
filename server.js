@@ -86,6 +86,12 @@ app.post('/api/ignore', (req, res) => {
   res.json({ success: true });
 });
 
+app.post('/api/new', (req, res) => {
+  const { jobId } = req.body;
+  updateApplication(jobId, 'new');
+  res.json({ success: true });
+});
+
 // ── Profile ──────────────────────────────────────────────────────────────────
 app.get('/api/profile', (req, res) => {
   const profile = getProfile() || {};
