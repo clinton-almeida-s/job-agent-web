@@ -136,40 +136,37 @@ function jobRow(job, index) {
   let actionsHtml = '';
   if (status === 'new') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view">View ▸</a>
-        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply">Apply</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','saved')" class="action-link save">Save</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip">Skip</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','ignored')" class="action-link skip">Ignore</a>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply" aria-label="Apply to this job">Apply</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','saved')" class="action-link save" aria-label="Save this job">Save</a>
       `;
   } else if (status === 'applied') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view">View ▸</a>
-        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply">Apply</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip">Revoke & Skip</a>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply" aria-label="Re-apply to this job">Apply</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip" aria-label="Revoke application and skip">Revoke</a>
       `;
   } else if (status === 'saved') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view">View ▸</a>
-        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply">Apply</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip">Skip</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','ignored')" class="action-link skip">Ignore</a>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply" aria-label="Apply to this job">Apply</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip" aria-label="Move to skipped">Skip</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','ignored')" class="action-link skip" aria-label="Move to ignored">Ignore</a>
       `;
   } else if (status === 'skipped') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view">View ▸</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-link save">Reopen</a>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-link save" aria-label="Reopen this job">Reopen</a>
       `;
   } else if (status === 'ignored') {
     actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view">View ▸</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-link save">Reopen</a>
+        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-link save" aria-label="Reopen this job">Reopen</a>
       `;
   }
 
   return `
   <div class="job-row ${rowClass}" id="job-${job.id}">
-    <div class="job-rank"><span class="rank-num">${index + 1}</span></div>
     <div class="job-info">
       <div class="job-title">
         ${escapeHtml(job.title)}

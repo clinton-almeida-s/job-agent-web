@@ -28,27 +28,27 @@
 
   <!-- Stat Strip -->
   <div class="stat-strip">
-    <div class="stat-cell"><span class="num">—</span><span class="label">Total</span></div>
-    <div class="stat-cell"><span class="num accent">—</span><span class="label">New</span></div>
-    <div class="stat-cell"><span class="num amber">—</span><span class="label">Saved</span></div>
-    <div class="stat-cell"><span class="num green">—</span><span class="label">Applied</span></div>
-    <div class="stat-cell"><span class="num red">—</span><span class="label">Skipped</span></div>
-    <div class="stat-cell"><span class="num" style="color:var(--muted)">—</span><span class="label">Ignored</span></div>
+    <div class="stat-cell"><span class="num">—</span><span class="label">total jobs</span></div>
+    <div class="stat-cell"><span class="num accent">—</span><span class="label">new</span></div>
+    <div class="stat-cell"><span class="num amber">—</span><span class="label">saved</span></div>
+    <div class="stat-cell"><span class="num green">—</span><span class="label">applied</span></div>
+    <div class="stat-cell"><span class="num red">—</span><span class="label">skipped</span></div>
+    <div class="stat-cell"><span class="num" style="color:var(--muted)">—</span><span class="label">ignored</span></div>
   </div>
 
   <!-- Filter Bar -->
   <div class="filter-bar">
-    <select id="statusFilter" title="Filter by status">
+    <select id="statusFilter" title="Filter by status" aria-label="Filter by status">
       <option value="new">New Jobs</option>
       <option value="saved">Saved</option>
       <option value="applied">Applied</option>
       <option value="skipped">Skipped</option>
       <option value="ignored">Ignored</option>
     </select>
-    <select id="companyFilter" title="Filter by company">
+    <select id="companyFilter" title="Filter by company" aria-label="Filter by company">
       <option value="">All Companies</option>
     </select>
-    <select id="regionFilter" title="Filter by region">
+    <select id="regionFilter" title="Filter by region" aria-label="Filter by region">
       <option value="">All Regions</option>
       <option value="india">India</option>
       <option value="remote">Remote</option>
@@ -56,15 +56,15 @@
       <option value="europe">Europe</option>
       <option value="asia-pacific">Asia-Pacific</option>
     </select>
-    <select id="jobTypeFilter" title="Filter by job type">
+    <select id="jobTypeFilter" title="Filter by job type" aria-label="Filter by job type">
       <option value="">All Types</option>
       <option value="remote">Remote Only</option>
       <option value="onsite">On-site Only</option>
     </select>
-    <select id="sourceFilter" title="Filter by source">
+    <select id="sourceFilter" title="Filter by source" aria-label="Filter by source">
       <option value="">All Sources</option>
     </select>
-    <select id="sortFilter" title="Sort by">
+    <select id="sortFilter" title="Sort by" aria-label="Sort by">
       <option value="score">Score (desc)</option>
       <option value="posted">Newest</option>
     </select>
@@ -75,7 +75,6 @@
 
   <!-- Job List Header -->
   <div class="list-header">
-    <span>#</span>
     <span>Job</span>
     <span>Details</span>
     <span>Score</span>
@@ -88,11 +87,11 @@
   </div>
 
   <!-- Profile Modal -->
-  <div id="profileModal" class="modal" style="display:none">
+  <div id="profileModal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-label="Edit profile">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>Edit Profile</h2>
-        <button id="closeProfileBtn" class="close">&times;</button>
+        <h2>Edit profile</h2>
+        <button id="closeProfileBtn" class="close" aria-label="Close dialog">&times;</button>
       </div>
       <form id="profileForm">
         <div class="form-grid">
@@ -134,11 +133,11 @@
   </div>
 
   <!-- Apply Modal -->
-  <div id="applyModal" class="modal" style="display:none">
+  <div id="applyModal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-label="Prepare application">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>Prepare Application</h2>
-        <button id="closeApplyBtn" class="close">&times;</button>
+        <h2>Prepare application</h2>
+        <button id="closeApplyBtn" class="close" aria-label="Close dialog">&times;</button>
       </div>
       <div id="applyContent"></div>
       <div class="modal-actions">
