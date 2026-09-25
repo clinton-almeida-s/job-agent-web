@@ -25,8 +25,34 @@ app.get('/api/jobs', (req, res) => {
   const limit = parseInt(req.query.limit, 10) || 100;
   const source = req.query.source || null;
   const minScore = req.query.minScore != null ? parseInt(req.query.minScore, 10) : null;
+  const company = req.query.company || null;
+  const region = req.query.region || null;
+  const jobType = req.query.jobType || null;
   const sort = req.query.sort || 'score';
-  res.json(getJobs({ status, limit, source, minScore, sort }));
+  const jobs = getJobs({ status, limit, source, minScore, sort });
+  let filtered = jobs;
+  if (company) {
+    const c = company.toLowerCase();
+    filtered = filtered.filter(j => (j.company || '').toLowerCase() === c);
+  }
+  if (region) {
+    const REGION_KEYWORDS = {
+      india: ['india','mumbai','delhi','bangalore','hyderabad','chennai','pune','kolkata','ahmedabad','kochi','bengaluru','blr','inr','₹'],
+      usa: ['usa','us ','united states','new york','san francisco','austin','seattle','boston','chicago','denver','atlanta','dallas','miami','los angeles','usd'],
+      europe: ['europe','uk ','london','berlin','paris','amsterdam','dublin','stockholm','oslo','helsinki','zurich','geneva','milan','madrid','barcelona','lisbon','eur','eu'],
+      'asia-pacific': ['china','shanghai','beijing','shenzhen','hong kong','taiwan','singapore','sydney','melbourne','tokyo','osaka','seoul','manila','jakarta','kuala lumpur','thailand','vietnam','philippines','cny','sgd','aud','jpy']
+    };
+    const keywords = REGION_KEYWORDS[region] || [];
+    filtered = filtered.filter(j => {
+      const loc = (j.location || '').toLowerCase();
+      const desc = (j.description || '').toLowerCase();
+      return keywords.some(kw => loc.includes(kw) || desc.includes(kw));
+    });
+  }
+  if (jobType === 'remote') {
+    filtered = filtered.filter(j => j.remote || j.source === 'RemoteOK' || j.source === 'Remotive' || j.source === 'WeWorkRemotely');
+  }
+  res.json(filtered);
 });
 
 // ── Applications ─────────────────────────────────────────────────────────────

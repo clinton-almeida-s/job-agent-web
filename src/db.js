@@ -246,12 +246,10 @@ function getJobs(filter = {}) {
     if (filter.status) { conditions.push('status = ?'); params.push(filter.status); }
     if (filter.source) { conditions.push('source = ?'); params.push(filter.source); }
     if (filter.minScore != null) { conditions.push('score >= ?'); params.push(filter.minScore); }
-    if (filter.limit) { conditions.push('LIMIT ?'); params.push(filter.limit); }
-    if (filter.sort === 'posted') { conditions.push('ORDER BY posted_at DESC'); }
-    else { conditions.push('ORDER BY score DESC'); }
-    if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ') + ' ' + (filter.limit ? 'LIMIT ?' : 'ORDER BY score DESC');
-    if (filter.limit && !conditions.length) sql += ' ORDER BY score DESC LIMIT ?';
-    if (filter.limit) params.push(filter.limit);
+    const orderBy = filter.sort === 'posted' ? 'ORDER BY posted_at DESC' : 'ORDER BY score DESC';
+    if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
+    sql += ' ' + orderBy;
+    if (filter.limit) { sql += ' LIMIT ?'; params.push(filter.limit); }
     return db.prepare(sql).all(...params).map(normalizeJob);
   }
   let result = [...fallbackData.jobs];

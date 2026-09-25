@@ -3,87 +3,90 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Job Agent</title>
+  <title>Job Agent — your career. automated.</title>
   <link rel="stylesheet" href="/styles.css?t=__STYLES_VERSION__"/>
 </head>
 <body>
+  <div class="ambient-glow"></div>
+
   <!-- Top Bar -->
   <header class="topbar">
-    <div class="topbar-brand">
-      <h1>Job Agent</h1>
+    <div class="topbar-inner">
+      <div class="topbar-brand">
+        <h1>Job<span>Agent</span></h1>
+        <span class="topbar-tagline">your career. automated.</span>
+      </div>
       <div class="topbar-meta">
-        <span class="live-dot"></span>
-        <span id="topbarMatched">— matched</span>
+        <span><span class="live-dot" style="display:inline-block;vertical-align:middle;margin-right:4px;"></span><span id="topbarMatched">— matched</span></span>
         <span class="dot"></span>
         <span id="topbarTotal">— total</span>
         <span class="dot"></span>
-        <span id="utcTime">--:-- UTC</span>
+        <span id="utcTime">--:-- IST</span>
       </div>
-    </div>
-    <div class="topbar-actions">
-      <button id="scrapeBtn" class="btn btn-primary">Scrape Now</button>
-      <button id="profileBtn" class="btn btn-ghost">Profile</button>
+      <div class="topbar-actions">
+        <button id="profileBtn" class="btn btn-ghost">Profile</button>
+        <button id="scrapeBtn" class="btn btn-primary">⚡ Scrape Now</button>
+      </div>
     </div>
   </header>
 
-  <!-- Stat Strip -->
-  <div class="stat-strip">
-    <div class="stat-cell"><span class="num">—</span><span class="label">total jobs</span></div>
-    <div class="stat-cell"><span class="num accent">—</span><span class="label">new</span></div>
-    <div class="stat-cell"><span class="num amber">—</span><span class="label">saved</span></div>
-    <div class="stat-cell"><span class="num green">—</span><span class="label">applied</span></div>
-    <div class="stat-cell"><span class="num red">—</span><span class="label">skipped</span></div>
-    <div class="stat-cell"><span class="num" style="color:var(--muted)">—</span><span class="label">ignored</span></div>
-  </div>
+  <div class="page-wrap">
+    <!-- Hero Stats -->
+    <div class="hero-stats">
+      <div class="stat-cell"><span class="num">—</span><span class="label">Total Jobs</span></div>
+      <div class="stat-cell"><span class="num accent">—</span><span class="label">New</span></div>
+      <div class="stat-cell"><span class="num amber">—</span><span class="label">Saved</span></div>
+      <div class="stat-cell"><span class="num green">—</span><span class="label">Applied</span></div>
+      <div class="stat-cell"><span class="num red">—</span><span class="label">Skipped</span></div>
+      <div class="stat-cell"><span class="num dim">—</span><span class="label">Ignored</span></div>
+    </div>
 
-  <!-- Filter Bar -->
-  <div class="filter-bar">
-    <select id="statusFilter" title="Filter by status" aria-label="Filter by status">
-      <option value="new">New Jobs</option>
-      <option value="saved">Saved</option>
-      <option value="applied">Applied</option>
-      <option value="skipped">Skipped</option>
-      <option value="ignored">Ignored</option>
-    </select>
-    <select id="companyFilter" title="Filter by company" aria-label="Filter by company">
-      <option value="">All Companies</option>
-    </select>
-    <select id="regionFilter" title="Filter by region" aria-label="Filter by region">
-      <option value="">All Regions</option>
-      <option value="india">India</option>
-      <option value="remote">Remote</option>
-      <option value="usa">USA</option>
-      <option value="europe">Europe</option>
-      <option value="asia-pacific">Asia-Pacific</option>
-    </select>
-    <select id="jobTypeFilter" title="Filter by job type" aria-label="Filter by job type">
-      <option value="">All Types</option>
-      <option value="remote">Remote Only</option>
-      <option value="onsite">On-site Only</option>
-    </select>
-    <select id="sourceFilter" title="Filter by source" aria-label="Filter by source">
-      <option value="">All Sources</option>
-    </select>
-    <select id="sortFilter" title="Sort by" aria-label="Sort by">
-      <option value="score">Score (desc)</option>
-      <option value="posted">Newest</option>
-    </select>
-    <div class="spacer"></div>
-    <input id="searchInput" type="text" placeholder="Search title, company..."/>
-    <button id="clearFilters" class="btn btn-ghost" style="display:none">Clear</button>
-  </div>
+    <!-- Filters -->
+    <div class="filter-pills" id="filterPills"></div>
 
-  <!-- Job List Header -->
-  <div class="list-header">
-    <span>Job</span>
-    <span>Details</span>
-    <span>Score</span>
-    <span>Actions</span>
-  </div>
+    <div class="filter-bar">
+      <select id="statusFilter" title="Filter by status" aria-label="Filter by status">
+        <option value="new">New Jobs</option>
+        <option value="saved">Saved</option>
+        <option value="applied">Applied</option>
+        <option value="skipped">Skipped</option>
+        <option value="ignored">Ignored</option>
+      </select>
+      <select id="companyFilter" title="Filter by company" aria-label="Filter by company">
+        <option value="">All Companies</option>
+      </select>
+      <select id="regionFilter" title="Filter by region" aria-label="Filter by region">
+        <option value="">All Regions</option>
+        <option value="india">India</option>
+        <option value="remote">Remote</option>
+        <option value="usa">USA</option>
+        <option value="europe">Europe</option>
+        <option value="asia-pacific">Asia-Pacific</option>
+      </select>
+      <select id="jobTypeFilter" title="Filter by job type" aria-label="Filter by job type">
+        <option value="">All Types</option>
+        <option value="remote">Remote Only</option>
+        <option value="onsite">On-site Only</option>
+      </select>
+      <select id="sourceFilter" title="Filter by source" aria-label="Filter by source">
+        <option value="">All Sources</option>
+      </select>
+      <select id="sortFilter" title="Sort by" aria-label="Sort by">
+        <option value="score">Score (desc)</option>
+        <option value="posted">Newest</option>
+      </select>
+      <div class="spacer"></div>
+      <input id="searchInput" type="text" placeholder="Search title, company..."/>
+      <button id="clearFilters" class="btn btn-ghost" style="display:none">Clear</button>
+    </div>
 
-  <!-- Job List -->
-  <div class="job-list" id="jobQueue">
-    <div class="empty-state"><p>Loading jobs...</p></div>
+    <!-- Section label -->
+    <div class="section-label" id="sectionLabel">Job Queue — <span id="resultCount">—</span> results</div>
+
+    <!-- Job List -->
+    <div class="job-list" id="jobQueue">
+      <div class="empty-state"><p>Loading jobs...</p></div>
+    </div>
   </div>
 
   <!-- Profile Modal -->
