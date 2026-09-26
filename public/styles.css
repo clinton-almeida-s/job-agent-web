@@ -380,6 +380,13 @@ body {
   border: 1px solid var(--border);
 }
 .action-link.skip:hover { color: var(--red); border-color: var(--red-dim); }
+.action-link.ignore {
+  background: transparent;
+  color: var(--muted-dim);
+  border: 1px solid var(--border);
+  font-size: 10px;
+}
+.action-link.ignore:hover { color: var(--red); border-color: var(--red-dim); }
 
 /* ── Table Header ────────────────────────────────────────── */
 .list-header {

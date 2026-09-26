@@ -118,7 +118,8 @@ app.post('/api/scrape', async (req, res) => {
 });
 
 // ── Static files ─────────────────────────────────────────────────────────────
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname));
 
 // ── Serve dashboard (fallback) ───────────────────────────────────────────────
 app.get('*', (req, res) => {

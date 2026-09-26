@@ -299,7 +299,8 @@ function updateApplication(jobId, action, note) {
       note || null
     );
     // Also update job status
-    db.prepare("UPDATE jobs SET status = ? WHERE id = ?").run(action === 'applied' ? 'applied' : action === 'skipped' ? 'skipped' : 'new', jobId);
+    const jobStatusMap = { applied: 'applied', skipped: 'skipped', saved: 'saved', ignored: 'ignored', new: 'new' };
+    db.prepare("UPDATE jobs SET status = ? WHERE id = ?").run(jobStatusMap[action] || 'new', jobId);
   } else {
     const app = fallbackData.applications.find(a => a.id === `app-${jobId}`);
     if (app) {
@@ -319,7 +320,10 @@ function updateApplication(jobId, action, note) {
     }
     // Update job status
     const job = fallbackData.jobs.find(j => j.id === jobId);
-    if (job) job.status = action === 'applied' ? 'applied' : action === 'skipped' ? 'skipped' : 'new';
+    if (job) {
+      const jobStatusMap = { applied: 'applied', skipped: 'skipped', saved: 'saved', ignored: 'ignored', new: 'new' };
+      job.status = jobStatusMap[action] || 'new';
+    }
     saveFallback();
   }
 }

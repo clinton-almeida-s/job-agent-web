@@ -133,37 +133,13 @@ function jobRow(job, index) {
   const location = job.location || job.region || '—';
   const sourceLabel = job.source || '';
 
-  let actionsHtml = '';
-  if (status === 'new') {
-    actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
-        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply" aria-label="Apply to this job">Apply</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','saved')" class="action-link save" aria-label="Save this job">Save</a>
-      `;
-  } else if (status === 'applied') {
-    actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
-        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply" aria-label="Re-apply to this job">Apply</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip" aria-label="Revoke application and skip">Revoke</a>
-      `;
-  } else if (status === 'saved') {
-    actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
-        <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply" aria-label="Apply to this job">Apply</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip" aria-label="Move to skipped">Skip</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','ignored')" class="action-link skip" aria-label="Move to ignored">Ignore</a>
-      `;
-  } else if (status === 'skipped') {
-    actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-link save" aria-label="Reopen this job">Reopen</a>
-      `;
-  } else if (status === 'ignored') {
-    actionsHtml = `
-        <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
-        <a href="javascript:void(0)" onclick="markAction('${job.id}','new')" class="action-link save" aria-label="Reopen this job">Reopen</a>
-      `;
-  }
+  const actionsHtml = `
+    <a href="${escapeHtml(job.url)}" target="_blank" class="action-link view" aria-label="View job details">View</a>
+    <a href="javascript:void(0)" onclick="openApply('${job.id}')" class="action-link apply" aria-label="Apply to this job">Apply</a>
+    <a href="javascript:void(0)" onclick="markAction('${job.id}','saved')" class="action-link save" aria-label="Save this job">Save</a>
+    <a href="javascript:void(0)" onclick="markAction('${job.id}','skipped')" class="action-link skip" aria-label="Move to skipped">Skip</a>
+    <a href="javascript:void(0)" onclick="markAction('${job.id}','ignored')" class="action-link ignore" aria-label="Move to ignored">Ignore</a>
+  `;
 
   return `
   <div class="job-row ${rowClass}" id="job-${job.id}">
@@ -181,7 +157,7 @@ function jobRow(job, index) {
     </div>
     <div class="job-score">
       <div class="score-bar-track"><div class="score-bar-fill ${scoreClass}" style="width:${pct}%"></div></div>
-      <span class="score-val">${job.score} pts</span>
+      <span class="score-val">${job.score ?? 0} pts</span>
     </div>
     <div class="job-actions">${actionsHtml}</div>
   </div>`;
