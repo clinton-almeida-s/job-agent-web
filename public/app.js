@@ -7,6 +7,7 @@ let currentJobId = null;
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+  showSkeleton();
   await loadProfile();
   await loadStats();
   await loadSources();
@@ -111,6 +112,12 @@ function updateClearButton() {
   document.getElementById('clearFilters').style.display = hasFilter ? '' : 'none';
 }
 
+const SKELETON_HTML = `
+    <div class="skeleton-row"><div style="padding:1rem 1.25rem"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-sub"></div><div class="skeleton skeleton-bar"></div></div><div style="padding:1rem 1.25rem"><div class="skeleton skeleton-text" style="width:40%"></div><div class="skeleton skeleton-sub"></div></div><div style="padding:1rem 1.25rem"><div class="skeleton skeleton-bar" style="width:80%"></div></div><div style="padding:1rem 1.25rem;display:flex;gap:.5rem"><div class="skeleton skeleton-bar" style="width:50px"></div><div class="skeleton skeleton-bar" style="width:50px"></div><div class="skeleton skeleton-bar" style="width:50px"></div></div></div>
+    <div class="skeleton-row"><div style="padding:1rem 1.25rem"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-sub"></div><div class="skeleton skeleton-bar"></div></div><div style="padding:1rem 1.25rem"><div class="skeleton skeleton-text" style="width:40%"></div><div class="skeleton skeleton-sub"></div></div><div style="padding:1rem 1.25rem"><div class="skeleton skeleton-bar" style="width:80%"></div></div><div style="padding:1rem 1.25rem;display:flex;gap:.5rem"><div class="skeleton skeleton-bar" style="width:50px"></div><div class="skeleton skeleton-bar" style="width:50px"></div><div class="skeleton skeleton-bar" style="width:50px"></div></div></div>
+    <div class="skeleton-row"><div style="padding:1rem 1.25rem"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-sub"></div><div class="skeleton skeleton-bar"></div></div><div style="padding:1rem 1.25rem"><div class="skeleton skeleton-text" style="width:40%"></div><div class="skeleton skeleton-sub"></div></div><div style="padding:1rem 1.25rem"><div class="skeleton skeleton-bar" style="width:80%"></div></div><div style="padding:1rem 1.25rem;display:flex;gap:.5rem"><div class="skeleton skeleton-bar" style="width:50px"></div><div class="skeleton skeleton-bar" style="width:50px"></div><div class="skeleton skeleton-bar" style="width:50px"></div></div></div>
+  `;
+
 function renderJobs(jobs) {
   const q = document.getElementById('jobQueue');
   if (jobs.length === 0) {
@@ -118,6 +125,10 @@ function renderJobs(jobs) {
     return;
   }
   q.innerHTML = jobs.map((j, i) => jobRow(j, i)).join('');
+}
+
+function showSkeleton() {
+  document.getElementById('jobQueue').innerHTML = SKELETON_HTML;
 }
 
 function jobRow(job, index) {
@@ -251,6 +262,7 @@ function bindEvents() {
   document.getElementById('scrapeBtn').onclick = async () => {
     document.getElementById('scrapeBtn').disabled = true;
     document.getElementById('scrapeBtn').textContent = 'Scraping...';
+    showSkeleton();
     await fetch(`${API}/scrape`, { method: 'POST' });
     setTimeout(() => {
       loadJobs();
